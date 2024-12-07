@@ -43,7 +43,8 @@ function PatientLogin() {
     password: "",
   };
 
-  const { setEmail } = useAuth();
+  const { setEmail, setUserType } = useAuth();
+
   const [signState, setSignState] = useState("Sign In");
   const [formData, setFormData] = useState<FormValues>(initialValues);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -122,6 +123,7 @@ function PatientLogin() {
     if (Object.keys(errors).length === 0) {
       try {
         setEmail(formData.email);
+        setUserType("patient");
 
         // Signup request
         const response = await axios.post(
@@ -192,6 +194,7 @@ function PatientLogin() {
         setEmail(formData.email);
         const email = formData.email;
         const password = formData.password;
+        setUserType("patient");
 
         const response = await axios.post(
           "http://localhost:8080/api/patients/signin",
@@ -332,15 +335,13 @@ function PatientLogin() {
                 onChange={handleChange}
                 placeholder="Password"
               />
-              <button className="bg-[#007E85] rounded-lg p-2 mt-4 my-2 text-white w-24 font-bold">
+              <button className="bg-[#007E85] rounded-lg p-2 mt-4 my-5 text-white w-24 font-bold">
                 Sign In
               </button>
             </form>
           )}
-          <div className="w-100 flex justify-center border-[1px] border-[#007E85]">
-            <GoogleOAuthProvider
-              clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID!}
-            >
+          <div className="w-100 flex justify-center my-2 ">
+            <GoogleOAuthProvider clientId="169581545565-89ueco0qk9b1ino9hfckstb0v5ehkn65.apps.googleusercontent.com">
               <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
             </GoogleOAuthProvider>
           </div>
@@ -370,12 +371,12 @@ const InputField = ({
     <input
       type="text"
       name={name}
-      className="border-[1px] border-[#007E85] rounded-lg h-10 w-80 mt-1 p-2 font-light"
+      className="border-[1px] border-[#007E85] rounded-lg h-10 w-80 mt-1 p-2 font-light focus:outline-none"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
     />
-    <p className="font-thin text-red-500 text-xs p-0 m-0">{error}</p>
+    <p className=" text-red-500 text-xs p-0 m-0">{error}</p>
   </>
 );
 
@@ -396,12 +397,12 @@ const PassField = ({
     <input
       type="password"
       name={name}
-      className="border-[1px] border-[#007E85] rounded-lg h-10 w-80 mt-2 p-2 font-light"
+      className="border-[1px] border-[#007E85] rounded-lg h-10 w-80 mt-2 p-2 font-light focus:outline-none"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
     />
-    <p className="font-thin text-red-400 text-sm p-0 m-0">{error}</p>
+    <p className=" text-red-400 text-sm p-0 m-0">{error}</p>
   </>
 );
 

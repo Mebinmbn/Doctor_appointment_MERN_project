@@ -15,7 +15,7 @@ const OTPVerification = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [otpValues, setOtpValues] = useState(initialValue);
-  const { email } = useAuth();
+  const { email, userType } = useAuth();
 
   const onChangeHandle = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,6 +40,7 @@ const OTPVerification = () => {
         {
           email,
           otp,
+          userType,
         },
         {
           headers: { "Content-Type": "application/json" },

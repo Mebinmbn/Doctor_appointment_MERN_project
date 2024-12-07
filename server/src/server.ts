@@ -4,6 +4,7 @@ import dbConnect from "./config/database";
 import cors from "cors";
 import patientRoutes from "./routes/patientRoutes";
 import otpRoutes from "./routes/otpRoutes";
+import doctorRoutes from "./routes/doctorRoutes";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.get("/ping", (req: Request, res: Response) => {
 
 app.use("/api/patients", patientRoutes);
 app.use("/api/otp", otpRoutes);
+app.use("/api/doctor", doctorRoutes);
 
 // Start the server
 app.listen(PORT, () => {

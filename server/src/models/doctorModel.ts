@@ -11,6 +11,7 @@ export interface IDoctor extends Document {
   specialization: string;
   experience: string;
   location: string;
+  licenseImage: object;
   password: string;
   role: string;
   isVerified: boolean;
@@ -27,6 +28,11 @@ const DoctorSchema: Schema = new Schema<IDoctor>({
   specialization: { type: String, required: true },
   experience: { type: String, required: true },
   location: { type: String, required: true },
+  licenseImage: {
+    filename: String,
+    originalname: String,
+    path: String,
+  },
   password: { type: String, required: true },
   role: { type: String, default: "doctor" },
   isVerified: { type: Boolean, default: false },

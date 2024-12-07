@@ -16,9 +16,9 @@ export const sendVerification = async (req: Request, res: Response) => {
 
 export const verify = async (req: Request, res: Response) => {
   try {
-    const { email, otp } = req.body;
-    console.log(email, otp);
-    const isVerified = await verifyEmail(email, otp);
+    const { email, otp, userType } = req.body;
+    console.log(email, otp, userType);
+    const isVerified = await verifyEmail(email, otp, userType);
     if (isVerified) {
       res.status(200).json({ success: true, message: "Email verified" });
     } else {

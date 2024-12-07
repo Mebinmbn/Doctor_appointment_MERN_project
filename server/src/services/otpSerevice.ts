@@ -1,9 +1,9 @@
 const otpMap = new Map<string, string>();
 
 export const generateOTP = (email: string): string => {
-  const otp = Math.floor(1000 + Math.random() * 9000).toString(); // Generates a 4-digit OTP
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
   otpMap.set(email, otp);
-  // Expire the OTP after 5 minutes
+
   setTimeout(() => otpMap.delete(email), 5 * 60 * 1000);
   return otp;
 };
