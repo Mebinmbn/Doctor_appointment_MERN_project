@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { signInPatient, signUpPatient } from "../usecases/patientUseCases";
+import {
+  getDoctors,
+  signInPatient,
+  signUpPatient,
+} from "../usecases/patientUseCases";
 
 const signUp = async (req: Request, res: Response) => {
   try {
@@ -19,17 +23,29 @@ const signIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     const { token, patient } = await signInPatient(email, password);
-    res
-      .status(200)
-      .json({
-        success: true,
-        token,
-        user: { name: patient.firstName, role: patient.role, id: patient._id },
-        message: "Successfully Logged in",
-      });
+    res.status(200).json({
+      success: true,
+      token,
+      user: { name: patient.firstName, role: patient.role, id: patient._id },
+      message: "Successfully Logged in",
+    });
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
     res.status(400).json({ success: false, error: errorMessage });
   }
 };
-export default { signUp, signIn };
+
+const doctors = async (req: Request, res: Response) => {
+  try {
+    const doctors = await getDoctors();
+    if (doctors) {
+      res
+        .status(200)
+        .json({ success: true, doctors, message: "Request successfull" });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+export default { signUp, signIn, doctors };

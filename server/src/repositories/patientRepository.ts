@@ -1,3 +1,4 @@
+import DoctorModel from "../models/doctorModel";
 import PatientModel, { IPatient } from "../models/patientModel";
 
 const createPatient = async (
@@ -23,4 +24,17 @@ const verifyPatient = async (email: string): Promise<IPatient | null> => {
   return patient;
 };
 
-export default { createPatient, findPatientByEmail, verifyPatient };
+const findAllDoctors = async () => {
+  try {
+    return await DoctorModel.find({ isApproved: true });
+  } catch (error) {
+    throw new Error("Error in fetching doctors");
+  }
+};
+
+export default {
+  createPatient,
+  findPatientByEmail,
+  verifyPatient,
+  findAllDoctors,
+};

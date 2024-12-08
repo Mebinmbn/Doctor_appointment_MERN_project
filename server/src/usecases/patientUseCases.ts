@@ -3,7 +3,7 @@ import { IPatient } from "../models/patientModel";
 import validation from "../utils/validation";
 import { comparePassword, hashPassword } from "../services/bcryptService";
 import { generateToken } from "../services/tokenService";
-import { AuthResponse } from "../models/authResponseModel";
+import { PatientResponse } from "../models/authResponseModel";
 
 export const signUpPatient = async (patientData: IPatient) => {
   console.log("reched useCases", patientData);
@@ -22,7 +22,7 @@ export const signUpPatient = async (patientData: IPatient) => {
 export const signInPatient = async (
   email: string,
   password: string
-): Promise<AuthResponse> => {
+): Promise<PatientResponse> => {
   const patient = await patientRepository.findPatientByEmail(email);
   if (!patient) {
     throw new Error("User not found");
@@ -36,4 +36,12 @@ export const signInPatient = async (
   }
   const token = generateToken(patient.id);
   return { token, patient };
+};
+
+export const getDoctors = async () => {
+  try {
+    return await patientRepository.findAllDoctors();
+  } catch (error) {
+    throw new Error("Error in fetching doctors");
+  }
 };

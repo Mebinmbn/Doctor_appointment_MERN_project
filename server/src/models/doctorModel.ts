@@ -15,6 +15,8 @@ export interface IDoctor extends Document {
   password: string;
   role: string;
   isVerified: boolean;
+  isApproved: boolean;
+  isRejected: boolean;
   registeredAt: Date;
 }
 
@@ -36,6 +38,8 @@ const DoctorSchema: Schema = new Schema<IDoctor>({
   password: { type: String, required: true },
   role: { type: String, default: "doctor" },
   isVerified: { type: Boolean, default: false },
+  isApproved: { type: Boolean, default: false },
+  isRejected: { type: Boolean, default: false },
   registeredAt: { type: Date, default: Date.now },
 });
 

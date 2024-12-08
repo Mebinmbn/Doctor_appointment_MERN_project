@@ -6,6 +6,10 @@ import Home from "./patient/pages/Home";
 import DoctorRegister from "./doctor/pages/DoctorRegister";
 import DoctorSignin from "./doctor/pages/DoctorSignin";
 import DoctorDashboard from "./doctor/pages/DoctorDashboard";
+import AdminSignin from "./admin/pages/adminSignin";
+import AdminDashboard from "./admin/pages/AdminDashboard";
+import DoctorsList from "./admin/pages/DoctorsList";
+import Doctors from "./patient/pages/Doctors";
 
 function App() {
   return (
@@ -16,11 +20,17 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<PatientLogin />} />
           <Route path="/otp" element={<OTPVerification />} />
+          <Route path="/doctors" element={<Doctors />} />
         </Routes>
         <Routes>
           <Route path="/doctorSignup" element={<DoctorRegister />} />
           <Route path="/doctorSignin" element={<DoctorSignin />} />
           <Route path="/doctorDashboard" element={<DoctorDashboard />} />
+        </Routes>
+        <Routes>
+          <Route path="adminSignin" element={<AdminSignin />} />
+          <Route path="adminDashboard" element={<AdminDashboard />} />
+          <Route path="adminDoctors" element={<DoctorsList />} />
         </Routes>
       </Router>
     </>
