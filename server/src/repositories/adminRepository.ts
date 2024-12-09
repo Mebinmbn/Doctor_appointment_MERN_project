@@ -1,5 +1,6 @@
 import AdminModel, { IAdmin } from "../models/adminModel";
 import DoctorModel from "../models/doctorModel";
+import PatientModel from "../models/patientModel";
 
 const findAdminByEmail = async (email: string): Promise<IAdmin | null> => {
   console.log("Find email by id");
@@ -50,9 +51,31 @@ const rejectDoctor = async (email: string) => {
   }
 };
 
+const findAllDoctors = async () => {
+  try {
+    return await DoctorModel.find({
+      isApproved: true,
+      isVerified: true,
+      isRejected: false,
+    });
+  } catch {
+    throw new Error("Error in fetching applications");
+  }
+};
+
+const findAllPatients = async () => {
+  try {
+    return await PatientModel.find({});
+  } catch {
+    throw new Error("Error in fetching applications");
+  }
+};
+
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,
   approveDoctor,
   rejectDoctor,
+  findAllDoctors,
+  findAllPatients,
 };

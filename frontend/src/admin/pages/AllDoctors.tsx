@@ -2,16 +2,13 @@ import { useEffect, useState } from "react";
 import AdminNav from "../components/AdminNav";
 import axios from "axios";
 import { Doctor } from "../../types/doctor";
-import ImageModal from "../components/ImageModal";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
 
-function DoctorsList() {
+function AllDoctors() {
   const [doctorApplications, setDoctorApplications] = useState([]);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const admin = useSelector((state: RootState) => state.admin.admin);
   const navigate = useNavigate();
@@ -29,7 +26,7 @@ function DoctorsList() {
   const fetchDoctorApplications = async () => {
     try {
       const applicationResponse = await axios.get(
-        "http://localhost:8080/api/admin/applications",
+        "http://localhost:8080/api/admin/doctors",
         {
           headers: {
             "Content-Type": "application/json",
@@ -41,21 +38,12 @@ function DoctorsList() {
 
       console.log("applicationResponse", applicationResponse.data);
       if (applicationResponse.data) {
-        setDoctorApplications(applicationResponse.data.applications);
+        setDoctorApplications(applicationResponse.data.doctors);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
     }
-  };
-
-  const openModal = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedImage(null);
   };
 
   const handleApprove = async (id: string) => {
@@ -102,7 +90,6 @@ function DoctorsList() {
       toast.error("Error in approval");
     }
   };
-
   return (
     <div>
       <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
@@ -121,7 +108,7 @@ function DoctorsList() {
           <div className="flex justify-center  items-center ">
             <div className="w-full max-w-6xl mt-5  shadow-lg rounded-lg bg-[#007E85]">
               <h2 className="text-2xl font-bold mb-4 text-white p-4 text-white border-b text-white">
-                Applications
+                Doctors
               </h2>
               <table className="min-w-full bg-[#007E85] border">
                 <thead>
@@ -137,7 +124,7 @@ function DoctorsList() {
                       Experience
                     </th>
                     <th className="py-2 px-4 text-white border-b">Location</th>
-                    <th className="py-2 px-4 text-white border-b">License</th>
+                    <th className="py-2 px-4 text-white border-b">Gender</th>
                     <th className="py-2 px-4 text-white border-b">Action</th>
                   </tr>
                 </thead>
@@ -162,38 +149,21 @@ function DoctorsList() {
                         {doctor.location}
                       </td>
                       <td className="py-2 px-4 text-white border-b">
-                        <img
-                          src={`http://localhost:8080/uploads/license/${doctor.licenseImage.path
-                            .split("\\")
-                            .pop()}`}
-                          alt={doctor.licenseImage.path.split("\\").pop()}
-                          className="h-16 w-16 object-cover rounded"
-                          onClick={() =>
-                            openModal(
-                              `http://localhost:8080/uploads/license/${doctor.licenseImage.path
-                                .split("\\")
-                                .pop()}`
-                            )
-                          }
-                        />
+                        {doctor.gender}
                       </td>
                       <td className="py-2 px-4 text-white border-b">
                         <div>
                           <button
                             className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                            onClick={() => {
-                              handleApprove(doctor.email);
-                            }}
+                            onClick={() => {}}
                           >
-                            Approve
+                            Edit
                           </button>
                           <button
                             className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                            onClick={() => {
-                              handleReject(doctor.email);
-                            }}
+                            onClick={() => {}}
                           >
-                            Reject
+                            Block
                           </button>
                         </div>
                       </td>
@@ -205,13 +175,8 @@ function DoctorsList() {
           </div>
         </div>
       </div>
-      <ImageModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        imageUrl={selectedImage || ""}
-      />
     </div>
   );
 }
 
-export default DoctorsList;
+export default AllDoctors;

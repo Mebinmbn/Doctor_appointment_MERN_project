@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../app/featrue/userSlice";
+import { setAdmin } from "../../app/featrue/adminSlice";
 import { AppDispatch, RootState } from "../../app/store";
 
 import { User } from "../../types/user";
@@ -42,15 +42,15 @@ function AdminSignin() {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const user = useSelector(
-    (state: RootState) => state.auth.user
+  const admin = useSelector(
+    (state: RootState) => state.admin.admin
   ) as User | null;
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
+    if (admin) {
+      navigate("/admin");
     }
-  }, [user, navigate]);
+  }, [admin, navigate]);
 
   //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
@@ -110,9 +110,9 @@ function AdminSignin() {
         if (response.data.success === true) {
           toast.success("Logged in Successfully");
           const { user, token } = response.data;
-          dispatch(setUser({ user, token }));
-          localStorage.setItem("token", token);
-          navigate("/doctorSignin");
+          dispatch(setAdmin({ admin: user, adminToken: token }));
+          localStorage.setItem("adminToken", token);
+          navigate("/admin");
         }
 
         setFormData(initialValues);

@@ -1,15 +1,11 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
-import { clearAdmin } from "../../app/featrue/adminSlice";
+import { clearDoctor } from "../../app/featrue/doctorSlice";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
 
-function AdminNav() {
+function DoctorNav() {
   const dispatch = useDispatch();
-
   const handleLogout = () => {
-    dispatch(clearAdmin());
-    toast.success("Successfully logged out");
+    dispatch(clearDoctor());
   };
   return (
     <div className="flex content-center justify-center h-screen w-40  ml-1">
@@ -18,13 +14,13 @@ function AdminNav() {
           <NavLink to="">Dahboard</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="/adminPatients">Patients</NavLink>
+          <NavLink to="">Patients</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="/adminDoctors">Doctors</NavLink>
+          <NavLink to="">Doctors</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="/adminApplications">Applications</NavLink>
+          <NavLink to="/adminDoctors">Applications</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
           <NavLink to="">Payments</NavLink>
@@ -43,4 +39,4 @@ function AdminNav() {
   );
 }
 
-export default AdminNav;
+export default DoctorNav;

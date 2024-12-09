@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 const OTPVerification = () => {
   const initialValue = {
@@ -50,7 +51,8 @@ const OTPVerification = () => {
       console.log(response);
       toast.success("OTP verified successfully. Your email is verified.");
       setOtpValues(initialValue);
-      navigate("/login");
+      if (userType === "user") navigate("/login");
+      else if (userType === "doctor") navigate("/doctorSignin");
     } catch (error) {
       console.log(error);
       toast.error("Invalid OTP. Please try again.");
@@ -136,6 +138,7 @@ const OTPVerification = () => {
             Verify
           </button>
         </form>
+        {isLoading ?? <ClipLoader />}
       </div>
     </div>
   );

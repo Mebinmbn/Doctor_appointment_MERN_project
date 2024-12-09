@@ -14,6 +14,7 @@ export interface IDoctor extends Document {
   licenseImage: object;
   password: string;
   role: string;
+  fees: string;
   isVerified: boolean;
   isApproved: boolean;
   isRejected: boolean;
@@ -37,6 +38,7 @@ const DoctorSchema: Schema = new Schema<IDoctor>({
   },
   password: { type: String, required: true },
   role: { type: String, default: "doctor" },
+  fees: { type: String, default: "500" },
   isVerified: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: false },
   isRejected: { type: Boolean, default: false },

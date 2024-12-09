@@ -18,6 +18,9 @@ export interface Doctor {
   licenseImage: LicenseImage;
   password: string;
   role: string;
+  fees: string;
   isVerified: boolean;
+  isApproved: boolean;
+  isRejected: boolean;
   registeredAt: Date;
 }

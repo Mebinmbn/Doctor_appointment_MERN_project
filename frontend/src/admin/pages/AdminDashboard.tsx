@@ -1,6 +1,17 @@
+import { useSelector } from "react-redux";
 import AdminNav from "../components/AdminNav";
+import { RootState } from "../../app/store";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function AdminDashboard() {
+  const admin = useSelector((state: RootState) => state.admin.admin);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!admin) {
+      navigate("/adminSignin");
+    }
+  });
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
       <AdminNav />

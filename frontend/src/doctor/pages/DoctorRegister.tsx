@@ -67,13 +67,16 @@ function DoctorRegister() {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  }, []);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    },
+    []
+  );
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +150,6 @@ function DoctorRegister() {
     return errors;
   };
 
-  // Handle form submission
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -175,7 +177,6 @@ function DoctorRegister() {
           "Application submitted successfully, please wait for approval"
         );
 
-        // Send OTP request
         await axios.post(
           "http://localhost:8080/api/otp/send",
           { email: formData.email },
@@ -401,7 +402,7 @@ function DoctorRegister() {
             Already have an Account?
             <span
               onClick={() => {
-                navigate("/login");
+                navigate("/doctorSignin");
               }}
               className="text-blue-400 text-sm cursor-pointer"
             >

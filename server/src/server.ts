@@ -7,6 +7,7 @@ import otpRoutes from "./routes/otpRoutes";
 import doctorRoutes from "./routes/doctorRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import path from "path";
+import authMiddleware from "./middlewares/authMiddleware";
 
 dotenv.config();
 
@@ -28,21 +29,13 @@ app.use(express.json());
 
 dbConnect();
 
-// Test route
-app.get("/ping", (req: Request, res: Response) => {
-  res.status(200).send("Server is live!");
-});
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-console.log(__dirname);
 
 app.use("/api/patients", patientRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

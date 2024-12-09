@@ -3,13 +3,28 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { IDoctor } from "./../../../../server/src/models/doctorModel";
+import doctorIcon from "../../assets/icon/doctor.png";
+import { useSelector } from "react-redux";
+
+import { RootState } from "../../app/store";
+import { useNavigate } from "react-router-dom";
 
 function Doctors() {
   const [doctors, setDoctors] = useState([]);
+  const user = useSelector((state: RootState) => state.auth.user) as
+    | string
+    | null;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     fetchDoctors();
-  }, []);
+  }, [user]);
 
   console.log("doctors", doctors);
 
@@ -37,23 +52,35 @@ function Doctors() {
   return (
     <div>
       <Navbar />
-      {doctors.map((doctor: IDoctor) => (
-        <div className=" flex gap-5 border-[2px] border-[#007E85] h-40 w-[40rem] ml-5 rounded-lg">
-          <img
-            src=""
-            alt=""
-            className="rounded-full border-[2px] border-[#007E85] h-[80%] w-[20%] mt-3 ml-2"
-          />
-          <div className="bg-red-100 h-full w-56">
-            <h1 className="text-[#007E85] font-extrabold">
-              DR. {doctor.firstName.toUpperCase()}{" "}
-              {doctor.lastName.toUpperCase()}
-            </h1>
-            <p>{doctor.specialization} </p>
-            <p>{doctor.experience} years experience</p>
+      <div className="flex flex-wrap justify-evenly ml-auto p-5">
+        {doctors.map((doctor: IDoctor) => (
+          <div className="  gap-5 border-[2px] border-[#007E85] h-fit w-[15rem]  my-4 rounded-lg p-5">
+            <img
+              src={doctorIcon}
+              alt=""
+              className="rounded-full border-[2px] border-[#007E85] h-[90%] w-[40%] mt-2 mx-auto object-cover"
+            />
+            <div className=" h-full w-full  text-center">
+              <h1 className="text-[#007E85] font-extrabold my-4">
+                DR. {doctor.firstName.toUpperCase()}{" "}
+                {doctor.lastName.toUpperCase()}
+              </h1>
+              <p className="font-bold">
+                {doctor.specialization.toUpperCase()}{" "}
+              </p>
+              <p>{doctor.location} </p>
+              <p>{doctor.experience} years experience</p>
+              <p>
+                ₹ {doctor.fees}{" "}
+                <span className="text-red-500">Consultation Fees</span>{" "}
+              </p>
+              <button className="bg-[#007E85] rounded-lg px-2 py-1 m-3 text-white w-fit font-bold">
+                Get An Appointmet
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

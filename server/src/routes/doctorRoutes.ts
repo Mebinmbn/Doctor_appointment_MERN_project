@@ -10,4 +10,6 @@ router.post(
   doctorController.register
 );
 
+router.post("/signin", doctorController.signin);
+
 export default router;

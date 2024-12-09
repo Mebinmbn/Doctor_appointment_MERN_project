@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RootState } from "../../app/store";
 import { Link } from "react-router-dom";
 import logo from "../../assets/icon/logo.png";
@@ -14,10 +14,19 @@ const Navbar: React.FC = () => {
   ) as User | null;
   const dispatch = useDispatch();
   console.log(user);
+
+  const token = localStorage.getItem("token");
+
   const handleLogout = () => {
     dispatch(clearUser());
     toast("Logged out successfully");
   };
+
+  useEffect(() => {
+    if (!token) {
+      handleLogout();
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -36,7 +45,7 @@ const Navbar: React.FC = () => {
             <div className="hidden md:flex items-center space-x-1">
               <Link
                 to="/"
-                className="py-4 px-2 text-green-500 border-b-4 border-green-500 font-semibold"
+                className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300"
               >
                 Home
               </Link>
@@ -66,14 +75,14 @@ const Navbar: React.FC = () => {
             </h1>
             {user ? (
               <button
-                className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold"
+                className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold hover:bg-green-700 transition duration-300"
                 onClick={handleLogout}
               >
                 Logout
               </button>
             ) : (
               <Link to="/login">
-                <button className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold">
+                <button className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold hover:bg-green-700 transition duration-300">
                   Login
                 </button>
               </Link>

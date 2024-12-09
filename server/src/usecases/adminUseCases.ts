@@ -47,3 +47,19 @@ export const rejectApplication = async (email: string) => {
     throw new Error("Application not found");
   }
 };
+
+export const getDoctors = async () => {
+  try {
+    return await adminRepository.findAllDoctors();
+  } catch (error) {
+    throw new Error("Error while fetching applications");
+  }
+};
+
+export const getPatients = async () => {
+  try {
+    return await adminRepository.findAllPatients();
+  } catch (error) {
+    throw new Error("Error while fetching applications");
+  }
+};

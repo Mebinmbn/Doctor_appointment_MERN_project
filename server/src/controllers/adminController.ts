@@ -3,6 +3,8 @@ import AdminModel from "../models/adminModel";
 import {
   approveApplication,
   getApplications,
+  getDoctors,
+  getPatients,
   rejectApplication,
   signInAdmin,
 } from "../usecases/adminUseCases";
@@ -69,4 +71,35 @@ const reject = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, error: errorMessage });
   }
 };
-export default { signin, applications, approve, reject };
+
+const doctors = async (req: Request, res: Response) => {
+  try {
+    const doctors = await getDoctors();
+    console.log(applications);
+    res.status(200).json({
+      success: true,
+      doctors,
+      message: "Doctors fetched successfully",
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const patients = async (req: Request, res: Response) => {
+  try {
+    const patients = await getPatients();
+    console.log(applications);
+    res.status(200).json({
+      success: true,
+      patients,
+      message: "Doctors fetched successfully",
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+export default { signin, applications, approve, reject, doctors, patients };

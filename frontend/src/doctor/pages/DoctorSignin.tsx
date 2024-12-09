@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../app/featrue/userSlice";
+import { setDoctor } from "../../app/featrue/doctorSlice";
 import { AppDispatch, RootState } from "../../app/store";
 
 import { User } from "../../types/user";
@@ -48,15 +48,15 @@ function DoctorSignin() {
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const user = useSelector(
-    (state: RootState) => state.auth.user
+  const doctor = useSelector(
+    (state: RootState) => state.doctor.doctor
   ) as User | null;
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
+    if (!doctor) {
+      navigate("/doctorSignin");
     }
-  }, [user, navigate]);
+  }, [doctor, navigate]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
@@ -101,7 +101,7 @@ function DoctorSignin() {
         setUserType("doctor");
 
         const response = await axios.post(
-          "http://localhost:8080/api/patients/signin",
+          "http://localhost:8080/api/doctor/signin",
           { email, password },
           {
             headers: { "Content-Type": "application/json" },
@@ -110,11 +110,20 @@ function DoctorSignin() {
         );
         console.log(response.data.success);
         if (response.data.success === true) {
-          toast.success("Logged in Successfully");
           const { user, token } = response.data;
-          dispatch(setUser({ user, token }));
-          localStorage.setItem("token", token);
-          navigate("/doctorSignin");
+          dispatch(
+            setDoctor({
+              doctor: { name: user.name, role: user.role, id: user._id },
+              doctorToken: token,
+            })
+          );
+          localStorage.setItem("doctorToken", token);
+          if (user.isApproved) {
+            navigate("/doctorDashboard");
+            toast.success("Logged in Successfully");
+          } else {
+            toast.error("Application not approved yet");
+          }
         }
 
         setFormData(initialValues);
@@ -144,13 +153,13 @@ function DoctorSignin() {
   };
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
-      <div className="bg-gray-200 h-[35rem] w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
+      <div className="bg-gray-200 h-[20rem] w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
         <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">Sign In</h1>
         <form onSubmit={handleSignIn}>
           <input
             type="text"
             name="email"
-            className="border-[1px] border-[#007E85] rounded-lg h-10 w-80 mt-1 p-2 font-light focus:outline-none"
+            className="border-[1px] border-[#007E85] rounded-lg h-10 w-80 my-2 p-2 font-light focus:outline-none"
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
@@ -172,6 +181,17 @@ function DoctorSignin() {
             Sign In
           </button>
         </form>
+        <p>
+          Want register?
+          <span
+            onClick={() => {
+              navigate("/doctorSignup");
+            }}
+            className="text-blue-400 text-sm cursor-pointer"
+          >
+            Sign Out
+          </span>
+        </p>
       </div>
     </div>
   );
