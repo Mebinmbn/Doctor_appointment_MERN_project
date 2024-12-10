@@ -7,7 +7,7 @@ export const generateOTP = (email: string): string => {
   setTimeout(() => otpMap.delete(email), 5 * 60 * 1000);
   return otp;
 };
-
+//////////////////////////////////////////////////////
 export const verifyOTP = (email: string, otp: string): boolean => {
   const storedOtp = otpMap.get(email);
   console.log(otpMap);

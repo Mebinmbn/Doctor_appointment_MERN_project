@@ -7,12 +7,14 @@ import otpRoutes from "./routes/otpRoutes";
 import doctorRoutes from "./routes/doctorRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import path from "path";
-import authMiddleware from "./middlewares/authMiddleware";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+dbConnect();
+//////////////////////////////////////////////////////
 app.use(
   cors({
     credentials: true,
@@ -23,11 +25,7 @@ app.use(
     optionsSuccessStatus: 204,
   })
 );
-
-// Middleware
 app.use(express.json());
-
-dbConnect();
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

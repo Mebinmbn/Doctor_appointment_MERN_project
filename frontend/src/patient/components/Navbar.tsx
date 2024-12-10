@@ -24,9 +24,9 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (!token) {
-      handleLogout();
+      dispatch(clearUser());
     }
-  }, []);
+  }, [dispatch, token]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -56,13 +56,13 @@ const Navbar: React.FC = () => {
                 Doctors
               </Link>
               <Link
-                to="/about"
+                to="/"
                 className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300"
               >
                 About
               </Link>
               <Link
-                to="/contact"
+                to="/"
                 className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300"
               >
                 Contact Us

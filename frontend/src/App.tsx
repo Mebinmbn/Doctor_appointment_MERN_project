@@ -12,6 +12,7 @@ import DoctorsList from "./admin/pages/DoctorsList";
 import Doctors from "./patient/pages/Doctors";
 import AllDoctors from "./admin/pages/AllDoctors";
 import AllPatients from "./admin/pages/AllPatients";
+import ForgotPassword from "./patient/pages/ForgotPassword";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/login" element={<PatientLogin />} />
           <Route path="/otp" element={<OTPVerification />} />
           <Route path="/doctors" element={<Doctors />} />
+          <Route path="/forgotPassword" element={<ForgotPassword />} />
         </Routes>
         <Routes>
           <Route path="/doctorSignup" element={<DoctorRegister />} />

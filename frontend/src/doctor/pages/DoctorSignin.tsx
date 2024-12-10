@@ -182,14 +182,14 @@ function DoctorSignin() {
           </button>
         </form>
         <p>
-          Want register?
+          Want to register?
           <span
             onClick={() => {
               navigate("/doctorSignup");
             }}
             className="text-blue-400 text-sm cursor-pointer"
           >
-            Sign Out
+            Signup
           </span>
         </p>
       </div>

@@ -22,7 +22,7 @@ const findUnapprovedDoctors = async () => {
     throw new Error("Error in fetching applications");
   }
 };
-
+/////////////////////////////////////////////////////////////////////
 const approveDoctor = async (id: string) => {
   try {
     return await DoctorModel.findOneAndUpdate(
@@ -36,7 +36,7 @@ const approveDoctor = async (id: string) => {
     throw new Error("Approval failed");
   }
 };
-
+/////////////////////////////////////////////////////////////////////
 const rejectDoctor = async (email: string) => {
   try {
     return await DoctorModel.findOneAndUpdate(
@@ -50,7 +50,7 @@ const rejectDoctor = async (email: string) => {
     throw new Error("Rejection failed");
   }
 };
-
+/////////////////////////////////////////////////////////////////////
 const findAllDoctors = async () => {
   try {
     return await DoctorModel.find({
@@ -62,7 +62,7 @@ const findAllDoctors = async () => {
     throw new Error("Error in fetching applications");
   }
 };
-
+/////////////////////////////////////////////////////////////////////
 const findAllPatients = async () => {
   try {
     return await PatientModel.find({});
@@ -70,7 +70,7 @@ const findAllPatients = async () => {
     throw new Error("Error in fetching applications");
   }
 };
-
+/////////////////////////////////////////////////////////////////////
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,

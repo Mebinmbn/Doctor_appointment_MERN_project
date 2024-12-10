@@ -1,9 +1,16 @@
-import React, { FormEvent, useCallback, useState } from "react";
+import React, { FormEvent, useCallback, useState, CSSProperties } from "react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { ClipLoader } from "react-spinners";
+
+import ClipLoader from "react-spinners/ClipLoader";
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "[#007E85]",
+};
 
 const OTPVerification = () => {
   const initialValue = {
@@ -64,6 +71,7 @@ const OTPVerification = () => {
   const handleResendClick = async () => {
     try {
       setIsLoading(true);
+      setIsOtpSent(true);
       const response = await axios.post(
         "http://localhost:8080/api/otp/send",
         { email },
@@ -72,7 +80,7 @@ const OTPVerification = () => {
           withCredentials: true,
         }
       );
-      setIsOtpSent(true);
+      setIsOtpSent(false);
       console.log(response);
       toast.success("OTP sent successfully. Please check your email.");
       setOtpValues(initialValue);
@@ -122,6 +130,17 @@ const OTPVerification = () => {
               className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
             />
           </div>
+          <div className="mt-2">
+            {isOtpSent && (
+              <ClipLoader
+                cssOverride={override}
+                size={20}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            )}
+          </div>
+
           <p className="mt-5">
             didn't get the otp?{" "}
             <span
@@ -138,7 +157,6 @@ const OTPVerification = () => {
             Verify
           </button>
         </form>
-        {isLoading ?? <ClipLoader />}
       </div>
     </div>
   );

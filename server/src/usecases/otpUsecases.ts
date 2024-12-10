@@ -5,9 +5,16 @@ import { generateOTP, verifyOTP } from "../services/otpSerevice";
 
 export const sendVerificationEmail = async (
   email: string,
-  emailService: IEmailService
+  emailService: IEmailService,
+  userType: string
 ) => {
   console.log("otpUsecases");
+  if (userType === "forgotPass_patient") {
+    const patient = await patientRepository.findPatientByEmail(email);
+    if (!patient) {
+      throw new Error("Email is not registerd with us");
+    }
+  }
   const otp = generateOTP(email);
   console.log(otp);
   await emailService.sendOTP(email, otp);

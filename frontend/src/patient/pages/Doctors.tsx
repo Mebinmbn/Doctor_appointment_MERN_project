@@ -18,9 +18,10 @@ function Doctors() {
 
   useEffect(() => {
     if (!user) {
-      navigate("/");
+      navigate("/login");
+      toast.info("Login to continue");
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
   useEffect(() => {
     fetchDoctors();

@@ -335,7 +335,13 @@ function PatientLogin() {
                 onChange={handleChange}
                 placeholder="Password"
               />
-              <button className="bg-[#007E85] rounded-lg p-2 mt-4 my-5 text-white w-24 font-bold">
+              <p className="text-right mr-5 my-5 text-blue-800 cursor-pointer">
+                Forgot password?
+              </p>
+              <button
+                type="submit"
+                className="bg-[#007E85] rounded-lg p-2 mt-4 my-5 text-white w-24 font-bold"
+              >
                 Sign In
               </button>
             </form>

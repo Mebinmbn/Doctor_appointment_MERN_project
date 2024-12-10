@@ -9,11 +9,11 @@ const createPatient = async (
   await patient.save();
   return patient;
 };
-
+/////////////////////////////////////////////////////////////////////
 const findPatientByEmail = async (email: string): Promise<IPatient | null> => {
   return await PatientModel.findOne({ email });
 };
-
+/////////////////////////////////////////////////////////////////////
 const verifyPatient = async (email: string): Promise<IPatient | null> => {
   const patient = await PatientModel.findOneAndUpdate(
     { email },
@@ -23,7 +23,7 @@ const verifyPatient = async (email: string): Promise<IPatient | null> => {
   console.log("updated patient", patient);
   return patient;
 };
-
+/////////////////////////////////////////////////////////////////////
 const findAllDoctors = async () => {
   try {
     return await DoctorModel.find({ isApproved: true });
@@ -31,7 +31,7 @@ const findAllDoctors = async () => {
     throw new Error("Error in fetching doctors");
   }
 };
-
+/////////////////////////////////////////////////////////////////////
 export default {
   createPatient,
   findPatientByEmail,
