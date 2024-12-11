@@ -45,3 +45,13 @@ export const getDoctors = async () => {
     throw new Error("Error in fetching doctors");
   }
 };
+
+export const ResetPassword = async (password: string, email: string) => {
+  console.log("usecases- reset password");
+  try {
+    const hashedPassword = await hashPassword(password);
+    return patientRepository.resetPassword(hashedPassword, email);
+  } catch (error) {
+    throw new Error("Error in reseting password");
+  }
+};

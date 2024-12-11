@@ -22,7 +22,7 @@ export const verify = async (req: Request, res: Response) => {
     console.log(email, otp, userType);
     const isVerified = await verifyEmail(email, otp, userType);
     if (isVerified) {
-      res.status(200).json({ success: true, message: "Email verified" });
+      res.status(200).json({ success: true, email, message: "Email verified" });
     } else {
       res.status(400).json({ success: false, error: "Invalid OTP" });
     }

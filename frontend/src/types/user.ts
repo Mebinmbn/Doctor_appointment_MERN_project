@@ -1,5 +1,12 @@
 export interface User {
-  name: string;
-  role: string;
-  id: string;
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  isVerified: boolean;
+  isRejected: boolean;
+  isBlocked: boolean;
+  registeredAt: Date;
 }

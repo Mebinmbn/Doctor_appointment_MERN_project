@@ -31,6 +31,7 @@ function ForgotPassword() {
         navigate("/otp");
       }
       setUserEmail("");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error("Email is not registered with us", error.message);
     }

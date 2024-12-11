@@ -71,6 +71,67 @@ const findAllPatients = async () => {
   }
 };
 /////////////////////////////////////////////////////////////////////
+
+const blockDoctor = async (id: string) => {
+  try {
+    return await DoctorModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: { isBlocked: true },
+      },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in blocking");
+  }
+};
+
+/////////////////////////////////////////////////////////////////////
+
+const unblockDoctor = async (id: string) => {
+  try {
+    return await DoctorModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: { isBlocked: false },
+      },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in unblocking");
+  }
+};
+
+/////////////////////////////////////////////////////////////////////
+
+const unblockPatient = async (id: string) => {
+  try {
+    return await PatientModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: { isBlocked: false },
+      },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in unblocking");
+  }
+};
+/////////////////////////////////////////////////////////////////////
+
+const blockPatient = async (id: string) => {
+  try {
+    return await PatientModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: { isBlocked: true },
+      },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in unblocking");
+  }
+};
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,
@@ -78,4 +139,8 @@ export default {
   rejectDoctor,
   findAllDoctors,
   findAllPatients,
+  blockDoctor,
+  unblockDoctor,
+  unblockPatient,
+  blockPatient,
 };

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   getDoctors,
+  ResetPassword,
   signInPatient,
   signUpPatient,
 } from "../usecases/patientUseCases";
@@ -48,4 +49,27 @@ const doctors = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, error: errorMessage });
   }
 };
-export default { signUp, signIn, doctors };
+
+const reset = async (req: Request, res: Response) => {
+  const { password, email } = req.body;
+  try {
+    const patient = await ResetPassword(password, email);
+    if (patient) {
+      res.status(200).json({
+        success: true,
+        patient,
+        message: "Password reseted succesdfully",
+      });
+      console.log(
+        "success: true" + patient + "message: Password reseted succesdfully"
+      );
+    } else {
+      res
+        .status(400)
+        .json({ success: false, message: "Error in password reset" });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, error });
+  }
+};
+export default { signUp, signIn, doctors, reset };

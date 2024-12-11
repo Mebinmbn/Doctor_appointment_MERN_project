@@ -12,6 +12,7 @@ export interface IPatient extends Document {
   password: string;
   role: string;
   isVerified: boolean;
+  isBlocked: boolean;
   registeredAt: Date;
 }
 
@@ -26,6 +27,7 @@ const PatientSchema: Schema = new Schema<IPatient>({
   password: { type: String, required: true },
   role: { type: String, default: "user" },
   isVerified: { type: Boolean, default: false },
+  isBlocked: { type: Boolean, default: false },
   registeredAt: { type: Date, default: Date.now },
 });
 

@@ -63,3 +63,36 @@ export const getPatients = async () => {
     throw new Error("Error while fetching applications");
   }
 };
+
+export const blockDoctor = async (id: string) => {
+  console.log("usecases - bolckdr");
+  try {
+    return await adminRepository.blockDoctor(id);
+  } catch (error) {
+    throw new Error("Error occurred in blocking");
+  }
+};
+
+export const unblockDoctor = async (id: string) => {
+  try {
+    return await adminRepository.unblockDoctor(id);
+  } catch (error) {
+    throw new Error("Error occurred in unblocking");
+  }
+};
+
+export const unblockPatient = async (id: string) => {
+  try {
+    return await adminRepository.unblockPatient(id);
+  } catch (error) {
+    throw new Error("Error occurred in unblocking");
+  }
+};
+
+export const blockPatient = async (id: string) => {
+  try {
+    return await adminRepository.blockPatient(id);
+  } catch (error) {
+    throw new Error("Error occurred in unblocking");
+  }
+};

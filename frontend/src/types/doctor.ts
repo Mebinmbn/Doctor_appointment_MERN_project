@@ -22,5 +22,6 @@ export interface Doctor {
   isVerified: boolean;
   isApproved: boolean;
   isRejected: boolean;
+  isBlocked: boolean;
   registeredAt: Date;
 }

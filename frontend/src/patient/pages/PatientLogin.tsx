@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useCallback, FormEvent, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
@@ -335,9 +335,11 @@ function PatientLogin() {
                 onChange={handleChange}
                 placeholder="Password"
               />
-              <p className="text-right mr-5 my-5 text-blue-800 cursor-pointer">
-                Forgot password?
-              </p>
+              <Link to="/forgotPassword">
+                <p className="text-right mr-5 my-5 text-blue-800 cursor-pointer">
+                  Forgot password?
+                </p>
+              </Link>
               <button
                 type="submit"
                 className="bg-[#007E85] rounded-lg p-2 mt-4 my-5 text-white w-24 font-bold"

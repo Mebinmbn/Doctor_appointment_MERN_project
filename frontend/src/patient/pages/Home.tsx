@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { User } from "../../types/user";
+import React from "react";
 
 function Home() {
   const user = useSelector(
@@ -22,4 +23,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default React.memo(Home);

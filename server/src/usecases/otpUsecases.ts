@@ -33,6 +33,8 @@ export const verifyEmail = async (
         return await patientRepository.verifyPatient(email);
       } else if (userType === "doctor") {
         return await doctorRepository.verifyDoctor(email);
+      } else if (userType === "forgotPassword") {
+        return await patientRepository.findPatientByEmail(email);
       }
     }
     throw new Error("Invalid OTP");

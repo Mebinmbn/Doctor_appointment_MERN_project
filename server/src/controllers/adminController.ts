@@ -2,11 +2,15 @@ import { Request, Response } from "express";
 import AdminModel from "../models/adminModel";
 import {
   approveApplication,
+  blockDoctor,
+  blockPatient,
   getApplications,
   getDoctors,
   getPatients,
   rejectApplication,
   signInAdmin,
+  unblockDoctor,
+  unblockPatient,
 } from "../usecases/adminUseCases";
 
 const signin = async (req: Request, res: Response) => {
@@ -102,4 +106,62 @@ const patients = async (req: Request, res: Response) => {
   }
 };
 
-export default { signin, applications, approve, reject, doctors, patients };
+const block = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  let { role } = req.body;
+
+  let response;
+  console.log("controller", role);
+  try {
+    if (role === "doctor") {
+      response = await blockDoctor(id);
+    } else {
+      response = await blockPatient(id);
+    }
+    console.log(response);
+
+    if (response) {
+      res
+        .status(200)
+        .json({ success: true, message: "Doctor blocked successfully" });
+    } else {
+      res.status(400).json({ success: false, error: "Error in blocking" });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, error: "Error in blocking" });
+  }
+};
+
+const unblock = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const { role } = req.body;
+  let response;
+  try {
+    if (role === "doctor") {
+      response = await unblockDoctor(id);
+    } else {
+      response = await unblockPatient(id);
+    }
+
+    if (response) {
+      res
+        .status(200)
+        .json({ success: true, message: "Doctor unblocked successfully" });
+    } else {
+      res.status(400).json({ success: false, error: "Error in unblocking" });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, error: "Error in unblocking" });
+  }
+};
+
+export default {
+  signin,
+  applications,
+  approve,
+  reject,
+  doctors,
+  patients,
+  block,
+  unblock,
+};

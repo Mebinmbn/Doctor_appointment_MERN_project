@@ -12,4 +12,6 @@ router.post("/google", googleSignInController);
 
 router.get("/doctors", patientController.doctors);
 
+router.post("/reset", patientController.reset);
+
 export default router;

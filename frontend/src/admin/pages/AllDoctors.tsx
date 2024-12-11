@@ -11,9 +11,10 @@ function AllDoctors() {
   const [doctorApplications, setDoctorApplications] = useState([]);
 
   const admin = useSelector((state: RootState) => state.admin.admin);
+  const token = localStorage.getItem("adminToken");
   const navigate = useNavigate();
   useEffect(() => {
-    if (!admin) {
+    if (!admin || !token) {
       navigate("/adminSignin");
     }
   });
@@ -22,7 +23,7 @@ function AllDoctors() {
     fetchDoctorApplications();
   }, []);
   console.log(doctorApplications);
-  const token = localStorage.getItem("adminToken");
+
   const fetchDoctorApplications = async () => {
     try {
       const applicationResponse = await axios.get(
@@ -46,11 +47,11 @@ function AllDoctors() {
     }
   };
 
-  const handleApprove = async (id: string) => {
+  const handleUnblock = async (id: string) => {
     try {
       const resposnse = await axios.post(
-        `http://localhost:8080/api/admin/applications/approve/${id}`,
-        {},
+        `http://localhost:8080/api/admin/doctors/unblock/${id}`,
+        { role: "doctor" },
         {
           headers: {
             "Content-Type": "application/json",
@@ -61,18 +62,19 @@ function AllDoctors() {
       );
       if (resposnse.data.success) {
         fetchDoctorApplications();
-        toast.success("Application approved");
+        toast.success("Doctor unblocked");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Error in approval");
+      toast.error("Error in unblocking");
     }
   };
 
-  const handleReject = async (email: string) => {
+  const handleBlock = async (id: string) => {
     try {
       const resposnse = await axios.post(
-        `http://localhost:8080/api/admin/applications/reject/${email}`,
+        `http://localhost:8080/api/admin/doctors/block/${id}`,
+        { role: "doctor" },
         {
           headers: {
             "Content-Type": "application/json",
@@ -83,11 +85,11 @@ function AllDoctors() {
       );
       if (resposnse.data.success) {
         fetchDoctorApplications();
-        toast.success("Application Rejected");
+        toast.success("Doctor blocked successfully");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Error in approval");
+      toast.error("Error in blocking");
     }
   };
   return (
@@ -159,12 +161,25 @@ function AllDoctors() {
                           >
                             Edit
                           </button>
-                          <button
-                            className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                            onClick={() => {}}
-                          >
-                            Block
-                          </button>
+                          {doctor.isBlocked ? (
+                            <button
+                              className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
+                              onClick={() => {
+                                handleUnblock(doctor._id);
+                              }}
+                            >
+                              Unblock
+                            </button>
+                          ) : (
+                            <button
+                              className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                              onClick={() => {
+                                handleBlock(doctor._id);
+                              }}
+                            >
+                              Block
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

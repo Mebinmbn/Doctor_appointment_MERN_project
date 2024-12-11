@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import AdminNav from "../components/AdminNav";
 import axios from "axios";
-import { Doctor } from "../../types/doctor";
 
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
+import { User } from "../../types/user";
 
 function AllPatients() {
-  const [doctorApplications, setDoctorApplications] = useState([]);
+  const [patients, setPaitents] = useState([]);
 
   const admin = useSelector((state: RootState) => state.admin.admin);
   const navigate = useNavigate();
@@ -20,11 +20,11 @@ function AllPatients() {
   });
 
   useEffect(() => {
-    fetchDoctorApplications();
+    fetchPatients();
   }, []);
-  console.log(doctorApplications);
+
   const token = localStorage.getItem("adminToken");
-  const fetchDoctorApplications = async () => {
+  const fetchPatients = async () => {
     try {
       const applicationResponse = await axios.get(
         "http://localhost:8080/api/admin/patients",
@@ -39,7 +39,7 @@ function AllPatients() {
 
       console.log("applicationResponse", applicationResponse.data);
       if (applicationResponse.data) {
-        setDoctorApplications(applicationResponse.data.patients);
+        setPaitents(applicationResponse.data.patients);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -47,11 +47,11 @@ function AllPatients() {
     }
   };
 
-  const handleApprove = async (id: string) => {
+  const handleUnblock = async (id: string) => {
     try {
       const resposnse = await axios.post(
-        `http://localhost:8080/api/admin/applications/approve/${id}`,
-        {},
+        `http://localhost:8080/api/admin/patients/unblock/${id}`,
+        { role: "patients" },
         {
           headers: {
             "Content-Type": "application/json",
@@ -61,19 +61,20 @@ function AllPatients() {
         }
       );
       if (resposnse.data.success) {
-        fetchDoctorApplications();
-        toast.success("Application approved");
+        fetchPatients();
+        toast.success("patients unblocked");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Error in approval");
+      toast.error("Error in unblocking");
     }
   };
 
-  const handleReject = async (email: string) => {
+  const handleBlock = async (id: string) => {
     try {
       const resposnse = await axios.post(
-        `http://localhost:8080/api/admin/applications/reject/${email}`,
+        `http://localhost:8080/api/admin/patients/block/${id}`,
+        { role: "patients" },
         {
           headers: {
             "Content-Type": "application/json",
@@ -83,12 +84,12 @@ function AllPatients() {
         }
       );
       if (resposnse.data.success) {
-        fetchDoctorApplications();
-        toast.success("Application Rejected");
+        fetchPatients();
+        toast.success("patients blocked successfully");
       }
     } catch (error) {
       console.log(error);
-      toast.error("Error in approval");
+      toast.error("Error in blocking");
     }
   };
   return (
@@ -109,7 +110,7 @@ function AllPatients() {
           <div className="flex justify-center  items-center ">
             <div className="w-full max-w-6xl mt-5  shadow-lg rounded-lg bg-[#007E85]">
               <h2 className="text-2xl font-bold mb-4 text-white p-4 text-white border-b text-white">
-                Doctors
+                Patients
               </h2>
               <table className="min-w-full bg-[#007E85] border">
                 <thead>
@@ -129,37 +130,52 @@ function AllPatients() {
                   </tr>
                 </thead>
                 <tbody>
-                  {doctorApplications?.map((doctor: Doctor) => (
-                    <tr key={doctor._id}>
+                  {patients?.map((patients: User) => (
+                    <tr key={patients._id}>
                       <td className="py-2 px-4 text-white border-b">
-                        {doctor.firstName}
+                        {patients.firstName}
                       </td>
 
                       <td className="py-2 px-4 text-white border-b">
-                        {doctor.lastName}
+                        {patients.lastName}
                       </td>
 
                       <td className="py-2 px-4 text-white border-b">
-                        {doctor.email}
+                        {patients.email}
                       </td>
                       <td className="py-2 px-4 text-white border-b">
-                        {doctor.phone}
+                        {patients.phone}
                       </td>
 
                       <td className="py-2 px-4 text-white border-b">
                         <div>
                           <button
                             className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                            onClick={() => {}}
+                            onClick={() => {
+                              navigate("/editPatient");
+                            }}
                           >
                             Edit
                           </button>
-                          <button
-                            className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                            onClick={() => {}}
-                          >
-                            Block
-                          </button>
+                          {patients.isBlocked ? (
+                            <button
+                              className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
+                              onClick={() => {
+                                handleUnblock(patients._id);
+                              }}
+                            >
+                              Unblock
+                            </button>
+                          ) : (
+                            <button
+                              className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                              onClick={() => {
+                                handleBlock(patients._id);
+                              }}
+                            >
+                              Block
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

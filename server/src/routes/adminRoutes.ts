@@ -22,6 +22,14 @@ router.post(
 
 router.get("/doctors", authMiddleware, adminController.doctors);
 
+router.post("/doctors/block/:id", authMiddleware, adminController.block);
+
+router.post("/doctors/unblock/:id", authMiddleware, adminController.unblock);
+
 router.get("/patients", authMiddleware, adminController.patients);
+
+router.post("/patients/block/:id", authMiddleware, adminController.block);
+
+router.post("/patients/unblock/:id", authMiddleware, adminController.unblock);
 
 export default router;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -17,9 +17,12 @@ function Doctors() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const toastId = "loginToContinue";
     if (!user) {
       navigate("/login");
-      toast.info("Login to continue");
+      if (!toast.isActive(toastId)) {
+        toast.info("Login to continue", { toastId });
+      }
     }
   }, [user, navigate]);
 
@@ -63,17 +66,15 @@ function Doctors() {
             />
             <div className=" h-full w-full  text-center">
               <h1 className="text-[#007E85] font-extrabold my-4">
-                DR. {doctor.firstName.toUpperCase()}{" "}
+                DR. {doctor.firstName.toUpperCase()}
                 {doctor.lastName.toUpperCase()}
               </h1>
-              <p className="font-bold">
-                {doctor.specialization.toUpperCase()}{" "}
-              </p>
+              <p className="font-bold">{doctor.specialization.toUpperCase()}</p>
               <p>{doctor.location} </p>
               <p>{doctor.experience} years experience</p>
               <p>
-                ₹ {doctor.fees}{" "}
-                <span className="text-red-500">Consultation Fees</span>{" "}
+                ₹ {doctor.fees}
+                <span className="text-red-500">Consultation Fees</span>
               </p>
               <button className="bg-[#007E85] rounded-lg px-2 py-1 m-3 text-white w-fit font-bold">
                 Get An Appointmet
@@ -86,4 +87,4 @@ function Doctors() {
   );
 }
 
-export default Doctors;
+export default React.memo(Doctors);

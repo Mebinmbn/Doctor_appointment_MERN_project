@@ -13,6 +13,8 @@ import Doctors from "./patient/pages/Doctors";
 import AllDoctors from "./admin/pages/AllDoctors";
 import AllPatients from "./admin/pages/AllPatients";
 import ForgotPassword from "./patient/pages/ForgotPassword";
+import ResetPassword from "./patient/pages/ResetPassword";
+import EditPatient from "./admin/pages/EditPatient";
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <Route path="/otp" element={<OTPVerification />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
+          <Route path="/resetPassword" element={<ResetPassword />} />
         </Routes>
         <Routes>
           <Route path="/doctorSignup" element={<DoctorRegister />} />
@@ -37,6 +40,7 @@ function App() {
           <Route path="/adminApplications" element={<DoctorsList />} />
           <Route path="/adminDoctors" element={<AllDoctors />} />
           <Route path="/adminPatients" element={<AllPatients />} />
+          <Route path="/editPatient" element={<EditPatient />} />
         </Routes>
       </Router>
     </>

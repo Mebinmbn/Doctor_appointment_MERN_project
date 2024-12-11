@@ -13,7 +13,6 @@ const Navbar: React.FC = () => {
     (state: RootState) => state.auth.user
   ) as User | null;
   const dispatch = useDispatch();
-  console.log(user);
 
   const token = localStorage.getItem("token");
 

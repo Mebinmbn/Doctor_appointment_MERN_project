@@ -60,6 +60,7 @@ const OTPVerification = () => {
       setOtpValues(initialValue);
       if (userType === "user") navigate("/login");
       else if (userType === "doctor") navigate("/doctorSignin");
+      else if (userType === "forgotPassword") navigate("/resetPassword");
     } catch (error) {
       console.log(error);
       toast.error("Invalid OTP. Please try again.");

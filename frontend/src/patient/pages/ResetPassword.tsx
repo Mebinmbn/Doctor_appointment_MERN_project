@@ -1,7 +1,38 @@
-import React, { useState } from "react";
+import { FormEvent, useState } from "react";
+import Navbar from "../components/Navbar";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
+  const { email } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/patients/reset",
+        { password, email },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        navigate("/login");
+        toast.success("Password changed successfully, please login");
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error);
+      console.log("Password reset error");
+    }
+  };
 
   return (
     <>
@@ -9,9 +40,9 @@ function ResetPassword() {
       <div className="flex h-screen items-center justify-center min-h-screen bg-[#007E85]">
         <div className="bg-gray-200 h-72 w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
           <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
-            Forgot Password
+            Reset Password
           </h1>
-          <p className="font-thin my-3">Enter your email to get the OTP</p>
+          <p className="font-thin my-3">Enter your new password</p>
           <form onSubmit={handleSubmit}>
             <input
               type="password"
