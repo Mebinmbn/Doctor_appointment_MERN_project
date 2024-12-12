@@ -3,9 +3,13 @@ import { RootState } from "../../app/store";
 import { Link } from "react-router-dom";
 import logo from "../../assets/icon/logo.png";
 import { useDispatch, useSelector } from "react-redux";
-import { User } from "../../types/user";
+
 import { clearUser } from "../../app/featrue/userSlice";
 import { toast } from "react-toastify";
+
+interface User {
+  name: string;
+}
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);

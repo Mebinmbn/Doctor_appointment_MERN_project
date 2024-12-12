@@ -22,11 +22,15 @@ router.post(
 
 router.get("/doctors", authMiddleware, adminController.doctors);
 
+router.put("/doctors", authMiddleware, adminController.edit);
+
 router.post("/doctors/block/:id", authMiddleware, adminController.block);
 
 router.post("/doctors/unblock/:id", authMiddleware, adminController.unblock);
 
 router.get("/patients", authMiddleware, adminController.patients);
+
+router.put("/patients", authMiddleware, adminController.edit);
 
 router.post("/patients/block/:id", authMiddleware, adminController.block);
 

@@ -27,7 +27,7 @@ const verifyPatient = async (email: string): Promise<IPatient | null> => {
 /////////////////////////////////////////////////////////////////////
 const findAllDoctors = async () => {
   try {
-    return await DoctorModel.find({ isApproved: true });
+    return await DoctorModel.find({ isApproved: true, isBlocked: false });
   } catch (error) {
     throw new Error("Error in fetching doctors");
   }

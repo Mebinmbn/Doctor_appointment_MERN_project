@@ -55,10 +55,10 @@ const OTPVerification = () => {
           withCredentials: true,
         }
       );
-      console.log(response);
+      console.log(isLoading, response);
       toast.success("OTP verified successfully. Your email is verified.");
       setOtpValues(initialValue);
-      if (userType === "user") navigate("/login");
+      if (userType === "patient") navigate("/login");
       else if (userType === "doctor") navigate("/doctorSignin");
       else if (userType === "forgotPassword") navigate("/resetPassword");
     } catch (error) {

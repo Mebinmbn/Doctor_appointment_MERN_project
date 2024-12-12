@@ -4,6 +4,8 @@ export interface User {
   lastName: string;
   email: string;
   phone: string;
+  gender: string;
+  dob: string;
   password: string;
   isVerified: boolean;
   isRejected: boolean;

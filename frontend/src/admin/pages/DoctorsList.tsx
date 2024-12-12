@@ -12,9 +12,11 @@ function DoctorsList() {
   const [doctorApplications, setDoctorApplications] = useState([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const admin = useSelector((state: RootState) => state.admin.admin);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
+
   useEffect(() => {
     if (!admin) {
       navigate("/adminSignin");
@@ -24,6 +26,7 @@ function DoctorsList() {
   useEffect(() => {
     fetchDoctorApplications();
   }, []);
+
   console.log(doctorApplications);
   const token = localStorage.getItem("adminToken");
   const fetchDoctorApplications = async () => {
@@ -103,6 +106,19 @@ function DoctorsList() {
     }
   };
 
+  const indexOfLastDoctorApplications = currentPage * itemsPerPage;
+  const indexOfFirstDoctorApplications =
+    indexOfLastDoctorApplications - itemsPerPage;
+  const currentDoctorApplications = doctorApplications.slice(
+    indexOfFirstDoctorApplications,
+    indexOfLastDoctorApplications
+  );
+  const totalPages = Math.ceil(doctorApplications.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
@@ -142,7 +158,7 @@ function DoctorsList() {
                   </tr>
                 </thead>
                 <tbody>
-                  {doctorApplications?.map((doctor: Doctor) => (
+                  {currentDoctorApplications?.map((doctor: Doctor) => (
                     <tr key={doctor._id}>
                       <td className="py-2 px-4 text-white border-b">
                         {doctor.firstName} {doctor.lastName}
@@ -201,6 +217,23 @@ function DoctorsList() {
                   ))}
                 </tbody>
               </table>
+              <div className="flex justify-center mt-4 ">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-2 py-1 mb-1 ${
+                        currentPage === page
+                          ? "bg-blue-500 text-white rounded-full"
+                          : " text-black"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>

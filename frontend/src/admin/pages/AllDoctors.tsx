@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminNav from "../components/AdminNav";
 import axios from "axios";
 import { Doctor } from "../../types/doctor";
@@ -6,9 +6,14 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
+import EditDoctorModel from "../components/EditDoctorModel";
 
 function AllDoctors() {
-  const [doctorApplications, setDoctorApplications] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [doctorToEdit, setDoctorToEdit] = useState<Doctor | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
 
   const admin = useSelector((state: RootState) => state.admin.admin);
   const token = localStorage.getItem("adminToken");
@@ -17,14 +22,9 @@ function AllDoctors() {
     if (!admin || !token) {
       navigate("/adminSignin");
     }
-  });
+  }, [token, navigate, admin]);
 
-  useEffect(() => {
-    fetchDoctorApplications();
-  }, []);
-  console.log(doctorApplications);
-
-  const fetchDoctorApplications = async () => {
+  const fetchDoctors = useCallback(async () => {
     try {
       const applicationResponse = await axios.get(
         "http://localhost:8080/api/admin/doctors",
@@ -39,13 +39,36 @@ function AllDoctors() {
 
       console.log("applicationResponse", applicationResponse.data);
       if (applicationResponse.data) {
-        setDoctorApplications(applicationResponse.data.doctors);
+        setDoctors(applicationResponse.data.doctors);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
     }
+  }, [token]);
+
+  const indexOfLastDoctor = currentPage * itemsPerPage;
+  const indexOfFirstDoctor = indexOfLastDoctor - itemsPerPage;
+  const currentDoctors = doctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
+  const totalPages = Math.ceil(doctors.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
   };
+
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
+
+  const openModal = (index: number) => {
+    setIsEditModalOpen(true);
+    setDoctorToEdit(doctors[index]);
+  };
+  const closeModal = useCallback(() => {
+    setIsEditModalOpen(false);
+    setDoctorToEdit(null);
+    fetchDoctors();
+  }, [fetchDoctors]);
 
   const handleUnblock = async (id: string) => {
     try {
@@ -61,7 +84,7 @@ function AllDoctors() {
         }
       );
       if (resposnse.data.success) {
-        fetchDoctorApplications();
+        fetchDoctors();
         toast.success("Doctor unblocked");
       }
     } catch (error) {
@@ -84,7 +107,7 @@ function AllDoctors() {
         }
       );
       if (resposnse.data.success) {
-        fetchDoctorApplications();
+        fetchDoctors();
         toast.success("Doctor blocked successfully");
       }
     } catch (error) {
@@ -131,8 +154,8 @@ function AllDoctors() {
                   </tr>
                 </thead>
                 <tbody>
-                  {doctorApplications?.map((doctor: Doctor) => (
-                    <tr key={doctor._id}>
+                  {currentDoctors?.map((doctor: Doctor, index) => (
+                    <tr key={index}>
                       <td className="py-2 px-4 text-white border-b">
                         {doctor.firstName} {doctor.lastName}
                       </td>
@@ -157,7 +180,9 @@ function AllDoctors() {
                         <div>
                           <button
                             className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                            onClick={() => {}}
+                            onClick={() => {
+                              openModal(index);
+                            }}
                           >
                             Edit
                           </button>
@@ -186,10 +211,34 @@ function AllDoctors() {
                   ))}
                 </tbody>
               </table>
+              <div className="flex justify-center mt-4 ">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-2 py-1 mb-1 ${
+                        currentPage === page
+                          ? "bg-blue-500 text-white rounded-full"
+                          : " text-black"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
+      {isEditModalOpen && (
+        <EditDoctorModel
+          isOpen={isEditModalOpen}
+          onRequestClose={closeModal}
+          doctor={doctorToEdit}
+        />
+      )}
     </div>
   );
 }

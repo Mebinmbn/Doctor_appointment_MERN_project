@@ -4,6 +4,8 @@ import {
   approveApplication,
   blockDoctor,
   blockPatient,
+  editDoctor,
+  editPatient,
   getApplications,
   getDoctors,
   getPatients,
@@ -155,6 +157,25 @@ const unblock = async (req: Request, res: Response) => {
   }
 };
 
+const edit = async (req: Request, res: Response) => {
+  const data = req.body;
+  console.log(data);
+  let response;
+  try {
+    if (data.role === "doctor") {
+      response = await editDoctor(data);
+    } else {
+      response = await editPatient(data);
+    }
+
+    if (response) {
+      res.status(200).json({ success: true, message: "Patient updated" });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, error: error });
+  }
+};
+
 export default {
   signin,
   applications,
@@ -164,4 +185,5 @@ export default {
   patients,
   block,
   unblock,
+  edit,
 };

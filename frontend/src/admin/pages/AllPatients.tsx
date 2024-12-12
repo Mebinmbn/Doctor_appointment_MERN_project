@@ -1,30 +1,31 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminNav from "../components/AdminNav";
 import axios from "axios";
-
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
-import { User } from "../../types/user";
+import EditPatientModal from "../components/EditPatientModal";
+import { User } from "./../../types/user";
 
 function AllPatients() {
   const [patients, setPaitents] = useState([]);
-
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [patientToEdit, setPatientToEdit] = useState<User | null>(null);
   const admin = useSelector((state: RootState) => state.admin.admin);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
+
   useEffect(() => {
     if (!admin) {
       navigate("/adminSignin");
     }
   });
 
-  useEffect(() => {
-    fetchPatients();
-  }, []);
-
   const token = localStorage.getItem("adminToken");
-  const fetchPatients = async () => {
+
+  const fetchPatients = useCallback(async () => {
     try {
       const applicationResponse = await axios.get(
         "http://localhost:8080/api/admin/patients",
@@ -45,7 +46,23 @@ function AllPatients() {
     } catch (error: any) {
       console.log(error);
     }
+  }, [token]);
+
+  useEffect(() => {
+    fetchPatients();
+    console.log(patients);
+  }, [fetchPatients]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const openModal = (index: any) => {
+    setIsEditModalOpen(true);
+    setPatientToEdit(patients[index]);
   };
+  const closeModal = useCallback(() => {
+    setIsEditModalOpen(false);
+    setPatientToEdit(null);
+    fetchPatients();
+  }, []);
 
   const handleUnblock = async (id: string) => {
     try {
@@ -92,6 +109,19 @@ function AllPatients() {
       toast.error("Error in blocking");
     }
   };
+
+  const indexOfLastPatient = currentPage * itemsPerPage;
+  const indexofFirstPatient = indexOfLastPatient - itemsPerPage;
+  const currentPatients = patients.slice(
+    indexofFirstPatient,
+    indexOfLastPatient
+  );
+  const totalPages = Math.ceil(patients.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
@@ -130,21 +160,21 @@ function AllPatients() {
                   </tr>
                 </thead>
                 <tbody>
-                  {patients?.map((patients: User) => (
-                    <tr key={patients._id}>
+                  {currentPatients?.map((patient: User, index) => (
+                    <tr key={index}>
                       <td className="py-2 px-4 text-white border-b">
-                        {patients.firstName}
+                        {patient.firstName}
                       </td>
 
                       <td className="py-2 px-4 text-white border-b">
-                        {patients.lastName}
+                        {patient.lastName}
                       </td>
 
                       <td className="py-2 px-4 text-white border-b">
-                        {patients.email}
+                        {patient.email}
                       </td>
                       <td className="py-2 px-4 text-white border-b">
-                        {patients.phone}
+                        {patient.phone}
                       </td>
 
                       <td className="py-2 px-4 text-white border-b">
@@ -152,16 +182,16 @@ function AllPatients() {
                           <button
                             className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
                             onClick={() => {
-                              navigate("/editPatient");
+                              openModal(index);
                             }}
                           >
                             Edit
                           </button>
-                          {patients.isBlocked ? (
+                          {patient.isBlocked ? (
                             <button
                               className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
                               onClick={() => {
-                                handleUnblock(patients._id);
+                                handleUnblock(patient._id);
                               }}
                             >
                               Unblock
@@ -170,7 +200,7 @@ function AllPatients() {
                             <button
                               className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
                               onClick={() => {
-                                handleBlock(patients._id);
+                                handleBlock(patient._id);
                               }}
                             >
                               Block
@@ -182,10 +212,34 @@ function AllPatients() {
                   ))}
                 </tbody>
               </table>
+              <div className="flex justify-center mt-4 ">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-2 py-1 mb-1 ${
+                        currentPage === page
+                          ? "bg-blue-500 text-white rounded-full"
+                          : " text-black"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
+      {isEditModalOpen && (
+        <EditPatientModal
+          isOpen={isEditModalOpen}
+          onRequestClose={closeModal}
+          patient={patientToEdit}
+        />
+      )}
     </div>
   );
 }

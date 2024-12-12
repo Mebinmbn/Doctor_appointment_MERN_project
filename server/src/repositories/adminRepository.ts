@@ -1,6 +1,6 @@
 import AdminModel, { IAdmin } from "../models/adminModel";
-import DoctorModel from "../models/doctorModel";
-import PatientModel from "../models/patientModel";
+import DoctorModel, { IDoctor } from "../models/doctorModel";
+import PatientModel, { IPatient } from "../models/patientModel";
 
 const findAdminByEmail = async (email: string): Promise<IAdmin | null> => {
   console.log("Find email by id");
@@ -132,6 +132,59 @@ const blockPatient = async (id: string) => {
     throw new Error("Error in unblocking");
   }
 };
+
+/////////////////////////////////////////////////////////////////////
+
+const updatePatient = async (patientData: IPatient) => {
+  console.log("updatePatient");
+  try {
+    return await PatientModel.findOneAndUpdate(
+      { _id: patientData._id },
+      {
+        $set: {
+          firstName: patientData.firstName,
+          lastName: patientData.lastName,
+          email: patientData.email,
+          phone: patientData.phone,
+          gender: patientData.gender,
+          dob: patientData.dob,
+          password: patientData.password,
+        },
+      },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in unblocking");
+  }
+};
+
+/////////////////////////////////////////////////////////////////////
+
+const updateDoctor = async (doctorData: IDoctor) => {
+  console.log("updatePatient");
+  try {
+    return await DoctorModel.findOneAndUpdate(
+      { _id: doctorData._id },
+      {
+        $set: {
+          firstName: doctorData.firstName,
+          lastName: doctorData.lastName,
+          email: doctorData.email,
+          phone: doctorData.phone,
+          gender: doctorData.gender,
+          specialization: doctorData.specialization,
+          experience: doctorData.experience,
+          dob: doctorData.dob,
+          fees: doctorData.fees,
+          password: doctorData.password,
+        },
+      },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in unblocking");
+  }
+};
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,
@@ -143,4 +196,6 @@ export default {
   unblockDoctor,
   unblockPatient,
   blockPatient,
+  updatePatient,
+  updateDoctor,
 };

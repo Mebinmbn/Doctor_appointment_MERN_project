@@ -1,21 +1,23 @@
-import React, { useCallback, useState } from "react";
+import React, { useState, useCallback } from "react";
+import Modal from "react-modal";
 import { toast } from "react-toastify";
-import { useAuth } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Doctor } from "../../types/doctor";
 
 interface FormValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
   gender?: string;
   specialization?: string;
-  experience: string;
-  location: string;
-  dob: string;
-  licenseImage: File | null;
-  password: string;
+  experience?: string;
+  location?: string;
+  dob?: string;
+  fees?: string;
+  role?: string;
+  password?: string;
 }
 
 interface FormErrors {
@@ -28,7 +30,8 @@ interface FormErrors {
   experience?: string;
   location?: string;
   dob?: string;
-  licenseImage?: string;
+  fees?: string;
+  role?: string;
   password?: string;
 }
 
@@ -40,26 +43,37 @@ interface AxiosError {
   };
 }
 
-function EditPatient() {
+interface EditDoctorModalProps {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  doctor: Doctor | null;
+}
+
+const EditDoctorModel: React.FC<EditDoctorModalProps> = ({
+  isOpen,
+  onRequestClose,
+  doctor,
+}) => {
   const initialValues: FormValues = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    gender: "",
-    specialization: "",
-    experience: "",
-    location: "",
-    dob: "",
-    licenseImage: null,
+    _id: doctor?._id,
+    firstName: doctor?.firstName,
+    lastName: doctor?.lastName,
+    email: doctor?.email,
+    phone: doctor?.phone,
+    gender: doctor?.gender,
+    specialization: doctor?.specialization,
+    experience: doctor?.experience,
+    location: doctor?.location,
+    dob: doctor?.dob?.toString().slice(0, 10),
+    fees: doctor?.fees,
+    role: doctor?.role,
     password: "",
   };
 
-  const { setEmail, setUserType } = useAuth();
   const [formData, setFormData] = useState<FormValues>(initialValues);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const navigate = useNavigate();
 
+  const token = localStorage.getItem("adminToken");
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
   const phoneRegex = /^[6-9]\d{9}$/;
@@ -74,15 +88,6 @@ function EditPatient() {
         ...prevData,
         [name]: value,
       }));
-    },
-    []
-  );
-
-  const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0] || null;
-      console.log(file);
-      setFormData((prevData) => ({ ...prevData, licenseImage: file }));
     },
     []
   );
@@ -118,39 +123,23 @@ function EditPatient() {
       errors.gender = "Gender is required";
     }
 
-    if (!values.specialization) {
-      errors.specialization = "Specialization is required";
-    }
-
-    if (!values.experience) {
-      errors.experience = "Experience is required";
-    }
-
-    if (!values.location) {
-      errors.location = "Location is required";
-    }
-
     if (!values.dob) {
       errors.dob = "DOB is required";
     } else if (!dobRegex.test(values.dob)) {
       errors.dob = "Not a valid dob";
     }
 
-    if (!values.licenseImage) {
-      errors.licenseImage = "License is required";
-    }
-
-    if (!values.password) {
-      errors.password = "Password is required!";
-    } else if (!passwordRegex.test(values.password)) {
-      errors.password =
-        "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.";
+    if (values.password) {
+      if (!passwordRegex.test(values.password)) {
+        errors.password =
+          "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.";
+      }
     }
 
     return errors;
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const errors = validate(formData);
@@ -158,63 +147,56 @@ function EditPatient() {
 
     if (Object.keys(errors).length === 0) {
       try {
-        setEmail(formData.email);
-        setUserType("doctor");
+        // setEmail(formData.email);
+        // setUserType("doctor");
 
         console.log(formData);
 
-        const response = await axios.post(
-          "http://localhost:8080/api/doctor/register",
+        const response = await axios.put(
+          "http://localhost:8080/api/admin/doctors",
           formData,
           {
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             withCredentials: true,
           }
         );
 
-        console.log("Doctor created:", response.data);
-        toast.success(
-          "Application submitted successfully, please wait for approval"
-        );
-
-        await axios.post(
-          "http://localhost:8080/api/otp/send",
-          { email: formData.email },
-          {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-          }
-        );
-        if (response.data.success) navigate("/otp");
-        setFormData(initialValues);
+        if (response.data.success) {
+          toast.success("Doctors's details updated successfully");
+          onRequestClose();
+        }
       } catch (error) {
         const axiosError = error as AxiosError;
         console.error("Error in signup request:", axiosError);
-        if (
-          axiosError.response &&
-          axiosError.response.data.error ===
-            "User already exists with this email"
-        ) {
-          toast.error(
-            "User already exists with this email. Please try logging in."
-          );
-        } else {
-          toast.error(axiosError.response?.data.error);
-        }
-        setFormData(initialValues);
+
+        toast.error(axiosError.response?.data.error);
       }
     }
   };
   return (
-    <div>
-      <div className="bg-gray-200 h-[42rem] w-[50rem] text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
-        <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
-          Register
-        </h1>
-
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      style={{
+        content: {
+          width: "50%",
+          margin: "auto",
+          padding: "20px",
+          borderRadius: "10px",
+          backgroundColor: "#007E85",
+        },
+        overlay: { backgroundColor: "rgba(0, 0, 0, 0.75)" },
+      }}
+      ariaHideApp={false}
+    >
+      <div className="bg-white m-auto w-full h-full p-6 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold mb-4">Edit Patient Details</h2>
         <div className="flex  justify-center  bg-gray-200 mb-4">
           <form
-            onSubmit={handleRegister}
+            onSubmit={handleUpdate}
             className=" p-6 rounded-lg  w-full max-w-2xl"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -289,6 +271,7 @@ function EditPatient() {
                   </p>
                 )}
               </div>
+
               <div className="form-group">
                 <select
                   id="specialization"
@@ -339,6 +322,7 @@ function EditPatient() {
                   </p>
                 )}
               </div>
+
               <div className="form-group">
                 <InputField
                   name="dob"
@@ -348,6 +332,18 @@ function EditPatient() {
                 />
                 {formErrors.dob && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>
+                )}
+              </div>
+
+              <div className="form-group">
+                <InputField
+                  name="fees"
+                  value={formData.fees}
+                  onChange={handleChange}
+                  placeholder="Fees"
+                />
+                {formErrors.experience && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.fees}</p>
                 )}
               </div>
               <div className="form-group">
@@ -364,53 +360,20 @@ function EditPatient() {
                 )}
               </div>
             </div>
-            <div className="mt-6 flex justify-center">
-              <label
-                htmlFor="licenseImage"
-                className="block text-gray-700 font-bold mb-2 me-2"
-              >
-                Upload License Image
-              </label>
-              <input
-                type="file"
-                id="licenseImage"
-                name="licenseImage"
-                accept="image/*"
-                onChange={handleFileChange}
-                //   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            {formErrors.licenseImage && (
-              <p className="text-red-500 text-xs mt-1">
-                {formErrors.licenseImage}
-              </p>
-            )}
 
             <div className="mt-6 flex justify-center">
               <button className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold">
-                Apply
+                Update
               </button>
             </div>
           </form>
         </div>
-
-        <p>
-          Already have an Account?
-          <span
-            onClick={() => {
-              navigate("/doctorSignin");
-            }}
-            className="text-blue-400 text-sm cursor-pointer"
-          >
-            Sign In
-          </span>
-        </p>
       </div>
-    </div>
+    </Modal>
   );
-}
+};
 
-export default EditPatient;
+export default EditDoctorModel;
 
 const InputField = ({
   name,

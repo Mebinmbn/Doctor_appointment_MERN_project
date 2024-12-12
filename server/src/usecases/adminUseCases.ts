@@ -1,7 +1,9 @@
 import { IAdmin } from "../models/adminModel";
 import { AdminResponse } from "../models/authResponseModel";
 import { IDoctor } from "../models/doctorModel";
+import { IPatient } from "../models/patientModel";
 import adminRepository from "../repositories/adminRepository";
+import { hashPassword } from "../services/bcryptService";
 import { generateToken } from "../services/tokenService";
 
 export const signInAdmin = async (
@@ -94,5 +96,29 @@ export const blockPatient = async (id: string) => {
     return await adminRepository.blockPatient(id);
   } catch (error) {
     throw new Error("Error occurred in unblocking");
+  }
+};
+
+export const editPatient = async (patientData: IPatient) => {
+  try {
+    if (patientData.password) {
+      patientData.password = await hashPassword(patientData.password);
+    }
+
+    return await adminRepository.updatePatient(patientData);
+  } catch (error) {
+    throw new Error("Error in updation");
+  }
+};
+
+export const editDoctor = async (doctorData: IDoctor) => {
+  try {
+    if (doctorData.password) {
+      doctorData.password = await hashPassword(doctorData.password);
+    }
+
+    return await adminRepository.updateDoctor(doctorData);
+  } catch (error) {
+    throw new Error("Error in updation");
   }
 };
