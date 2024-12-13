@@ -5,6 +5,7 @@ import {
   signInPatient,
   signUpPatient,
 } from "../usecases/patientUseCases";
+import { createNewTimeSlotRecord } from "../repositories/timeSlotsRepository";
 
 const signUp = async (req: Request, res: Response) => {
   try {
@@ -39,6 +40,7 @@ const signIn = async (req: Request, res: Response) => {
 const doctors = async (req: Request, res: Response) => {
   try {
     const doctors = await getDoctors();
+    await createNewTimeSlotRecord();
     if (doctors) {
       res
         .status(200)

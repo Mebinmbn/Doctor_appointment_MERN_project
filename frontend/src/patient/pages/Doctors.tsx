@@ -4,10 +4,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { IDoctor } from "./../../../../server/src/models/doctorModel";
 import doctorIcon from "../../assets/icon/doctor.png";
-import { useSelector } from "react-redux";
-
-import { RootState } from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setDoctorsArray } from "../../app/featrue/doctorsSlice";
+import { AppDispatch, RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
+import { useSearch } from "../../contexts/SearchContext";
 
 function Doctors() {
   const [doctors, setDoctors] = useState([]);
@@ -16,6 +17,8 @@ function Doctors() {
   const [gender, setGender] = useState("");
   const [experience, setExperience] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState<IDoctor[]>([]);
+  const { searchKey, setSearchKey } = useSearch();
+  const dispatch: AppDispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.auth.user) as
     | string
@@ -52,6 +55,7 @@ function Doctors() {
       if (doctorsData.data) {
         console.log(doctorsData.data);
         setDoctors(doctorsData.data.doctors);
+        dispatch(setDoctorsArray({ doctors: doctorsData.data }));
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -60,10 +64,18 @@ function Doctors() {
   };
 
   const clearFilter = () => {
+    setSearchQuery("");
     setSpecialization("");
     setGender("");
     setExperience("");
+    setSearchKey("");
   };
+
+  useEffect(() => {
+    if (searchKey) {
+      setSearchQuery(searchKey);
+    }
+  }, [searchKey, navigate]);
 
   useEffect(() => {
     const applyFilters = () => {

@@ -14,6 +14,7 @@ import AllDoctors from "./admin/pages/AllDoctors";
 import AllPatients from "./admin/pages/AllPatients";
 import ForgotPassword from "./patient/pages/ForgotPassword";
 import ResetPassword from "./patient/pages/ResetPassword";
+import PickDateTime from "./patient/pages/PickDateTime";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
+          <Route path="/pickDate" element={<PickDateTime />} />
         </Routes>
         <Routes>
           <Route path="/doctorSignup" element={<DoctorRegister />} />
