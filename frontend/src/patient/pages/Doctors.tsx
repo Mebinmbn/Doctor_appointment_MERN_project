@@ -9,6 +9,7 @@ import { setDoctorsArray } from "../../app/featrue/doctorsSlice";
 import { AppDispatch, RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
 import { useSearch } from "../../contexts/SearchContext";
+import { setDoctorToConsult } from "../../app/featrue/userSlice";
 
 function Doctors() {
   const [doctors, setDoctors] = useState([]);
@@ -20,7 +21,7 @@ function Doctors() {
   const { searchKey, setSearchKey } = useSearch();
   const dispatch: AppDispatch = useDispatch();
 
-  const user = useSelector((state: RootState) => state.auth.user) as
+  const user = useSelector((state: RootState) => state.user.user) as
     | string
     | null;
   const navigate = useNavigate();
@@ -107,6 +108,13 @@ function Doctors() {
     applyFilters();
   }, [searchQuery, specialization, gender, experience, doctors]);
 
+  const handleAppointment = (index: number) => {
+    console.log(doctors[index]);
+    dispatch(setDoctorToConsult(doctors[index]));
+
+    navigate("/pickDate");
+  };
+
   return (
     <div>
       <Navbar />
@@ -181,12 +189,13 @@ function Doctors() {
 
       {/* <div className="bg-blue-300 w-full h-3 my-5"></div> */}
       <div className="flex w-90 flex-wrap justify-center gap-5 ml-auto p-5 border-8">
-        {filteredDoctors.map((doctor: IDoctor) => (
+        {filteredDoctors.map((doctor: IDoctor, index) => (
           <div className="  gap-5 border-[2px] border-[#007E85] h-fit w-[15rem]  my-4 rounded-lg p-5">
             <img
               src={doctorIcon}
               alt=""
               className="rounded-full border-[2px] border-[#007E85] h-[90%] w-[40%] mt-2 mx-auto object-cover"
+              key={index}
             />
             <div className=" h-full w-full  text-center">
               <h1 className="text-[#007E85] font-extrabold my-4">
@@ -200,7 +209,10 @@ function Doctors() {
                 ₹ {doctor.fees}
                 <span className="text-red-500"> Consultation Fees</span>
               </p>
-              <button className="bg-[#007E85] rounded-lg px-2 py-1 m-3 text-white w-fit font-bold">
+              <button
+                onClick={() => handleAppointment(index)}
+                className="bg-[#007E85] rounded-lg px-2 py-1 m-3 text-white w-fit font-bold"
+              >
                 Get An Appointmet
               </button>
             </div>

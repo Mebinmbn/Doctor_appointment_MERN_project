@@ -1,5 +1,5 @@
 import DoctorModel, { IDoctor } from "../models/doctorModel";
-import TimeSlotsModel from "../models/TimeSlotsModel";
+import TimeSlotsModel from "../models/timeSlotsModel";
 import cron from "node-cron";
 
 const defaultTimeSlots = [
@@ -24,8 +24,11 @@ export const createNewTimeSlotRecord = async () => {
     // Get the date six days ahead
     const today = new Date();
     const sixDaysAhead = new Date(today);
+    console.log(sixDaysAhead);
     sixDaysAhead.setDate(today.getDate() + 6);
+
     sixDaysAhead.setHours(0, 0, 0, 0);
+    console.log(sixDaysAhead);
 
     if (sixDaysAhead.toString().slice(0, 3) !== "Sun") {
       // Fetch all doctors
@@ -59,6 +62,8 @@ export const createNewTimeSlotRecord = async () => {
           );
         }
       }
+    } else {
+      console.log("Times slot didn't create due to sunday");
     }
   } catch (error) {
     console.error("Error creating time slot record:", error);

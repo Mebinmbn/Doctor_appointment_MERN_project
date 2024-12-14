@@ -5,7 +5,7 @@ import doctorReducer from "./featrue/doctorSlice";
 import doctorsReducer from "./featrue//doctorsSlice";
 const store = configureStore({
   reducer: {
-    auth: userReducer,
+    user: userReducer,
     admin: adminReducer,
     doctor: doctorReducer,
     doctors: doctorsReducer,

@@ -14,11 +14,12 @@ interface User {
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector(
-    (state: RootState) => state.auth.user
+    (state: RootState) => state.user.user
   ) as User | null;
   const dispatch = useDispatch();
 
   const token = localStorage.getItem("token");
+  console.log("user form navbar", user);
 
   const handleLogout = () => {
     dispatch(clearUser());

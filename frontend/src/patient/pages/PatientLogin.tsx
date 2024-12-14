@@ -51,7 +51,7 @@ function PatientLogin() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector(
-    (state: RootState) => state.auth.user
+    (state: RootState) => state.user.user
   ) as User | null;
 
   useEffect(() => {

@@ -38,6 +38,16 @@ export const signInPatient = async (
   return { token, patient };
 };
 
+export const ResetPassword = async (password: string, email: string) => {
+  console.log("usecases- reset password");
+  try {
+    const hashedPassword = await hashPassword(password);
+    return patientRepository.resetPassword(hashedPassword, email);
+  } catch (error) {
+    throw new Error("Error in reseting password");
+  }
+};
+
 export const getDoctors = async () => {
   try {
     return await patientRepository.findAllDoctors();
@@ -46,12 +56,18 @@ export const getDoctors = async () => {
   }
 };
 
-export const ResetPassword = async (password: string, email: string) => {
-  console.log("usecases- reset password");
+export const getTimeSlots = async (id: string) => {
   try {
-    const hashedPassword = await hashPassword(password);
-    return patientRepository.resetPassword(hashedPassword, email);
+    return await patientRepository.getDoctorTimeSlots(id);
   } catch (error) {
-    throw new Error("Error in reseting password");
+    throw new Error("Error in fetching doctors");
+  }
+};
+
+export const getPatient = async (id: string) => {
+  try {
+    return await patientRepository.fetchPatientDetails(id);
+  } catch (error) {
+    throw new Error("Error in fetching patient details");
   }
 };

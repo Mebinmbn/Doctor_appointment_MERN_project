@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import {
   getDoctors,
+  getPatient,
+  getTimeSlots,
   ResetPassword,
   signInPatient,
   signUpPatient,
@@ -41,6 +43,7 @@ const doctors = async (req: Request, res: Response) => {
   try {
     const doctors = await getDoctors();
     await createNewTimeSlotRecord();
+
     if (doctors) {
       res
         .status(200)
@@ -49,6 +52,38 @@ const doctors = async (req: Request, res: Response) => {
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
     res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const timeSlots = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const timeSlots = await getTimeSlots(id);
+
+    if (timeSlots) {
+      res
+        .status(200)
+        .json({ success: true, timeSlots, message: "Request successfull" });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const patient = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const patient = await getPatient(id);
+    if (patient) {
+      res.status(200).json({
+        success: true,
+        patient,
+        message: "patient detials collected successfully",
+      });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, error: error });
   }
 };
 
@@ -74,4 +109,5 @@ const reset = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, error });
   }
 };
-export default { signUp, signIn, doctors, reset };
+
+export default { signUp, signIn, doctors, reset, timeSlots, patient };
