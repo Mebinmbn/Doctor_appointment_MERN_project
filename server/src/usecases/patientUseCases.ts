@@ -4,9 +4,11 @@ import validation from "../utils/validation";
 import { comparePassword, hashPassword } from "../services/bcryptService";
 import { generateToken } from "../services/tokenService";
 import { PatientResponse } from "../models/authResponseModel";
+import { IPatientDetails } from "../models/patientDetailsModel";
+import { IAppointment } from "../models/appointmentModel";
 
 export const signUpPatient = async (patientData: IPatient) => {
-  console.log("reched useCases", patientData);
+  console.log("reached useCases", patientData);
   validation.validatePatientSignup(patientData);
   const existingPatient = await patientRepository.findPatientByEmail(
     patientData.email
@@ -69,5 +71,28 @@ export const getPatient = async (id: string) => {
     return await patientRepository.fetchPatientDetails(id);
   } catch (error) {
     throw new Error("Error in fetching patient details");
+  }
+};
+
+export const storePatientDetails = async (patientData: IPatientDetails) => {
+  try {
+    validation.validatePatientDetails(patientData);
+    return await patientRepository.createPatientDetails(patientData);
+  } catch (error) {
+    throw new Error("Error in storing patient details");
+  }
+};
+
+export const bookAppointment = async (appointmentData: IAppointment) => {
+  try {
+    const existingAppointment = await patientRepository.checkAppointment(
+      appointmentData
+    );
+    if (existingAppointment) {
+      throw new Error("Time slot already booked");
+    }
+    return await patientRepository.createAppointment(appointmentData);
+  } catch (error) {
+    throw new Error("Error in booking appointment");
   }
 };

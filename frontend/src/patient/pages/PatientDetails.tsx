@@ -3,12 +3,12 @@ import { useSelector } from "react-redux";
 import { User } from "../../types/user";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { RootState } from "../../app/store";
 
 interface FormValues {
-  _id?: string;
+  userId?: string;
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -51,7 +51,8 @@ interface RootUser {
 function PatientDetails() {
   const [patient, setPatient] = useState<User | null>(null);
   const location = useLocation();
-  const { selectedDate, selectedTime } = location.state || {};
+  const { selectedDate, selectedTime, doctor } = location.state || {};
+  const navigate = useNavigate();
   const user = useSelector(
     (state: RootState) => state.user.user
   ) as RootUser | null;
@@ -83,8 +84,9 @@ function PatientDetails() {
   }, []);
 
   console.log("user form patientDetails", user, patient);
+
   const initialValues: FormValues = {
-    _id: patient?._id,
+    userId: patient?._id,
     firstName: patient?.firstName,
     lastName: patient?.lastName,
     email: patient?.email,
@@ -103,11 +105,30 @@ function PatientDetails() {
   const [formData, setFormData] = useState<FormValues>(initialValues);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
+  useEffect(() => {
+    if (patient) {
+      setFormData({
+        userId: patient._id,
+        firstName: patient.firstName,
+        lastName: patient.lastName,
+        email: patient.email,
+        phone: patient.phone,
+        gender: patient.gender,
+        dob: patient.dob?.toString().slice(0, 10),
+        houseNo: "",
+        street: "",
+        city: "",
+        pin: "",
+      });
+    }
+  }, [patient]);
+
   const token = localStorage.getItem("adminToken");
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
   const phoneRegex = /^[6-9]\d{9}$/;
   const dobRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  const pinRegex = /^[1-9][0-9]{5}$/;
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLInputElement>) => {
@@ -157,10 +178,28 @@ function PatientDetails() {
       errors.dob = "Not a valid dob";
     }
 
+    if (!values.houseNo) {
+      errors.houseNo = "House No. is required";
+    }
+
+    if (!values.street) {
+      errors.street = "Street is required";
+    }
+
+    if (!values.city) {
+      errors.city = "City is required";
+    }
+
+    if (!values.pin) {
+      errors.pin = "Pin is required";
+    } else if (!pinRegex.test(values.pin)) {
+      errors.pin = "Invalid pin";
+    }
+
     return errors;
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const errors = validate(formData);
@@ -173,8 +212,8 @@ function PatientDetails() {
 
         console.log(formData);
 
-        const response = await axios.put(
-          "http://localhost:8080/api/admin/patients",
+        const response = await axios.post(
+          "http://localhost:8080/api/patients/appointments/patient",
           formData,
           {
             headers: {
@@ -186,7 +225,10 @@ function PatientDetails() {
         );
 
         if (response.data.success) {
-          toast.success("Patient's details updated successfully");
+          toast.success("Patient's details stored successfully");
+          navigate("/paymentPage", {
+            state: { selectedDate, selectedTime, formData, doctor },
+          });
         }
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -203,7 +245,7 @@ function PatientDetails() {
         <h2 className="text-2xl font-bold mb-4">Patient Details</h2>
         <div className="flex  justify-center  bg-gray-200 mb-4">
           <form
-            onSubmit={handleUpdate}
+            onSubmit={handleSubmit}
             className=" p-6 rounded-lg  w-full max-w-2xl"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -292,12 +334,12 @@ function PatientDetails() {
               </div>
               <div className="form-group">
                 <InputField
-                  name="HoseNo"
+                  name="houseNo"
                   value={formData.houseNo}
                   onChange={handleChange}
                   placeholder="House No/ House Name"
                 />
-                {formErrors.email && (
+                {formErrors.houseNo && (
                   <p className="text-red-500 text-xs mt-1">
                     {formErrors.houseNo}
                   </p>
@@ -310,7 +352,7 @@ function PatientDetails() {
                   onChange={handleChange}
                   placeholder="Street"
                 />
-                {formErrors.email && (
+                {formErrors.street && (
                   <p className="text-red-500 text-xs mt-1">
                     {formErrors.street}
                   </p>
@@ -323,7 +365,7 @@ function PatientDetails() {
                   onChange={handleChange}
                   placeholder="City"
                 />
-                {formErrors.email && (
+                {formErrors.city && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.city}</p>
                 )}
               </div>
@@ -334,18 +376,21 @@ function PatientDetails() {
                   onChange={handleChange}
                   placeholder="Pin"
                 />
-                {formErrors.email && (
+                {formErrors.pin && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.pin}</p>
                 )}
               </div>
             </div>
 
-            <div className="mt-6 flex justify-center">
+            <div className="mt-6 text-right">
               <button className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold">
-                Update
+                Next
               </button>
             </div>
           </form>
+          <p>
+            {selectedDate}, {selectedTime.time}
+          </p>
         </div>
       </div>
     </div>

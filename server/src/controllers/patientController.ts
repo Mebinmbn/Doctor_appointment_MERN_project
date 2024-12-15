@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import {
+  bookAppointment,
   getDoctors,
   getPatient,
   getTimeSlots,
   ResetPassword,
   signInPatient,
   signUpPatient,
+  storePatientDetails,
 } from "../usecases/patientUseCases";
 import { createNewTimeSlotRecord } from "../repositories/timeSlotsRepository";
 
@@ -36,6 +38,29 @@ const signIn = async (req: Request, res: Response) => {
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
     res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const reset = async (req: Request, res: Response) => {
+  const { password, email } = req.body;
+  try {
+    const patient = await ResetPassword(password, email);
+    if (patient) {
+      res.status(200).json({
+        success: true,
+        patient,
+        message: "Password reseted succesdfully",
+      });
+      console.log(
+        "success: true" + patient + "message: Password reseted succesdfully"
+      );
+    } else {
+      res
+        .status(400)
+        .json({ success: false, message: "Error in password reset" });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, error });
   }
 };
 
@@ -87,27 +112,48 @@ const patient = async (req: Request, res: Response) => {
   }
 };
 
-const reset = async (req: Request, res: Response) => {
-  const { password, email } = req.body;
+const patientData = async (req: Request, res: Response) => {
+  const patientData = req.body;
+  console.log(patientData);
   try {
-    const patient = await ResetPassword(password, email);
+    const patient = await storePatientDetails(patientData);
     if (patient) {
       res.status(200).json({
         success: true,
         patient,
-        message: "Password reseted succesdfully",
+        message: "Patient Details stored successfully",
       });
-      console.log(
-        "success: true" + patient + "message: Password reseted succesdfully"
-      );
-    } else {
-      res
-        .status(400)
-        .json({ success: false, message: "Error in password reset" });
     }
-  } catch (error) {
-    res.status(400).json({ success: false, error });
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
   }
 };
 
-export default { signUp, signIn, doctors, reset, timeSlots, patient };
+const book = async (req: Request, res: Response) => {
+  const appointmentData = req.body;
+  try {
+    const appointment = await bookAppointment(appointmentData);
+    if (appointment) {
+      res.status(200).json({
+        success: true,
+        appointment,
+        message: "Appointemnt created successfully",
+      });
+    } else {
+      res.status(400).json({ success: false, message: "Error in booking" });
+    }
+  } catch (error: any) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+export default {
+  signUp,
+  signIn,
+  doctors,
+  reset,
+  timeSlots,
+  patient,
+  patientData,
+  book,
+};

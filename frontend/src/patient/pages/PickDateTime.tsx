@@ -19,6 +19,7 @@ function PickDateTime() {
   const [timeSlots, setTimeSlots] = useState<TimeSlots[]>([]);
   const [dates, setDates] = useState<Date[]>([]);
   const [times, setTimes] = useState<Times[]>([]);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const doctor: Doctor | null = useSelector(
     (state: RootState) => state.user.doctorToConsult
@@ -70,7 +71,13 @@ function PickDateTime() {
     setSelectedTime(time);
   };
   const handleNextStep = () => {
-    navigate("/patientDetails", { state: { selectedDate, selectedTime } });
+    if (!selectedDate || !selectedTime) {
+      setError("Date and Time  are required");
+      return;
+    }
+    navigate("/patientDetails", {
+      state: { selectedDate, selectedTime, doctor },
+    });
   };
 
   const formatDateString = (dateString: Date) => {
@@ -109,6 +116,7 @@ function PickDateTime() {
         </div>
         <div className="  py-10 px-5 ">
           <div className="container mx-auto">
+            <p className="text-red-500 text-center">{error}</p>
             <h2 className="text-2xl mb-4 font-extrabold">Choose Date</h2>
             <div className="flex flex-wrap justify-center mb-6">
               {dates.map((date, index) => (

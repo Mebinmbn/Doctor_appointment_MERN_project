@@ -1,4 +1,5 @@
 import { IDoctor } from "../models/doctorModel";
+import { IPatientDetails } from "../models/patientDetailsModel";
 import { IPatient } from "../models/patientModel";
 
 const validatePatientSignup = (doctorData: IPatient) => {
@@ -36,8 +37,28 @@ const validateDoctorRegister = (doctorData: IDoctor) => {
     throw new Error("All fields are required");
   }
 };
+
+const validatePatientDetails = (patientData: IPatientDetails) => {
+  if (
+    !patientData.userId ||
+    !patientData.firstName ||
+    !patientData.lastName ||
+    !patientData.email ||
+    !patientData.phone ||
+    !patientData.gender ||
+    !patientData.dob ||
+    !patientData.houseNo ||
+    !patientData.street ||
+    !patientData.city ||
+    !patientData.pin
+  ) {
+    throw new Error("All fields are required");
+  }
+};
+
 export default {
   validatePatientSignup,
   validatePatientSignin,
   validateDoctorRegister,
+  validatePatientDetails,
 };

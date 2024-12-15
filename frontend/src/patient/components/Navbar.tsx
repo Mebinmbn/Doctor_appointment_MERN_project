@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 
 interface User {
   name: string;
+  id: string;
+  role: string;
 }
 
 const Navbar: React.FC = () => {

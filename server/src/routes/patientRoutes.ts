@@ -16,6 +16,10 @@ router.get("/doctors/timeSlots/:id", patientController.timeSlots);
 
 router.get("/appointments/patient/:id", patientController.patient);
 
+router.post("/appointments/patient", patientController.patientData);
+
+router.post("/appointments/book", patientController.book);
+
 router.post("/reset", patientController.reset);
 
 export default router;

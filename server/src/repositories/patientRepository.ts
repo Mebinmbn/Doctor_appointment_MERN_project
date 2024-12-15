@@ -1,4 +1,8 @@
+import AppointmentModel, { IAppointment } from "../models/appointmentModel";
 import DoctorModel from "../models/doctorModel";
+import PatientDetailsModel, {
+  IPatientDetails,
+} from "../models/patientDetailsModel";
 import PatientModel, { IPatient } from "../models/patientModel";
 import TimeSlotsModel from "../models/timeSlotsModel";
 
@@ -74,6 +78,43 @@ const fetchPatientDetails = async (id: string) => {
   }
 };
 
+////////////////////////////////////////////////////////////////////////
+
+const createPatientDetails = async (patientData: IPatientDetails) => {
+  console.log("patientRepo.createPatientDetails", patientData);
+  try {
+    const patient = new PatientDetailsModel(patientData);
+    await patient.save();
+    console.log(patient);
+    return patient;
+  } catch (error) {
+    throw new Error("Error in storing patient details");
+  }
+};
+////////////////////////////////////////////////////////////////////////
+
+const checkAppointment = async (appontmentData: IAppointment) => {
+  return await AppointmentModel.findOne({
+    doctorId: appontmentData.doctorId,
+    date: appontmentData.date,
+    time: appontmentData.time,
+  });
+};
+
+////////////////////////////////////////////////////////////////////////
+
+const createAppointment = async (appointmentData: IAppointment) => {
+  console.log("patientRepo.createAppointment", appointmentData);
+  try {
+    const appointment = new AppointmentModel(appointmentData);
+    await appointment.save();
+    console.log(appointment);
+    return appointment;
+  } catch (error) {
+    throw new Error("Error in booking appointment");
+  }
+};
+
 export default {
   createPatient,
   findPatientByEmail,
@@ -82,4 +123,7 @@ export default {
   resetPassword,
   getDoctorTimeSlots,
   fetchPatientDetails,
+  createPatientDetails,
+  createAppointment,
+  checkAppointment,
 };
