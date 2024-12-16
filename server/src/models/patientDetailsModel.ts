@@ -20,7 +20,7 @@ const PatientDetailsSchema: Schema = new Schema<IPatientDetails>(
     userId: { type: Schema.Types.ObjectId, ref: "patient", required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
+    email: { type: String, required: true },
     phone: { type: String, required: true },
     dob: { type: Date },
     gender: { type: String, enum: ["male", "female", "other"] },

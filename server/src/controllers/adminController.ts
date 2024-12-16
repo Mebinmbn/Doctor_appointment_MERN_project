@@ -7,6 +7,7 @@ import {
   editDoctor,
   editPatient,
   getApplications,
+  getAppointments,
   getDoctors,
   getPatients,
   rejectApplication,
@@ -176,6 +177,21 @@ const edit = async (req: Request, res: Response) => {
   }
 };
 
+const appointments = async (req: Request, res: Response) => {
+  try {
+    const appointments = await getAppointments();
+    console.log(applications);
+    res.status(200).json({
+      success: true,
+      appointments,
+      message: "Appointments fetched successfully",
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   signin,
   applications,
@@ -186,4 +202,5 @@ export default {
   block,
   unblock,
   edit,
+  appointments,
 };

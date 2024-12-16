@@ -14,6 +14,8 @@ router.get("/doctors", patientController.doctors);
 
 router.get("/doctors/timeSlots/:id", patientController.timeSlots);
 
+router.put("/appointments/lockTimeSlot", patientController.lockTimeSlot);
+
 router.get("/appointments/patient/:id", patientController.patient);
 
 router.post("/appointments/patient", patientController.patientData);

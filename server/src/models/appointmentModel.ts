@@ -12,8 +12,12 @@ export interface IAppointment {
 
 const AppointmentSchema: Schema = new Schema<IAppointment>(
   {
-    doctorId: { type: Schema.Types.ObjectId, ref: "doctors", required: true },
-    patientId: { type: Schema.Types.ObjectId, ref: "patients", required: true },
+    doctorId: { type: Schema.Types.ObjectId, ref: "Doctor", required: true },
+    patientId: {
+      type: Schema.Types.ObjectId,
+      ref: "Patient",
+      required: true,
+    },
     date: { type: Date, required: true },
     time: { type: String, required: true },
     status: {

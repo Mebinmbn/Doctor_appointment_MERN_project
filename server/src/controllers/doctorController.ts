@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { registerDoctor, signinDoctor } from "../usecases/doctorUseCases";
+import {
+  approveAppointment,
+  getAppointments,
+  registerDoctor,
+  rejectAppointment,
+  signinDoctor,
+} from "../usecases/doctorUseCases";
 
 const register = async (req: Request, res: Response) => {
   console.log(req.file);
@@ -53,4 +59,48 @@ const signin = async (req: Request, res: Response) => {
   }
 };
 
-export default { register, signin };
+const appointments = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const appointments = await getAppointments(id);
+
+    res.status(200).json({
+      success: true,
+      appointments,
+      message: "Appointments fected successfully",
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const approve = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const appointment = await approveAppointment(id);
+
+    res
+      .status(200)
+      .json({ success: true, appointment, message: "Approved successfully" });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const reject = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const appointment = await rejectAppointment(id);
+
+    res
+      .status(200)
+      .json({ success: true, appointment, message: "Rejected successfully" });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+export default { register, signin, appointments, approve, reject };

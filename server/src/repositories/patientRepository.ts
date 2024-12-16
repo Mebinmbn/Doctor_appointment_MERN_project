@@ -115,6 +115,21 @@ const createAppointment = async (appointmentData: IAppointment) => {
   }
 };
 
+////////////////////////////////////////////////////////////////////////
+
+const lockTimeSlot = async (doctorId: string, date: string, time: string) => {
+  console.log("patientRepo.createAppointment", doctorId, date, time);
+  try {
+    return await TimeSlotsModel.findOneAndUpdate(
+      { doctor: doctorId, date: date },
+      { $set: { "timeSlots.$[element].isBooked": true } },
+      { arrayFilters: [{ "element.time": time }], new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in locking time slot");
+  }
+};
+
 export default {
   createPatient,
   findPatientByEmail,
@@ -126,4 +141,5 @@ export default {
   createPatientDetails,
   createAppointment,
   checkAppointment,
+  lockTimeSlot,
 };

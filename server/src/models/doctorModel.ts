@@ -48,7 +48,7 @@ const DoctorSchema: Schema = new Schema<IDoctor>({
 });
 
 const DoctorModel: Model<IDoctor> = mongoose.model<IDoctor>(
-  "Docotor",
+  "Doctor",
   DoctorSchema
 );
 

@@ -45,3 +45,28 @@ export const signinDoctor = async (email: string, password: string) => {
     throw new Error(error);
   }
 };
+
+export const getAppointments = async (id: string) => {
+  console.log("doctor usecases");
+  try {
+    return await doctorRepository.fetchAppointments(id);
+  } catch (error) {
+    throw new Error("Error in fetching appointments");
+  }
+};
+
+export const approveAppointment = async (id: string) => {
+  try {
+    return await doctorRepository.approve(id);
+  } catch (error) {
+    throw new Error("Error in approval");
+  }
+};
+
+export const rejectAppointment = async (id: string) => {
+  try {
+    return await doctorRepository.reject(id);
+  } catch (error) {
+    throw new Error("Error in rejection");
+  }
+};

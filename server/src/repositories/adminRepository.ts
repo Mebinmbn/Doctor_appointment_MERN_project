@@ -1,4 +1,5 @@
 import AdminModel, { IAdmin } from "../models/adminModel";
+import AppointmentModel from "../models/appointmentModel";
 import DoctorModel, { IDoctor } from "../models/doctorModel";
 import PatientModel, { IPatient } from "../models/patientModel";
 
@@ -185,6 +186,20 @@ const updateDoctor = async (doctorData: IDoctor) => {
     throw new Error("Error in unblocking");
   }
 };
+
+const fetchAppointments = async () => {
+  console.log("doctor repo");
+  try {
+    const appointments = await AppointmentModel.find({})
+      .populate("doctorId", "firstName lastName specialization")
+      .populate("patientId", "firstName lastName email");
+
+    return appointments;
+  } catch (error) {
+    throw new Error("Error in fetching appointments");
+  }
+};
+
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,
@@ -198,4 +213,5 @@ export default {
   blockPatient,
   updatePatient,
   updateDoctor,
+  fetchAppointments,
 };

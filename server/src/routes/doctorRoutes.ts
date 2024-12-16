@@ -12,4 +12,10 @@ router.post(
 
 router.post("/signin", doctorController.signin);
 
+router.get("/appointments/:id", doctorController.appointments);
+
+router.put("/appointments/approve/:id", doctorController.approve);
+
+router.put("/appointments/reject/:id", doctorController.reject);
+
 export default router;

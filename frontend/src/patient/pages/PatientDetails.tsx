@@ -57,6 +57,16 @@ function PatientDetails() {
     (state: RootState) => state.user.user
   ) as RootUser | null;
 
+  useEffect(() => {
+    const toastId = "loginToContinue";
+    if (!user) {
+      navigate("/login");
+      if (!toast.isActive(toastId)) {
+        toast.warn("Login to continue", { toastId });
+      }
+    }
+  }, [user, navigate]);
+
   const fetchPatientDetails = async () => {
     const id = user?.id;
     console.log("id from fetchPatientDetails", id);
@@ -388,9 +398,6 @@ function PatientDetails() {
               </button>
             </div>
           </form>
-          <p>
-            {selectedDate}, {selectedTime.time}
-          </p>
         </div>
       </div>
     </div>

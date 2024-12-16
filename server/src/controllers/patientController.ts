@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   bookAppointment,
+  conformTimeSlot,
   getDoctors,
   getPatient,
   getTimeSlots,
@@ -131,6 +132,7 @@ const patientData = async (req: Request, res: Response) => {
 
 const book = async (req: Request, res: Response) => {
   const appointmentData = req.body;
+  console.log("patient controller", appointmentData);
   try {
     const appointment = await bookAppointment(appointmentData);
     if (appointment) {
@@ -143,7 +145,25 @@ const book = async (req: Request, res: Response) => {
       res.status(400).json({ success: false, message: "Error in booking" });
     }
   } catch (error: any) {
-    res.status(400).json({ success: false, error: error.message });
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const lockTimeSlot = async (req: Request, res: Response) => {
+  const { doctorId, date, time } = req.body;
+  try {
+    const timeSlot = await conformTimeSlot(doctorId, date, time);
+    if (timeSlot) {
+      res.status(200).json({
+        success: true,
+        timeSlot,
+        message: "Time slot locked successfully",
+      });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
   }
 };
 
@@ -156,4 +176,5 @@ export default {
   patient,
   patientData,
   book,
+  lockTimeSlot,
 };

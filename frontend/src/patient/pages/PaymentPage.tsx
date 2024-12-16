@@ -1,13 +1,30 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+import Navbar from "../components/Navbar";
 
 function PaymentPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { selectedDate, selectedTime, formData, doctor } =
     location.state || null;
+  const user = useSelector((state: RootState) => state.user.user) as
+    | string
+    | null;
+
+  useEffect(() => {
+    const toastId = "loginToContinue";
+    if (!user) {
+      navigate("/login");
+      if (!toast.isActive(toastId)) {
+        toast.warn("Login to continue", { toastId });
+      }
+    }
+  }, [user, navigate]);
 
   const handleClick = async () => {
     const appointmentData = {
@@ -35,14 +52,18 @@ function PaymentPage() {
       } else {
         toast.error(response.data.message);
       }
-    } catch (error) {
-      console.log(error);
-      toast.error(error);
+    } catch (error: any) {
+      let errorMessage = "An unexpected error";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+      toast.error(errorMessage);
     }
   };
 
   return (
     <div>
+      <Navbar />
       <p>{selectedDate}</p>
       <p>{selectedTime.time}</p>
       <p>{formData.userId}</p>

@@ -7,6 +7,7 @@ import { Doctor } from "../../types/doctor";
 import axios from "axios";
 import { TimeSlots } from "../../types/timeSlots";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface Times {
   time: string;
@@ -15,7 +16,7 @@ interface Times {
 
 function PickDateTime() {
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedTime, setSelectedTime] = useState<Times | null>(null);
   const [timeSlots, setTimeSlots] = useState<TimeSlots[]>([]);
   const [dates, setDates] = useState<Date[]>([]);
   const [times, setTimes] = useState<Times[]>([]);
@@ -24,6 +25,20 @@ function PickDateTime() {
   const doctor: Doctor | null = useSelector(
     (state: RootState) => state.user.doctorToConsult
   );
+
+  const user = useSelector((state: RootState) => state.user.user) as
+    | string
+    | null;
+
+  useEffect(() => {
+    const toastId = "loginToContinue";
+    if (!user) {
+      navigate("/login");
+      if (!toast.isActive(toastId)) {
+        toast.warn("Login to continue", { toastId });
+      }
+    }
+  }, [user, navigate]);
 
   const fetchDateAndTime = useCallback(async () => {
     const id = doctor?._id;
@@ -70,14 +85,28 @@ function PickDateTime() {
   const handleTimeClick = (time) => {
     setSelectedTime(time);
   };
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (!selectedDate || !selectedTime) {
       setError("Date and Time  are required");
       return;
     }
-    navigate("/patientDetails", {
-      state: { selectedDate, selectedTime, doctor },
-    });
+    const response = await axios.put(
+      "http://localhost:8080/api/patients/appointments/lockTimeSlot",
+      { doctorId: doctor?._id, date: selectedDate, time: selectedTime.time },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    if (response.data.success) {
+      navigate("/patientDetails", {
+        state: { selectedDate, selectedTime, doctor },
+      });
+    } else {
+      toast.error("Time slot is already booked, please select another time");
+    }
   };
 
   const formatDateString = (dateString: Date) => {

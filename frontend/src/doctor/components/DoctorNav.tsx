@@ -17,7 +17,7 @@ function DoctorNav() {
           <NavLink to="">Patients</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="">Doctors</NavLink>
+          <NavLink to="/doctorAppointments">Appointments</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
           <NavLink to="/adminDoctors">Applications</NavLink>
@@ -25,9 +25,7 @@ function DoctorNav() {
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
           <NavLink to="">Payments</NavLink>
         </div>
-        <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="">Appointments</NavLink>
-        </div>
+
         <div
           className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl cursor-pointer"
           onClick={handleLogout}

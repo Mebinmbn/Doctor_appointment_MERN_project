@@ -122,3 +122,11 @@ export const editDoctor = async (doctorData: IDoctor) => {
     throw new Error("Error in updation");
   }
 };
+
+export const getAppointments = async () => {
+  try {
+    return await adminRepository.fetchAppointments();
+  } catch (error) {
+    throw new Error("Error in fetching appointments");
+  }
+};

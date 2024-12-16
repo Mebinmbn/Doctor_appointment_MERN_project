@@ -89,10 +89,27 @@ export const bookAppointment = async (appointmentData: IAppointment) => {
       appointmentData
     );
     if (existingAppointment) {
+      console.log("Time slot already booked");
       throw new Error("Time slot already booked");
     }
     return await patientRepository.createAppointment(appointmentData);
+  } catch (error: any) {
+    if (error.message === "Time slot already booked") {
+      throw error;
+    } else {
+      throw new Error("Error in booking appointment: " + error.message);
+    }
+  }
+};
+
+export const conformTimeSlot = async (
+  doctorId: string,
+  date: string,
+  time: string
+) => {
+  try {
+    return await patientRepository.lockTimeSlot(doctorId, date, time);
   } catch (error) {
-    throw new Error("Error in booking appointment");
+    throw new Error("Error in locking  timeSlot");
   }
 };

@@ -111,15 +111,21 @@ function DoctorSignin() {
         console.log(response.data.success);
         if (response.data.success === true) {
           const { user, token } = response.data;
+          console.log(user);
           dispatch(
             setDoctor({
-              doctor: { name: user.name, role: user.role, id: user._id },
+              doctor: {
+                id: user.id,
+                name: user.name,
+                role: user.role,
+                isApproved: user.isApproved,
+              },
               doctorToken: token,
             })
           );
           localStorage.setItem("doctorToken", token);
           if (user.isApproved) {
-            navigate("/doctorDashboard");
+            navigate("/doctor");
             toast.success("Logged in Successfully");
           } else {
             toast.error("Application not approved yet");

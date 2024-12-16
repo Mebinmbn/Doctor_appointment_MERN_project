@@ -17,6 +17,9 @@ import ResetPassword from "./patient/pages/ResetPassword";
 import PickDateTime from "./patient/pages/PickDateTime";
 import PatientDetails from "./patient/pages/PatientDetails";
 import PaymentPage from "./patient/pages/PaymentPage";
+import DoctorAppointments from "./doctor/pages/DoctorAppointments";
+import ErrorPage from "./components/ErrorPage";
+import AdminAppointments from "./admin/pages/AdminAppointments";
 
 function App() {
   return (
@@ -44,18 +47,21 @@ function App() {
           <Route path="/pickDate" element={<PickDateTime />} />
           <Route path="/patientDetails" element={<PatientDetails />} />
           <Route path="/paymentPage" element={<PaymentPage />} />
-        </Routes>
-        <Routes>
+          {/* doctorRoutes */}
           <Route path="/doctorSignup" element={<DoctorRegister />} />
           <Route path="/doctorSignin" element={<DoctorSignin />} />
-          <Route path="/doctorDashboard" element={<DoctorDashboard />} />
-        </Routes>
-        <Routes>
+          <Route path="/doctor" element={<DoctorDashboard />} />
+          <Route path="/doctorAppointments" element={<DoctorAppointments />} />
+          {/* adminRoutes */}
           <Route path="/adminSignin" element={<AdminSignin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/adminApplications" element={<DoctorsList />} />
           <Route path="/adminDoctors" element={<AllDoctors />} />
           <Route path="/adminPatients" element={<AllPatients />} />
+          <Route path="/adminAppointments" element={<AdminAppointments />} />
+
+          {/* errorPage */}
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>
     </>

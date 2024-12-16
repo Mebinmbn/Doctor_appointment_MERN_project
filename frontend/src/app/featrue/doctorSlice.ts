@@ -1,7 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
+interface Doctor {
+  name: string;
+  role: string;
+  id: string;
+  isApproved: boolean;
+}
 
 interface AuthState {
-  doctor: string | null;
+  doctor: Doctor | null;
   doctorToken: string | null;
 }
 

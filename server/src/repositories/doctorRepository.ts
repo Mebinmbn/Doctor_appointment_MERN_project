@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import DoctorModel, { IDoctor } from "./../models/doctorModel";
+import AppointmentModel from "../models/appointmentModel";
 
 const checkDoctorByEmail = async (email: string): Promise<IDoctor | null> => {
   console.log("check doctor");
@@ -22,4 +23,58 @@ const verifyDoctor = async (email: string) => {
   return doctor;
 };
 /////////////////////////////////////////////////////////////////////
-export default { checkDoctorByEmail, createDoctor, verifyDoctor };
+const fetchAppointments = async (id: string) => {
+  console.log("doctor repo", id);
+  try {
+    const appointments = await AppointmentModel.find({
+      doctorId: id,
+      status: { $ne: "rejected" },
+    })
+      .populate("doctorId", "firstName lastName specialization")
+      .populate("patientId", "firstName lastName email");
+
+    return appointments;
+  } catch (error) {
+    throw new Error("Error in fetching appointments");
+  }
+};
+/////////////////////////////////////////////////////////////////////
+const approve = async (id: string) => {
+  console.log("doctor repo");
+  try {
+    const appointments = await AppointmentModel.findByIdAndUpdate(
+      { _id: id },
+      { $set: { status: "confirmed" } },
+      { new: true }
+    );
+    console.log(appointments);
+    return appointments;
+  } catch (error) {
+    throw new Error("Error in approving appointments");
+  }
+};
+
+/////////////////////////////////////////////////////////////////////
+const reject = async (id: string) => {
+  console.log("doctor repo", id);
+  try {
+    const appointments = await AppointmentModel.findByIdAndUpdate(
+      { _id: id },
+      { $set: { status: "rejected" } },
+      { new: true }
+    );
+    console.log(appointments);
+    return appointments;
+  } catch (error) {
+    throw new Error("Error in rejecting appointments");
+  }
+};
+
+export default {
+  checkDoctorByEmail,
+  createDoctor,
+  verifyDoctor,
+  fetchAppointments,
+  approve,
+  reject,
+};
