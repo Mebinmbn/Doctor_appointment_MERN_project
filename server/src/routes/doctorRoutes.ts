@@ -18,4 +18,8 @@ router.put("/appointments/approve/:id", doctorController.approve);
 
 router.put("/appointments/reject/:id", doctorController.reject);
 
+router.get("/timeSlots/:id", doctorController.timeSlots);
+
+router.put("/timeSlots", doctorController.removeTimeSlots);
+
 export default router;

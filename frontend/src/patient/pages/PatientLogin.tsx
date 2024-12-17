@@ -262,7 +262,9 @@ function PatientLogin() {
       }
     } catch (error) {
       console.error("Error in Google sign in request:", error);
-      toast.error("Google Sign-In failed");
+      const axiosError = error as AxiosError;
+      console.log("Error in signup request:", axiosError.response?.data.error);
+      toast.error(axiosError.response?.data.error);
     }
   };
 

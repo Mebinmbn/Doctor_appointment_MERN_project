@@ -4,8 +4,10 @@ import {
   getAppointments,
   registerDoctor,
   rejectAppointment,
+  removeDoctorTimeSlots,
   signinDoctor,
 } from "../usecases/doctorUseCases";
+import { getTimeSlots } from "../usecases/patientUseCases";
 
 const register = async (req: Request, res: Response) => {
   console.log(req.file);
@@ -103,4 +105,47 @@ const reject = async (req: Request, res: Response) => {
   }
 };
 
-export default { register, signin, appointments, approve, reject };
+const timeSlots = async (req: Request, res: Response) => {
+  console.log("doctor timeslots");
+  const { id } = req.params;
+  try {
+    const timeSlots = await getTimeSlots(id);
+
+    if (timeSlots) {
+      res
+        .status(200)
+        .json({ success: true, timeSlots, message: "Request successfull" });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const removeTimeSlots = async (req: Request, res: Response) => {
+  const { doctorId, date, time } = req.body;
+  console.log(doctorId, date, time);
+  try {
+    const timeSlots = await removeDoctorTimeSlots(doctorId, date, time);
+    if (timeSlots) {
+      res.status(200).json({
+        success: true,
+        timeSlots,
+        message: "Time slot locked successfully",
+      });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+export default {
+  register,
+  signin,
+  appointments,
+  approve,
+  reject,
+  timeSlots,
+  removeTimeSlots,
+};

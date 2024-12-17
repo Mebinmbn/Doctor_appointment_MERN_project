@@ -14,13 +14,13 @@ function DoctorNav() {
           <NavLink to="">Dahboard</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="">Patients</NavLink>
+          <NavLink to="/doctorTimeSlot">Time Slots</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
           <NavLink to="/doctorAppointments">Appointments</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="/adminDoctors">Applications</NavLink>
+          <NavLink to="">Applications</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
           <NavLink to="">Payments</NavLink>

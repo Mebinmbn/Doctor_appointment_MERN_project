@@ -19,7 +19,7 @@ export const signInAdmin = async (
     if (admin.password !== password) {
       throw new Error("Invalid Creditials");
     }
-    const token = generateToken(admin.name);
+    const token = generateToken(admin.id, admin.role, false);
     return { token, admin };
   } catch (error: any) {
     throw new Error(error);

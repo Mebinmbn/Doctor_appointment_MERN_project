@@ -30,13 +30,15 @@ export const signInPatient = async (
     throw new Error("User not found");
   } else if (!patient.isVerified) {
     throw new Error("User is not verified");
+  } else if (patient.isBlocked) {
+    throw new Error("Access denied");
   }
 
   const isPasswordValid = await comparePassword(password, patient.password);
   if (!isPasswordValid) {
     throw new Error("Invalid credentials");
   }
-  const token = generateToken(patient.id);
+  const token = generateToken(patient.id, patient.role, patient.isBlocked);
   return { token, patient };
 };
 

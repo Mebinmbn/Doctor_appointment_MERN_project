@@ -25,10 +25,15 @@ const authMiddleware = (
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     console.log("decoded", decoded);
     req.user = decoded;
+    if (decoded.isBlocked) {
+      res.status(401).json({ message: "Access denied" });
+    }
     next();
   } catch (err: any) {
     if (err.name === "TokenExpiredError") {
+      console.log("Token expired");
       res.status(401).json({ message: "Token expired" });
+
       return;
     }
     res.status(401).json({ message: "Token is not valid" });

@@ -26,9 +26,7 @@ function PickDateTime() {
     (state: RootState) => state.user.doctorToConsult
   );
 
-  const user = useSelector((state: RootState) => state.user.user) as
-    | string
-    | null;
+  const { user, token } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const toastId = "loginToContinue";
@@ -44,7 +42,12 @@ function PickDateTime() {
     const id = doctor?._id;
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/patients/doctors/timeSlots/${id}`
+        `http://localhost:8080/api/patients/doctors/timeSlots/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.success) {
         const fetchedDateTime = response.data.timeSlots;
@@ -96,6 +99,7 @@ function PickDateTime() {
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         withCredentials: true,
       }

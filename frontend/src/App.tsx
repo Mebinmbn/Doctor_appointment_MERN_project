@@ -20,6 +20,7 @@ import PaymentPage from "./patient/pages/PaymentPage";
 import DoctorAppointments from "./doctor/pages/DoctorAppointments";
 import ErrorPage from "./components/ErrorPage";
 import AdminAppointments from "./admin/pages/AdminAppointments";
+import DoctorTimeSlot from "./doctor/pages/DoctorTimeSlot";
 
 function App() {
   return (
@@ -41,9 +42,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<PatientLogin />} />
           <Route path="/otp" element={<OTPVerification />} />
-          <Route path="/doctors" element={<Doctors />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
+          <Route path="/doctors" element={<Doctors />} />
           <Route path="/pickDate" element={<PickDateTime />} />
           <Route path="/patientDetails" element={<PatientDetails />} />
           <Route path="/paymentPage" element={<PaymentPage />} />
@@ -52,6 +53,7 @@ function App() {
           <Route path="/doctorSignin" element={<DoctorSignin />} />
           <Route path="/doctor" element={<DoctorDashboard />} />
           <Route path="/doctorAppointments" element={<DoctorAppointments />} />
+          <Route path="/doctorTimeSlot" element={<DoctorTimeSlot />} />
           {/* adminRoutes */}
           <Route path="/adminSignin" element={<AdminSignin />} />
           <Route path="/admin" element={<AdminDashboard />} />

@@ -99,6 +99,7 @@ const timeSlots = async (req: Request, res: Response) => {
 
 const patient = async (req: Request, res: Response) => {
   const { id } = req.params;
+  console.log("fetch Patinet controller", id);
   try {
     const patient = await getPatient(id);
     if (patient) {

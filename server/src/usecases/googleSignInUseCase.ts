@@ -10,6 +10,7 @@ export const googleSignIn = async (token: string) => {
   if (!payload) throw new Error("Invalid Google token");
 
   let patient = await patientRepository.findPatientByEmail(payload.email);
+
   if (!patient) {
     const newPatient: Partial<IPatient> = {
       firstName: payload.given_name,
@@ -21,9 +22,11 @@ export const googleSignIn = async (token: string) => {
       password: "googleaccount",
     };
     patient = await patientRepository.createPatient(newPatient);
+  } else if (patient.isBlocked) {
+    throw new Error("Access denied");
   }
 
-  const jwtoken = generateToken(patient.id);
+  const jwtoken = generateToken(patient.id, patient.role, patient.isBlocked);
 
   return { patient, jwtoken };
 };

@@ -3,6 +3,7 @@ import DoctorNav from "../components/DoctorNav";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function DoctorDashboard() {
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
@@ -11,6 +12,7 @@ function DoctorDashboard() {
   useEffect(() => {
     if (!doctor) {
       navigate("/doctorSignin");
+      toast.warn("Login to continue");
     }
   });
   return (

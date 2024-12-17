@@ -72,7 +72,12 @@ function PatientDetails() {
     console.log("id from fetchPatientDetails", id);
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/patients/appointments/patient/${id}`
+        `http://localhost:8080/api/patients/appointments/patient/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.success) {
         setPatient(response.data.patient);

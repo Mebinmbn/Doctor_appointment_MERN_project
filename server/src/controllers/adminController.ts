@@ -138,6 +138,7 @@ const block = async (req: Request, res: Response) => {
 const unblock = async (req: Request, res: Response) => {
   const id = req.params.id;
   const { role } = req.body;
+  console.log(id, role);
   let response;
   try {
     if (role === "doctor") {

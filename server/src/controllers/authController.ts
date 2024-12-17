@@ -10,7 +10,12 @@ export const googleSignInController = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       token: jwtoken,
-      user: { name: patient.firstName, role: patient.role, id: patient._id },
+      user: {
+        name: patient.firstName,
+        role: patient.role,
+        id: patient._id,
+        isBlocked: patient.isBlocked,
+      },
       message: "Successfully Logged in",
     });
   } catch (error: any) {

@@ -12,9 +12,7 @@ function PaymentPage() {
   const navigate = useNavigate();
   const { selectedDate, selectedTime, formData, doctor } =
     location.state || null;
-  const user = useSelector((state: RootState) => state.user.user) as
-    | string
-    | null;
+  const { user, token } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const toastId = "loginToContinue";
@@ -40,7 +38,7 @@ function PaymentPage() {
         {
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -52,6 +50,7 @@ function PaymentPage() {
       } else {
         toast.error(response.data.message);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       let errorMessage = "An unexpected error";
       if (error.response && error.response.data && error.response.data.error) {

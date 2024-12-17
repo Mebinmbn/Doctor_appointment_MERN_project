@@ -3,10 +3,11 @@ import AdminNav from "../components/AdminNav";
 import axios from "axios";
 import { Doctor } from "../../types/doctor";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
 import EditDoctorModel from "../components/EditDoctorModel";
+import { clearAdmin } from "../../app/featrue/adminSlice";
 
 function AllDoctors() {
   const [doctors, setDoctors] = useState([]);
@@ -14,6 +15,7 @@ function AllDoctors() {
   const [doctorToEdit, setDoctorToEdit] = useState<Doctor | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
+  const dispatch = useDispatch();
 
   const admin = useSelector((state: RootState) => state.admin.admin);
   const token = localStorage.getItem("adminToken");
@@ -43,7 +45,10 @@ function AllDoctors() {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log(error);
+      console.log(error.response.data.message);
+      if (error.response.data.message) {
+        dispatch(clearAdmin());
+      }
     }
   }, [token]);
 
@@ -121,11 +126,11 @@ function AllDoctors() {
         <AdminNav />
         <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
           <div className="flex justify-evenly m-5 w-[90%]  mx-auto">
-            <input
+            {/* <input
               type="text"
               placeholder="Search"
               className="rounded-lg h-10 w-[50%] back bg-gray-200 border-[1px] ml-5 p-3"
-            />
+            /> */}
             <div className="bg-gray-100 rounded-xl w-20 p-2 ml-auto ">
               <p className="text-black font-bold">Admin</p>
             </div>

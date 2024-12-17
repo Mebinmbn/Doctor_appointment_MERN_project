@@ -9,7 +9,7 @@ import DoctorNav from "../components/DoctorNav";
 import { Appointment } from "../../types/appointment";
 
 function DoctorAppointments() {
-  const [appointments, setAppointments] = useState([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +18,7 @@ function DoctorAppointments() {
   useEffect(() => {
     if (!doctor) {
       navigate("/doctorSignin");
+      toast.warn("Login to continue");
     }
   });
   console.log("doctor", doctor);
@@ -49,6 +50,7 @@ function DoctorAppointments() {
   useEffect(() => {
     fetchAppointments();
     console.log("Appointments", appointments);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchAppointments]);
 
   const handleReject = async (id: string) => {
@@ -172,7 +174,7 @@ function DoctorAppointments() {
                             {appointment.status === "confirmed" ? (
                               <div>
                                 <button
-                                  className="bg-green-500 rounded-xl py-2 px-5 border-[1px] mr-2"
+                                  className="bg-blue-500 rounded-xl py-1 px-5 border-[1px] mr-2"
                                   onClick={() => {
                                     // handleApprove(appointment._id);
                                   }}
@@ -192,7 +194,7 @@ function DoctorAppointments() {
                                 </button>
 
                                 <button
-                                  className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
+                                  className="bg-red-500 w-20 rounded-xl p-1 border-[1px]"
                                   onClick={() => {
                                     handleReject(appointment._id);
                                   }}

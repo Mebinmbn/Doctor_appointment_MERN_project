@@ -67,11 +67,11 @@ function AdminAppointments() {
         <AdminNav />
         <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
           <div className="flex justify-evenly m-5 w-[90%]  mx-auto">
-            <input
+            {/* <input
               type="text"
               placeholder="Search"
               className="rounded-lg h-10 w-[50%] back bg-gray-200 border-[1px] ml-5 p-3"
-            />
+            /> */}
             <div className="bg-gray-100 rounded-xl w-fit  p-2 ml-auto ">
               <p className="text-black font-bold">Admin</p>
             </div>

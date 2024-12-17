@@ -31,6 +31,8 @@ export const signinDoctor = async (email: string, password: string) => {
       throw new Error("Doctor not found");
     } else if (!doctor.isVerified) {
       throw new Error("Doctor is not verified");
+    } else if (doctor.isBlocked) {
+      throw new Error("Access denied");
     }
 
     const isPasswordValid = await comparePassword(password, doctor.password);
@@ -38,7 +40,7 @@ export const signinDoctor = async (email: string, password: string) => {
     if (!isPasswordValid) {
       throw new Error("Invalid creditials");
     }
-    const token = generateToken(doctor.id);
+    const token = generateToken(doctor.id, doctor.role, doctor.isBlocked);
 
     return { token, doctor };
   } catch (error: any) {
@@ -68,5 +70,17 @@ export const rejectAppointment = async (id: string) => {
     return await doctorRepository.reject(id);
   } catch (error) {
     throw new Error("Error in rejection");
+  }
+};
+
+export const removeDoctorTimeSlots = async (
+  doctorId: string,
+  date: string,
+  time: string[]
+) => {
+  try {
+    return await doctorRepository.updateTimeSlots(doctorId, date, time);
+  } catch (error) {
+    throw new Error("Error in removing time slots");
   }
 };

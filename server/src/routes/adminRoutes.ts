@@ -34,7 +34,7 @@ router.put("/patients", authMiddleware, adminController.edit);
 
 router.post("/patients/block/:id", authMiddleware, adminController.block);
 
-router.post("/patients/unblock/:id", authMiddleware, adminController.unblock);
+router.post("/patients/unblock/:id", adminController.unblock);
 
 router.get("/appointments", adminController.appointments);
 

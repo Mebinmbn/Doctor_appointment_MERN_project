@@ -21,14 +21,12 @@ function Doctors() {
   const { searchKey, setSearchKey } = useSearch();
   const dispatch: AppDispatch = useDispatch();
 
-  const user = useSelector((state: RootState) => state.user.user) as
-    | string
-    | null;
+  const { user, token } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
   useEffect(() => {
     const toastId = "loginToContinue";
-    if (!user) {
+    if (!user || user.isBlocked) {
       navigate("/login");
       if (!toast.isActive(toastId)) {
         toast.warn("Login to continue", { toastId });
@@ -49,6 +47,7 @@ function Doctors() {
         {
           headers: {
             "Content-Type": "application/Json",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }

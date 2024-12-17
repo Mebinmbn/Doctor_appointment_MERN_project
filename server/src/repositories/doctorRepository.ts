@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import DoctorModel, { IDoctor } from "./../models/doctorModel";
 import AppointmentModel from "../models/appointmentModel";
+import TimeSlotsModel from "../models/timeSlotsModel";
 
 const checkDoctorByEmail = async (email: string): Promise<IDoctor | null> => {
   console.log("check doctor");
@@ -70,6 +71,37 @@ const reject = async (id: string) => {
   }
 };
 
+/////////////////////////////////////////////////////////////////////
+const updateTimeSlots = async (
+  doctorId: string,
+  date: string,
+  time: string[]
+) => {
+  console.log("doctor repo", doctorId);
+  try {
+    const data = await TimeSlotsModel.findOne({
+      doctor: doctorId,
+      date: date,
+    });
+    console.log(data);
+    if (!data) {
+      console.log("no data found");
+      throw new Error("No data found");
+    }
+    const updatedTimeSlots = data.timeSlots.map((slot) => {
+      if (time.includes(slot.time)) {
+        slot.isBooked = true;
+      }
+      return slot;
+    });
+    data.timeSlots = updatedTimeSlots;
+    await data.save();
+    return data;
+  } catch (error) {
+    throw new Error("Error in rejecting appointments");
+  }
+};
+
 export default {
   checkDoctorByEmail,
   createDoctor,
@@ -77,4 +109,5 @@ export default {
   fetchAppointments,
   approve,
   reject,
+  updateTimeSlots,
 };
