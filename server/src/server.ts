@@ -6,6 +6,7 @@ import patientRoutes from "./routes/patientRoutes";
 import otpRoutes from "./routes/otpRoutes";
 import doctorRoutes from "./routes/doctorRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import noticationRoutes from "./routes/notificationRoutes";
 import path from "path";
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.use("/api/patients", patientRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/notification", noticationRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

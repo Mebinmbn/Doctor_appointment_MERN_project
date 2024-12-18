@@ -31,6 +31,7 @@ const fetchAppointments = async (id: string) => {
       doctorId: id,
       status: { $ne: "rejected" },
     })
+      .sort({ createdAt: -1 })
       .populate("doctorId", "firstName lastName specialization")
       .populate("patientId", "firstName lastName email");
 

@@ -1,5 +1,6 @@
 import { IDoctor } from "../models/doctorModel";
 import doctorRepository from "../repositories/doctorRepository";
+import notificationsRepository from "../repositories/notificationsRepository";
 import { comparePassword, hashPassword } from "../services/bcryptService";
 import { generateToken } from "../services/tokenService";
 import validation from "../utils/validation";
@@ -59,7 +60,16 @@ export const getAppointments = async (id: string) => {
 
 export const approveAppointment = async (id: string) => {
   try {
-    return await doctorRepository.approve(id);
+    const appointment = await doctorRepository.approve(id);
+    if (appointment) {
+      const notification =
+        await notificationsRepository.createAppointmentNotification(
+          appointment,
+          "approved",
+          "doctor"
+        );
+    }
+    return appointment;
   } catch (error) {
     throw new Error("Error in approval");
   }
@@ -67,7 +77,16 @@ export const approveAppointment = async (id: string) => {
 
 export const rejectAppointment = async (id: string) => {
   try {
-    return await doctorRepository.reject(id);
+    const appointment = await doctorRepository.reject(id);
+    if (appointment) {
+      const notification =
+        await notificationsRepository.createAppointmentNotification(
+          appointment,
+          "rejected",
+          "doctor"
+        );
+    }
+    return appointment;
   } catch (error) {
     throw new Error("Error in rejection");
   }

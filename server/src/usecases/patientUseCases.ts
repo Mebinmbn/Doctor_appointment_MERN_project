@@ -6,9 +6,9 @@ import { generateToken } from "../services/tokenService";
 import { PatientResponse } from "../models/authResponseModel";
 import { IPatientDetails } from "../models/patientDetailsModel";
 import { IAppointment } from "../models/appointmentModel";
+import notificationsRepository from "../repositories/notificationsRepository";
 
 export const signUpPatient = async (patientData: IPatient) => {
-  console.log("reached useCases", patientData);
   validation.validatePatientSignup(patientData);
   const existingPatient = await patientRepository.findPatientByEmail(
     patientData.email
@@ -43,7 +43,6 @@ export const signInPatient = async (
 };
 
 export const ResetPassword = async (password: string, email: string) => {
-  console.log("usecases- reset password");
   try {
     const hashedPassword = await hashPassword(password);
     return patientRepository.resetPassword(hashedPassword, email);
@@ -94,7 +93,17 @@ export const bookAppointment = async (appointmentData: IAppointment) => {
       console.log("Time slot already booked");
       throw new Error("Time slot already booked");
     }
-    return await patientRepository.createAppointment(appointmentData);
+    const appointment = await patientRepository.createAppointment(
+      appointmentData
+    );
+    if (appointment) {
+      await notificationsRepository.createAppointmentNotification(
+        appointment,
+        "applied",
+        "patient"
+      );
+    }
+    return appointment;
   } catch (error: any) {
     if (error.message === "Time slot already booked") {
       throw error;
