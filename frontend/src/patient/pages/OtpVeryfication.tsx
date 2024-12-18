@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 import ClipLoader from "react-spinners/ClipLoader";
+import Navbar from "../components/Navbar";
 
 const override: CSSProperties = {
   display: "block",
@@ -94,70 +95,73 @@ const OTPVerification = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
-      <div className="bg-gray-200 bor h-[20rem] w-96   text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
-        <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
-          OTP Verification
-        </h1>
-        <p className="m-4">Enter your otp</p>
-        <form onSubmit={verifyOtp}>
-          <div className="flex justify-between text-center w-64 mx-auto mt-5">
-            <input
-              type="text"
-              name="one"
-              value={otpValues.one}
-              onChange={onChangeHandle}
-              className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
-            />
-            <input
-              type="text"
-              name="two"
-              value={otpValues.two}
-              onChange={onChangeHandle}
-              className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
-            />
-            <input
-              type="text"
-              name="three"
-              value={otpValues.three}
-              onChange={onChangeHandle}
-              className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
-            />
-            <input
-              type="text"
-              name="four"
-              value={otpValues.four}
-              onChange={onChangeHandle}
-              className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
-            />
-          </div>
-          <div className="mt-2">
-            {isOtpSent && (
-              <ClipLoader
-                cssOverride={override}
-                size={20}
-                aria-label="Loading Spinner"
-                data-testid="loader"
+    <div>
+      <Navbar />
+      <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+        <div className="bg-gray-200 bor h-[20rem] w-96   text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
+          <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
+            OTP Verification
+          </h1>
+          <p className="m-4">Enter your otp</p>
+          <form onSubmit={verifyOtp}>
+            <div className="flex justify-between text-center w-64 mx-auto mt-5">
+              <input
+                type="text"
+                name="one"
+                value={otpValues.one}
+                onChange={onChangeHandle}
+                className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
               />
-            )}
-          </div>
+              <input
+                type="text"
+                name="two"
+                value={otpValues.two}
+                onChange={onChangeHandle}
+                className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
+              />
+              <input
+                type="text"
+                name="three"
+                value={otpValues.three}
+                onChange={onChangeHandle}
+                className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
+              />
+              <input
+                type="text"
+                name="four"
+                value={otpValues.four}
+                onChange={onChangeHandle}
+                className="h-12 w-12 border-[1px] border-[#007E85] bg-blue-100 text-center"
+              />
+            </div>
+            <div className="mt-2">
+              {isOtpSent && (
+                <ClipLoader
+                  cssOverride={override}
+                  size={20}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              )}
+            </div>
 
-          <p className="mt-5">
-            didn't get the otp?{" "}
-            <span
-              className="text-blue-800 cursor-pointer"
-              onClick={handleResendClick}
+            <p className="mt-5">
+              didn't get the otp?{" "}
+              <span
+                className="text-blue-800 cursor-pointer"
+                onClick={handleResendClick}
+              >
+                Resend otp
+              </span>
+            </p>
+            <button
+              type="submit"
+              className="bg-[#007E85] rounded-lg w-20 h-10 text-white m-4"
             >
-              Resend otp
-            </span>
-          </p>
-          <button
-            type="submit"
-            className="bg-[#007E85] rounded-lg w-20 h-10 text-white m-4"
-          >
-            Verify
-          </button>
-        </form>
+              Verify
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

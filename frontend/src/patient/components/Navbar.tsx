@@ -3,9 +3,12 @@ import { RootState } from "../../app/store";
 import { Link } from "react-router-dom";
 import logo from "../../assets/icon/logo.png";
 import { useDispatch, useSelector } from "react-redux";
+import { IoNotifications } from "react-icons/io5";
 
 import { clearUser } from "../../app/featrue/userSlice";
 import { toast } from "react-toastify";
+import axios, { AxiosError } from "axios";
+import { INotification } from "./../../../../server/src/models/notificationModel";
 
 interface User {
   name: string;
@@ -15,6 +18,8 @@ interface User {
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const user = useSelector(
     (state: RootState) => state.user.user
   ) as User | null;
@@ -31,11 +36,40 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (!token) {
       dispatch(clearUser());
+    } else {
+      fetchNotifications();
     }
   }, [dispatch, token]);
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/notification/${user?.id}`
+      );
+      if (response.data.success) {
+        console.log(response.data);
+        const fetchedNotifications = response.data.notifications;
+        const combinedNotifications = [
+          ...notifications,
+          ...fetchedNotifications.filter(
+            (notif: INotification) =>
+              !notifications.find((existing) => existing._id === notif._id)
+          ),
+        ];
+        setNotifications(combinedNotifications);
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("Error in signup request:", axiosError);
+    }
+  };
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const toggleNotifications = () => {
+    setIsNotificationOpen(!isNotificationOpen);
   };
 
   return (
@@ -80,12 +114,48 @@ const Navbar: React.FC = () => {
               {user?.name.toUpperCase()}
             </h1>
             {user ? (
-              <button
-                className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold hover:bg-green-700 transition duration-300"
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
+              <>
+                <div className="relative flex ">
+                  <IoNotifications
+                    className="text-blue-800 h-5 w-5 cursor-pointer"
+                    onClick={toggleNotifications}
+                  />
+                  {notifications.length > 0 ? (
+                    <div className="Notification_count absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 border-2 rounded-full w-5 h-5 bg-red-600 text-white flex items-center justify-center">
+                      {notifications.length}
+                    </div>
+                  ) : null}
+                  {isNotificationOpen && (
+                    <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                      <ul className="p-2">
+                        {notifications.length === 0 ? (
+                          <li className="text-gray-500">No notifications</li>
+                        ) : (
+                          notifications.map((notification, index) => (
+                            <li
+                              key={index}
+                              className={`text-sm ${
+                                notification.type === "approved"
+                                  ? "bg-green-200"
+                                  : "bg-red-200"
+                              } text-black p-1 border-b last:border-b-0`}
+                            >
+                              {notification.content}
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold hover:bg-green-700 transition duration-300"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <Link to="/login">
                 <button className="bg-[#007E85] rounded-lg p-2 text-white w-24 font-bold hover:bg-green-700 transition duration-300">

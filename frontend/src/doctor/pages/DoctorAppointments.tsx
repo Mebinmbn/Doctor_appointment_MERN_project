@@ -7,6 +7,7 @@ import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
 import DoctorNav from "../components/DoctorNav";
 import { Appointment } from "../../types/appointment";
+import DoctorTopBar from "../components/DoctorTopBar";
 
 function DoctorAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -116,18 +117,7 @@ function DoctorAppointments() {
       <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
         <DoctorNav />
         <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
-          <div className="flex justify-evenly m-5 w-[90%]  mx-auto">
-            <input
-              type="text"
-              placeholder="Search"
-              className="rounded-lg h-10 w-[50%] back bg-gray-200 border-[1px] ml-5 p-3"
-            />
-            <div className="bg-gray-100 rounded-xl w-fit  p-2 ml-auto ">
-              <p className="text-black font-bold">
-                DR. {doctor?.name.toUpperCase()}
-              </p>
-            </div>
-          </div>
+          <DoctorTopBar />
           <div className="flex justify-center  items-center ">
             <div className="w-full max-w-6xl mt-5  shadow-lg rounded-lg bg-[#007E85]">
               <h2 className="text-2xl font-bold mb-4 text-white p-4 text-white border-b text-white">
@@ -153,7 +143,7 @@ function DoctorAppointments() {
                       {currentAppointments?.map((appointment: Appointment) => (
                         <tr key={appointment._id}>
                           <td className="py-2 px-4 text-white border-b">
-                            {appointment.patientId.firstName}
+                            {appointment.patientId?.firstName}
                           </td>
 
                           <td className="py-2 px-4 text-white border-b">
