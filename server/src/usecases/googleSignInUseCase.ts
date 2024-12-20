@@ -23,7 +23,7 @@ export const googleSignIn = async (token: string) => {
     };
     patient = await patientRepository.createPatient(newPatient);
   } else if (patient.isBlocked) {
-    throw new Error("Access denied");
+    throw new Error("Your account is blocked");
   }
 
   const jwtoken = generateToken(patient.id, patient.role, patient.isBlocked);

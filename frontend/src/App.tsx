@@ -1,26 +1,27 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PatientLogin from "./patient/pages/PatientLogin";
+import PatientLogin from "./pages/patient/PatientLogin";
 import { ToastContainer } from "react-toastify";
-import OTPVerification from "./patient/pages/OtpVeryfication";
-import Home from "./patient/pages/Home";
-import DoctorRegister from "./doctor/pages/DoctorRegister";
-import DoctorSignin from "./doctor/pages/DoctorSignin";
-import DoctorDashboard from "./doctor/pages/DoctorDashboard";
-import AdminSignin from "./admin/pages/AdminSignin";
-import AdminDashboard from "./admin/pages/AdminDashboard";
-import DoctorsList from "./admin/pages/DoctorsList";
-import Doctors from "./patient/pages/Doctors";
-import AllDoctors from "./admin/pages/AllDoctors";
-import AllPatients from "./admin/pages/AllPatients";
-import ForgotPassword from "./patient/pages/ForgotPassword";
-import ResetPassword from "./patient/pages/ResetPassword";
-import PickDateTime from "./patient/pages/PickDateTime";
-import PatientDetails from "./patient/pages/PatientDetails";
-import PaymentPage from "./patient/pages/PaymentPage";
-import DoctorAppointments from "./doctor/pages/DoctorAppointments";
+import OTPVerification from "./pages/patient/OtpVeryfication";
+import Home from "./pages/patient/Home";
+import DoctorRegister from "./pages/doctor/DoctorRegister";
+import DoctorSignin from "./pages/doctor/DoctorSignin";
+import DoctorDashboard from "./pages/doctor/DoctorDashboard";
+import AdminSignin from "./pages/admin/AdminSignin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import DoctorsList from "./pages/admin/DoctorsList";
+import Doctors from "./pages/patient/Doctors";
+import AllDoctors from "./pages/admin/AllDoctors";
+import AllPatients from "./pages/admin/AllPatients";
+import ForgotPassword from "./pages/patient/ForgotPassword";
+import ResetPassword from "./pages/patient/ResetPassword";
+import PickDateTime from "./pages/patient/PickDateTime";
+import PatientDetails from "./pages/patient/PatientDetails";
+import PaymentPage from "./pages/patient/PaymentPage";
+import DoctorAppointments from "./pages/doctor/DoctorAppointments";
 import ErrorPage from "./components/ErrorPage";
-import AdminAppointments from "./admin/pages/AdminAppointments";
-import DoctorTimeSlot from "./doctor/pages/DoctorTimeSlot";
+import AdminAppointments from "./pages/admin/AdminAppointments";
+import DoctorTimeSlot from "./pages/doctor/DoctorTimeSlot";
+import TimeSlotForm from "./pages/doctor/TimeSlotForm";
 
 function App() {
   return (
@@ -49,18 +50,19 @@ function App() {
           <Route path="/patientDetails" element={<PatientDetails />} />
           <Route path="/paymentPage" element={<PaymentPage />} />
           {/* doctorRoutes */}
-          <Route path="/doctorSignup" element={<DoctorRegister />} />
-          <Route path="/doctorSignin" element={<DoctorSignin />} />
+          <Route path="/doctor/signup" element={<DoctorRegister />} />
+          <Route path="/doctor/login" element={<DoctorSignin />} />
           <Route path="/doctor" element={<DoctorDashboard />} />
-          <Route path="/doctorAppointments" element={<DoctorAppointments />} />
-          <Route path="/doctorTimeSlot" element={<DoctorTimeSlot />} />
+          <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+          <Route path="/doctor/timeSlot" element={<DoctorTimeSlot />} />
+          <Route path="/doctor/timeSlotForm" element={<TimeSlotForm />} />
           {/* adminRoutes */}
-          <Route path="/adminSignin" element={<AdminSignin />} />
+          <Route path="/admin/login" element={<AdminSignin />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/adminApplications" element={<DoctorsList />} />
-          <Route path="/adminDoctors" element={<AllDoctors />} />
-          <Route path="/adminPatients" element={<AllPatients />} />
-          <Route path="/adminAppointments" element={<AdminAppointments />} />
+          <Route path="/admin/applications" element={<DoctorsList />} />
+          <Route path="/admin/doctors" element={<AllDoctors />} />
+          <Route path="/admin/patients" element={<AllPatients />} />
+          <Route path="/admin/appointments" element={<AdminAppointments />} />
 
           {/* errorPage */}
           <Route path="*" element={<ErrorPage />} />

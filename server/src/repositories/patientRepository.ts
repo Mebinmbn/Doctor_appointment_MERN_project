@@ -77,6 +77,7 @@ const fetchPatientDetails = async (id: string) => {
 ////////////////////////////////////////////////////////////////////////
 
 const createPatientDetails = async (patientData: IPatientDetails) => {
+  console.log("create patient details");
   try {
     const patient = new PatientDetailsModel(patientData);
     await patient.save();

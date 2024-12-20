@@ -31,7 +31,7 @@ export const signInPatient = async (
   } else if (!patient.isVerified) {
     throw new Error("User is not verified");
   } else if (patient.isBlocked) {
-    throw new Error("Access denied");
+    throw new Error("Your account is blocked");
   }
 
   const isPasswordValid = await comparePassword(password, patient.password);

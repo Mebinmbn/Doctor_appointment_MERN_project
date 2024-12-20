@@ -41,12 +41,12 @@ const fetchAppointments = async (id: string) => {
   }
 };
 /////////////////////////////////////////////////////////////////////
-const approve = async (id: string) => {
+const cancel = async (id: string) => {
   console.log("doctor repo");
   try {
     const appointments = await AppointmentModel.findByIdAndUpdate(
       { _id: id },
-      { $set: { status: "confirmed" } },
+      { $set: { status: "cancelled" } },
       { new: true }
     );
     console.log(appointments);
@@ -57,20 +57,20 @@ const approve = async (id: string) => {
 };
 
 /////////////////////////////////////////////////////////////////////
-const reject = async (id: string) => {
-  console.log("doctor repo", id);
-  try {
-    const appointments = await AppointmentModel.findByIdAndUpdate(
-      { _id: id },
-      { $set: { status: "rejected" } },
-      { new: true }
-    );
-    console.log(appointments);
-    return appointments;
-  } catch (error) {
-    throw new Error("Error in rejecting appointments");
-  }
-};
+// const reject = async (id: string) => {
+//   console.log("doctor repo", id);
+//   try {
+//     const appointments = await AppointmentModel.findByIdAndUpdate(
+//       { _id: id },
+//       { $set: { status: "rejected" } },
+//       { new: true }
+//     );
+//     console.log(appointments);
+//     return appointments;
+//   } catch (error) {
+//     throw new Error("Error in rejecting appointments");
+//   }
+// };
 
 /////////////////////////////////////////////////////////////////////
 const updateTimeSlots = async (
@@ -108,7 +108,7 @@ export default {
   createDoctor,
   verifyDoctor,
   fetchAppointments,
-  approve,
-  reject,
+  cancel,
+  // reject,
   updateTimeSlots,
 };

@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import { config } from "dotenv";
+import jwt from "jsonwebtoken";
 
 config();
 
@@ -8,9 +8,14 @@ export const generateToken = (
   userRole: string,
   userIsBlocked: boolean
 ): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET not defined");
+  }
+  console.log(secret);
   return jwt.sign(
     { id: userId, role: userRole, isBlocked: userIsBlocked },
-    "mysorebank",
+    secret,
     { expiresIn: "1h" }
   );
 };

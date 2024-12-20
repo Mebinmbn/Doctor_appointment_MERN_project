@@ -21,7 +21,7 @@ app.use(
     credentials: true,
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "User-Type"],
     preflightContinue: false,
     optionsSuccessStatus: 204,
   })

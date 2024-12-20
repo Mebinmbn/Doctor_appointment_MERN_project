@@ -10,7 +10,6 @@ import {
   signUpPatient,
   storePatientDetails,
 } from "../usecases/patientUseCases";
-import { createNewTimeSlotRecord } from "../repositories/timeSlotsRepository";
 
 const signUp = async (req: Request, res: Response) => {
   try {
@@ -68,7 +67,6 @@ const reset = async (req: Request, res: Response) => {
 const doctors = async (req: Request, res: Response) => {
   try {
     const doctors = await getDoctors();
-    await createNewTimeSlotRecord();
 
     if (doctors) {
       res

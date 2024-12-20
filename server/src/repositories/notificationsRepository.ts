@@ -16,8 +16,8 @@ const createAppointmentNotification = async (
         throw new Error("Doctor not found to create notification");
       }
       let status;
-      if (type === "approved") {
-        status = "confirmed";
+      if (type === "cancelled") {
+        status = "cancelled";
       } else {
         status = "rejected";
       }

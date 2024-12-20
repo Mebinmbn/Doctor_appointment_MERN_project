@@ -1,6 +1,7 @@
 import { IDoctor } from "../models/doctorModel";
 import doctorRepository from "../repositories/doctorRepository";
 import notificationsRepository from "../repositories/notificationsRepository";
+import timeSlotsRepository from "../repositories/timeSlotsRepository";
 import { comparePassword, hashPassword } from "../services/bcryptService";
 import { generateToken } from "../services/tokenService";
 import validation from "../utils/validation";
@@ -33,7 +34,7 @@ export const signinDoctor = async (email: string, password: string) => {
     } else if (!doctor.isVerified) {
       throw new Error("Doctor is not verified");
     } else if (doctor.isBlocked) {
-      throw new Error("Access denied");
+      throw new Error("Your account is blocked");
     }
 
     const isPasswordValid = await comparePassword(password, doctor.password);
@@ -58,37 +59,45 @@ export const getAppointments = async (id: string) => {
   }
 };
 
-export const approveAppointment = async (id: string) => {
+export const cancelAppointment = async (id: string) => {
   try {
-    const appointment = await doctorRepository.approve(id);
+    const appointment = await doctorRepository.cancel(id);
     if (appointment) {
       const notification =
         await notificationsRepository.createAppointmentNotification(
           appointment,
-          "approved",
+          "cancelld",
           "doctor"
         );
     }
     return appointment;
   } catch (error) {
-    throw new Error("Error in approval");
+    throw new Error("Error in cancelling");
   }
 };
 
-export const rejectAppointment = async (id: string) => {
+// export const rejectAppointment = async (id: string) => {
+//   try {
+//     const appointment = await doctorRepository.reject(id);
+//     if (appointment) {
+//       const notification =
+//         await notificationsRepository.createAppointmentNotification(
+//           appointment,
+//           "rejected",
+//           "doctor"
+//         );
+//     }
+//     return appointment;
+//   } catch (error) {
+//     throw new Error("Error in rejection");
+//   }
+// };
+
+export const createDoctorTimeSlots = async (doctorId: string, slots: []) => {
   try {
-    const appointment = await doctorRepository.reject(id);
-    if (appointment) {
-      const notification =
-        await notificationsRepository.createAppointmentNotification(
-          appointment,
-          "rejected",
-          "doctor"
-        );
-    }
-    return appointment;
+    return await timeSlotsRepository.createNewTimeSlotRecord(doctorId, slots);
   } catch (error) {
-    throw new Error("Error in rejection");
+    throw new Error("Error in creating time slots");
   }
 };
 

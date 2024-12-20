@@ -16,7 +16,7 @@ const findUnapprovedDoctors = async () => {
   try {
     return await DoctorModel.find({
       isApproved: false,
-      isVerified: true,
+
       isRejected: false,
     });
   } catch {

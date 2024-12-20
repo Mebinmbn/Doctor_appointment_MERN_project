@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import {
-  approveAppointment,
+  cancelAppointment,
+  createDoctorTimeSlots,
   getAppointments,
   registerDoctor,
-  rejectAppointment,
   removeDoctorTimeSlots,
   signinDoctor,
 } from "../usecases/doctorUseCases";
 import { getTimeSlots } from "../usecases/patientUseCases";
+import { ITimeSlots } from "../models/timeSlotsModel";
 
 const register = async (req: Request, res: Response) => {
   console.log(req.file);
@@ -63,6 +64,7 @@ const signin = async (req: Request, res: Response) => {
 
 const appointments = async (req: Request, res: Response) => {
   const { id } = req.params;
+  console.log("appointments", id);
   try {
     const appointments = await getAppointments(id);
 
@@ -77,10 +79,10 @@ const appointments = async (req: Request, res: Response) => {
   }
 };
 
-const approve = async (req: Request, res: Response) => {
+const cancel = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const appointment = await approveAppointment(id);
+    const appointment = await cancelAppointment(id);
 
     res
       .status(200)
@@ -91,14 +93,31 @@ const approve = async (req: Request, res: Response) => {
   }
 };
 
-const reject = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const appointment = await rejectAppointment(id);
+// const reject = async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   try {
+//     const appointment = await rejectAppointment(id);
 
-    res
-      .status(200)
-      .json({ success: true, appointment, message: "Rejected successfully" });
+//     res
+//       .status(200)
+//       .json({ success: true, appointment, message: "Rejected successfully" });
+//   } catch (error: any) {
+//     const errorMessage = error.message || "An unexpected error occurred";
+//     res.status(400).json({ success: false, error: errorMessage });
+//   }
+// };
+
+const createTimeSlots = async (req: Request, res: Response) => {
+  console.log("doctor timeslots");
+  const { id } = req.params;
+  const { slots } = req.body;
+  console.log(id, slots);
+  try {
+    const timeSlots = await createDoctorTimeSlots(id, slots);
+
+    if (timeSlots) {
+      res.status(200).json({ success: true, timeSlots, message: "" });
+    }
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
     res.status(400).json({ success: false, error: errorMessage });
@@ -144,8 +163,10 @@ export default {
   register,
   signin,
   appointments,
-  approve,
-  reject,
+  // approve,
+  // reject,
+  cancel,
   timeSlots,
   removeTimeSlots,
+  createTimeSlots,
 };
