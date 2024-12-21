@@ -71,7 +71,7 @@ function PatientDetails() {
     const id = user?.id;
     console.log("id from fetchPatientDetails", id);
     try {
-      const response = await api.get(`/patients/appointments/patient/${id}`, {
+      const response = await api.get(`/patients/patient/${id}`, {
         headers: {
           "User-Type": "patient",
         },

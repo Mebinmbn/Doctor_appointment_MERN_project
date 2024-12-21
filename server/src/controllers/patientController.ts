@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import {
   bookAppointment,
+  cancelAppointment,
   conformTimeSlot,
+  getAppointments,
   getDoctors,
   getPatient,
   getTimeSlots,
@@ -66,16 +68,55 @@ const reset = async (req: Request, res: Response) => {
 
 const doctors = async (req: Request, res: Response) => {
   try {
-    const doctors = await getDoctors();
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || "";
+    const specialization = (req.query.specialization as string) || "";
+    const gender = (req.query.gender as string) || "";
+    const experience = (req.query.experience as string) || "";
+
+    const query: any = {};
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+      ];
+    }
+    if (specialization) {
+      query.specialization = { $regex: specialization, $options: "i" };
+    }
+    if (gender) {
+      query.gender = gender;
+    }
+    if (experience) {
+      query.experience = { $gte: parseInt(experience, 10) };
+    }
+
+    query.isApproved = true;
+    query.isVerified = true;
+    query.isBlocked = false;
+    console.log(query);
+
+    const { doctors, totalDocs, totalPages } = await getDoctors(
+      page,
+      limit,
+      query
+    );
 
     if (doctors) {
-      res
-        .status(200)
-        .json({ success: true, doctors, message: "Request successfull" });
+      res.status(200).json({
+        success: true,
+        data: doctors,
+        meta: { page, limit, totalDocs, totalPages },
+      });
     }
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
-    res.status(400).json({ success: false, error: errorMessage });
+    res.status(500).json({
+      success: false,
+      error: errorMessage,
+      message: "Internal Server Error",
+    });
   }
 };
 
@@ -166,6 +207,35 @@ const lockTimeSlot = async (req: Request, res: Response) => {
   }
 };
 
+const appointments = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const appointments = await getAppointments(id);
+    res.status(200).json({
+      success: true,
+      appointments,
+      message: "Appointments fected successfully",
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const cancel = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const appointment = await cancelAppointment(id);
+
+    res
+      .status(200)
+      .json({ success: true, appointment, message: "Approved successfully" });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   signUp,
   signIn,
@@ -176,4 +246,6 @@ export default {
   patientData,
   book,
   lockTimeSlot,
+  appointments,
+  cancel,
 };

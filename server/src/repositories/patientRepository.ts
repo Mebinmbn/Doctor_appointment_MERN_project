@@ -43,9 +43,14 @@ const resetPassword = async (hashedPassword: string, email: string) => {
 };
 
 /////////////////////////////////////////////////////////////////////
-const findAllDoctors = async () => {
+const findAllDoctors = async (page: number, limit: number, query: {}) => {
   try {
-    return await DoctorModel.find({ isApproved: true, isBlocked: false });
+    const doctors = await DoctorModel.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const totalDocs = await DoctorModel.countDocuments(query);
+    const totalPages = Math.ceil(totalDocs / limit);
+    return { doctors, totalDocs, totalPages };
   } catch (error) {
     throw new Error("Error in fetching doctors");
   }
@@ -59,7 +64,9 @@ const getDoctorTimeSlots = async (id: string) => {
 
     date.setUTCHours(0, 0, 0, 0);
 
-    return await TimeSlotsModel.find({ doctor: id, date: { $gte: date } });
+    return await TimeSlotsModel.find({ doctor: id, date: { $gte: date } })
+      .sort({ date: 1 })
+      .limit(7);
   } catch (error) {
     throw new Error("Error in fetching doctors");
   }
@@ -124,6 +131,37 @@ const lockTimeSlot = async (doctorId: string, date: string, time: string) => {
   }
 };
 
+const fetchAppointments = async (id: string) => {
+  console.log("patient repo", id);
+  try {
+    const appointments = await AppointmentModel.find({
+      patientId: id,
+    })
+      .sort({ createdAt: -1 })
+      .populate("doctorId", "firstName lastName specialization")
+      .populate("patientId", "firstName lastName email");
+
+    return appointments;
+  } catch (error) {
+    throw new Error("Error in fetching appointments");
+  }
+};
+
+const cancel = async (id: string) => {
+  console.log("patient repo");
+  try {
+    const appointments = await AppointmentModel.findByIdAndUpdate(
+      { _id: id },
+      { $set: { status: "cancelled" } },
+      { new: true }
+    );
+    console.log(appointments);
+    return appointments;
+  } catch (error) {
+    throw new Error("Error in approving appointments");
+  }
+};
+
 export default {
   createPatient,
   findPatientByEmail,
@@ -136,4 +174,6 @@ export default {
   createAppointment,
   checkAppointment,
   lockTimeSlot,
+  fetchAppointments,
+  cancel,
 };

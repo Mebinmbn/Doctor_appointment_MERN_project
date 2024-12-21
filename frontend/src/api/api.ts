@@ -1,6 +1,6 @@
 import axios from "axios";
 import { clearToken, getLoginUrl, getToken } from "../utility/apiUtility";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api/",
@@ -32,19 +32,15 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.log(error.response.status);
     if (
       (error.response && error.response.status === 403) ||
       error.response.status === 401
     ) {
       const userType = error.config.headers["User-Type"];
-      let errorMessage;
-      if (error.response.status === 403)
-        errorMessage = "Your account is blocked. Logging out";
-      else if (error.respose.status === 401) errorMessage = "Token exprired";
 
       clearToken(userType);
       window.location.href = getLoginUrl(userType);
-      toast.error(errorMessage);
     }
     return Promise.reject(error);
   }

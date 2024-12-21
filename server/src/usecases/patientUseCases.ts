@@ -51,9 +51,9 @@ export const ResetPassword = async (password: string, email: string) => {
   }
 };
 
-export const getDoctors = async () => {
+export const getDoctors = async (page: number, limit: number, query: {}) => {
   try {
-    return await patientRepository.findAllDoctors();
+    return await patientRepository.findAllDoctors(page, limit, query);
   } catch (error) {
     throw new Error("Error in fetching doctors");
   }
@@ -122,5 +122,30 @@ export const conformTimeSlot = async (
     return await patientRepository.lockTimeSlot(doctorId, date, time);
   } catch (error) {
     throw new Error("Error in locking  timeSlot");
+  }
+};
+
+export const getAppointments = async (id: string) => {
+  try {
+    return await patientRepository.fetchAppointments(id);
+  } catch (error) {
+    throw new Error("Error in fetching appointments");
+  }
+};
+
+export const cancelAppointment = async (id: string) => {
+  try {
+    const appointment = await patientRepository.cancel(id);
+    if (appointment) {
+      const notification =
+        await notificationsRepository.createAppointmentNotification(
+          appointment,
+          "cancelld",
+          "doctor"
+        );
+    }
+    return appointment;
+  } catch (error) {
+    throw new Error("Error in cancelling");
   }
 };

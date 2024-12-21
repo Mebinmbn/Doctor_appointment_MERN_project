@@ -78,28 +78,31 @@ const updateTimeSlots = async (
   date: string,
   time: string[]
 ) => {
-  console.log("doctor repo", doctorId);
+  console.log("doctor repo", doctorId, time);
   try {
-    const data = await TimeSlotsModel.findOne({
+    const timeSlotRecord = await TimeSlotsModel.findOne({
       doctor: doctorId,
-      date: date,
+      date: new Date(date),
     });
-    console.log(data);
-    if (!data) {
-      console.log("no data found");
-      throw new Error("No data found");
+
+    if (!timeSlotRecord) {
+      throw new Error("Time slot record not found");
     }
-    const updatedTimeSlots = data.timeSlots.map((slot) => {
-      if (time.includes(slot.time)) {
-        slot.isBooked = true;
-      }
-      return slot;
-    });
-    data.timeSlots = updatedTimeSlots;
-    await data.save();
-    return data;
+
+    // console.log("Before filtering:", timeSlotRecord.timeSlots);
+
+    timeSlotRecord.timeSlots = timeSlotRecord.timeSlots.filter(
+      (timeSlot) => !time.includes(timeSlot.time)
+    );
+
+    // console.log("After filtering:", timeSlotRecord.timeSlots);
+
+    await timeSlotRecord.save();
+    console.log(timeSlotRecord);
+    return timeSlotRecord;
   } catch (error) {
-    throw new Error("Error in rejecting appointments");
+    console.error("Error in updating time slots:", error);
+    throw new Error("Error in updating time slots");
   }
 };
 

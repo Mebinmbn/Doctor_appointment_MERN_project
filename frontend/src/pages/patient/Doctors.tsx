@@ -11,18 +11,20 @@ import { useSearch } from "../../contexts/SearchContext";
 import { setDoctorToConsult } from "../../app/featrue/userSlice";
 import api from "../../api/api";
 
-function Doctors() {
-  const [doctors, setDoctors] = useState([]);
+const Doctors = () => {
+  const [doctors, setDoctors] = useState<IDoctor[]>([]);
+  const [filteredDoctors, setFilteredDoctors] = useState<IDoctor[]>([]);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [gender, setGender] = useState("");
   const [experience, setExperience] = useState("");
-  const [filteredDoctors, setFilteredDoctors] = useState<IDoctor[]>([]);
   const { searchKey, setSearchKey } = useSearch();
   const dispatch: AppDispatch = useDispatch();
-
-  const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+  const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const toastId = "loginToContinue";
@@ -34,31 +36,30 @@ function Doctors() {
     }
   }, [user, navigate]);
 
-  console.log("doctors", doctors);
-
   const fetchDoctors = useCallback(async () => {
     try {
-      const doctorsData = await api.get("/patients/doctors", {
-        headers: {
-          "User-Type": "patient",
-        },
-      });
-      if (doctorsData.data) {
-        console.log(doctorsData.data);
-        setDoctors(doctorsData.data.doctors);
-        dispatch(setDoctorsArray({ doctors: doctorsData.data }));
+      const response = await api.get(
+        `/patients/doctors?page=${page}&limit=${limit}&search=${searchQuery}&specialization=${specialization}&gender=${gender}&experience=${experience}`,
+        {
+          headers: {
+            "User-Type": "patient",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setDoctors(response.data.data);
+        setTotalPages(response.data.meta.totalPages);
+        dispatch(setDoctorsArray({ doctors: response.data.data }));
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.log(error);
+    } catch (error) {
+      console.error("Error fetching doctors:", error);
     }
-  }, [dispatch]);
+  }, [page, limit, searchQuery, specialization, gender, experience, dispatch]);
 
   useEffect(() => {
-    if (user) {
-      fetchDoctors();
-    }
-  }, [fetchDoctors, user]);
+    fetchDoctors();
+  }, [fetchDoctors]);
 
   const clearFilter = () => {
     setSearchQuery("");
@@ -66,48 +67,17 @@ function Doctors() {
     setGender("");
     setExperience("");
     setSearchKey("");
+    setPage(1);
   };
 
   useEffect(() => {
     if (searchKey) {
       setSearchQuery(searchKey);
     }
-  }, [searchKey, navigate]);
+  }, [searchKey]);
 
-  useEffect(() => {
-    const applyFilters = () => {
-      const filtered = doctors.filter((doctor: IDoctor) => {
-        const matchesSearch =
-          searchQuery === "" ||
-          `${doctor.firstName} ${doctor.lastName}`
-            .toLowerCase()
-            .includes(searchQuery);
-        const matchesSpecialization =
-          specialization === "" ||
-          doctor.specialization.toLowerCase() === specialization;
-        const matchesGender =
-          gender === "" || doctor.gender.toLowerCase() === gender;
-        const matchesExperience =
-          experience === "" ||
-          parseInt(doctor.experience, 10) >= parseInt(experience, 10);
-
-        return (
-          matchesSearch &&
-          matchesSpecialization &&
-          matchesGender &&
-          matchesExperience
-        );
-      });
-      setFilteredDoctors(filtered);
-    };
-
-    applyFilters();
-  }, [searchQuery, specialization, gender, experience, doctors]);
-
-  const handleAppointment = (index: number) => {
-    console.log(doctors[index]);
-    dispatch(setDoctorToConsult(doctors[index]));
-
+  const handleAppointment = (doctor: IDoctor) => {
+    dispatch(setDoctorToConsult(doctor));
     navigate("/pickDate");
   };
 
@@ -175,7 +145,7 @@ function Doctors() {
             </select>
           </div>
           <button
-            onClick={() => clearFilter()}
+            onClick={clearFilter}
             className="bg-white m-2 px-3 py-2 border border-[#007E85]  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
           >
             Clear Filters
@@ -183,40 +153,57 @@ function Doctors() {
         </div>
       </div>
 
-      {/* <div className="bg-blue-300 w-full h-3 my-5"></div> */}
       <div className="flex w-90 flex-wrap justify-center gap-5 ml-auto p-5 border-8">
-        {filteredDoctors.map((doctor: IDoctor, index) => (
-          <div className="  gap-5 border-[2px] border-[#007E85] h-fit w-[15rem]  my-4 rounded-lg p-5">
+        {doctors.map((doctor: IDoctor) => (
+          <div
+            key={doctor._id}
+            className="gap-5 border-[2px] border-[#007E85] h-fit w-[15rem] my-4 rounded-lg p-5"
+          >
             <img
               src={doctorIcon}
               alt=""
               className="rounded-full border-[2px] border-[#007E85] h-[90%] w-[40%] mt-2 mx-auto object-cover"
-              key={index}
             />
-            <div className=" h-full w-full  text-center">
+            <div className="h-full w-full text-center">
               <h1 className="text-[#007E85] font-extrabold my-4">
-                DR. {doctor.firstName.toUpperCase()}
-                <span> {doctor.lastName.toUpperCase()}</span>
+                DR. {doctor.firstName.toUpperCase()}{" "}
+                <span>{doctor.lastName.toUpperCase()}</span>
               </h1>
               <p className="font-bold">{doctor.specialization.toUpperCase()}</p>
-              <p>{doctor.location} </p>
+              <p>{doctor.location}</p>
               <p>{doctor.experience} years experience</p>
               <p>
-                ₹ {doctor.fees}
-                <span className="text-red-500"> Consultation Fees</span>
+                ₹ {doctor.fees}{" "}
+                <span className="text-red-500">Consultation Fees</span>
               </p>
               <button
-                onClick={() => handleAppointment(index)}
+                onClick={() => handleAppointment(doctor)}
                 className="bg-[#007E85] rounded-lg px-2 py-1 m-3 text-white w-fit font-bold"
               >
-                Get An Appointmet
+                Get An Appointment
               </button>
             </div>
           </div>
         ))}
       </div>
+      <div className="flex justify-center my-3 p-2 bg-blue-900">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page <= 1}
+          className="px-4 py-2 bg-gray-300 rounded mx-2 cursor-pointer"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={page >= totalPages}
+          className="px-8 py-2 bg-gray-300 rounded mx-2 cursor-pointer"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
-}
+};
 
 export default React.memo(Doctors);

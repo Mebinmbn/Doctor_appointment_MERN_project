@@ -22,6 +22,8 @@ import ErrorPage from "./components/ErrorPage";
 import AdminAppointments from "./pages/admin/AdminAppointments";
 import DoctorTimeSlot from "./pages/doctor/DoctorTimeSlot";
 import TimeSlotForm from "./pages/doctor/TimeSlotForm";
+import Profile from "./pages/patient/Profile";
+import Appointments from "./pages/patient/Appointments";
 
 function App() {
   return (
@@ -44,11 +46,13 @@ function App() {
           <Route path="/login" element={<PatientLogin />} />
           <Route path="/otp" element={<OTPVerification />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/pickDate" element={<PickDateTime />} />
           <Route path="/patientDetails" element={<PatientDetails />} />
           <Route path="/paymentPage" element={<PaymentPage />} />
+          <Route path="/appointments" element={<Appointments />} />
           {/* doctorRoutes */}
           <Route path="/doctor/signup" element={<DoctorRegister />} />
           <Route path="/doctor/login" element={<DoctorSignin />} />

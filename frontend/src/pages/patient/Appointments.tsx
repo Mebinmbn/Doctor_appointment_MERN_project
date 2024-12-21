@@ -1,37 +1,37 @@
+import PatientSideBar from "../../components/patient/PatientSideBar";
+import PatientTopBar from "../../components/patient/PatientTopBar";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
-import DoctorNav from "../../components/doctor/DoctorNav";
 import { Appointment } from "../../types/appointment";
-import DoctorTopBar from "../../components/doctor/DoctorTopBar";
 import api from "../../api/api";
 
-const DoctorAppointments: React.FC = () => {
+function Appointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const doctor = useSelector((state: RootState) => state.doctor.doctor);
+  const user = useSelector((state: RootState) => state.user.user);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
 
   useEffect(() => {
     const toastId = "loginToContinue";
-    if (!doctor) {
+    if (!user) {
       navigate("/doctor/login");
       if (!toast.isActive(toastId)) {
         toast.warn("Login to continue", { toastId });
       }
     }
-  }, [doctor, navigate]);
+  }, [user, navigate]);
 
   const fetchAppointments = useCallback(async () => {
-    if (!doctor) return;
+    if (!user) return;
 
     try {
-      const response = await api.get(`doctor/appointments/${doctor.id}`, {
+      const response = await api.get(`patients/appointments/${user.id}`, {
         headers: {
-          "User-Type": "doctor",
+          "User-Type": "patient",
         },
       });
 
@@ -42,21 +42,20 @@ const DoctorAppointments: React.FC = () => {
       console.error("Error fetching appointments:", error);
       toast.error("Failed to fetch appointments");
     }
-  }, [doctor]);
+  }, [user]);
 
   useEffect(() => {
-    if (doctor) fetchAppointments();
-  }, [doctor, fetchAppointments]);
-  console.log(appointments);
+    if (user) fetchAppointments();
+  }, [user, fetchAppointments]);
 
   const handleCancel = async (id: string) => {
     try {
       const response = await api.put(
-        `/doctor/appointments/cancel/${id}`,
+        `/patients/appointments/cancel/${id}`,
         { role: "Appointments" },
         {
           headers: {
-            "User-Type": "doctor",
+            "User-Type": "patient",
           },
         }
       );
@@ -81,12 +80,11 @@ const DoctorAppointments: React.FC = () => {
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
-      <DoctorNav />
+      <PatientSideBar />
       <div className="bg-white h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
-        <DoctorTopBar />
+        <PatientTopBar />
         <div className="flex justify-center items-center">
           <div className="w-full max-w-6xl mt-5 shadow-lg rounded-lg bg-[#007E85]">
             <h2 className="text-2xl font-bold mb-4 text-white p-4 border-b">
@@ -95,7 +93,7 @@ const DoctorAppointments: React.FC = () => {
             <table className="min-w-full bg-[#007E85] border">
               <thead>
                 <tr>
-                  <th className="py-2 px-4 text-white border-b">Patient</th>
+                  <th className="py-2 px-4 text-white border-b">Doctor</th>
                   <th className="py-2 px-4 text-white border-b">Date</th>
                   <th className="py-2 px-4 text-white border-b">Time</th>
                   <th className="py-2 px-4 text-white border-b">Payment</th>
@@ -108,7 +106,7 @@ const DoctorAppointments: React.FC = () => {
                   currentAppointments.map((appointment) => (
                     <tr key={appointment._id}>
                       <td className="py-2 px-4 text-white border-b">
-                        {appointment.patientId?.firstName}
+                        Dr. {appointment.doctorId?.firstName}
                       </td>
                       <td className="py-2 px-4 text-white border-b">
                         {appointment.date.toString().slice(0, 10)}
@@ -170,6 +168,6 @@ const DoctorAppointments: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
-export default DoctorAppointments;
+export default Appointments;

@@ -28,6 +28,20 @@ router.get(
   patientController.timeSlots
 );
 
+router.get(
+  "/appointments/:id",
+  authMiddleware,
+  roleMiddleware("user"),
+  patientController.appointments
+);
+
+router.put(
+  "/appointments/cancel/:id",
+  authMiddleware,
+  roleMiddleware("user"),
+  patientController.cancel
+);
+
 router.put(
   "/appointments/lockTimeSlot",
   authMiddleware,
@@ -36,7 +50,7 @@ router.put(
 );
 
 router.get(
-  "/appointments/patient/:id",
+  "/patient/:id",
   authMiddleware,
   roleMiddleware("user"),
   patientController.patient

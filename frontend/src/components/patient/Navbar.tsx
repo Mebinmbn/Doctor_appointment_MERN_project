@@ -110,9 +110,12 @@ const Navbar: React.FC = () => {
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-3 ml-auto">
-            <h1 className="text-[#007E85] font-bold">
-              {user?.name.toUpperCase()}
-            </h1>
+            <Link to="/profile">
+              {" "}
+              <h1 className="text-[#007E85] font-bold">
+                {user?.name.toUpperCase()}
+              </h1>
+            </Link>
             {user ? (
               <>
                 <div className="relative flex ">

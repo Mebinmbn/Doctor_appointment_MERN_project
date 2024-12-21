@@ -76,10 +76,24 @@ function PickDateTime() {
       const dateData = timeSlots.filter((data) => {
         if (data.date === date) return data;
       });
-      const avalableTimes = dateData[0].timeSlots.filter(
-        (time) => time.isBooked === false
-      );
-      avalableTimes.forEach((data) => data.time);
+      const currentDate = new Date();
+      const selectedDateObj = new Date(date);
+      const avalableTimes = dateData[0].timeSlots.filter((time) => {
+        if (time.isBooked === false) {
+          if (selectedDateObj.toDateString() === currentDate.toDateString()) {
+            const [hour, minute] = time.time.split(":");
+            const meridian = time.time.split(" ")[1];
+            const timeDate = new Date(date);
+            timeDate.setHours(
+              parseInt(hour) + (meridian === "PM" && hour !== "12" ? 12 : 0),
+              parseInt(minute)
+            );
+            return timeDate > currentDate;
+          }
+          return true;
+        }
+        return false;
+      });
       setTimes(avalableTimes);
       console.log("times", dateData[0].timeSlots);
     }

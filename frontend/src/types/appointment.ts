@@ -3,7 +3,7 @@ import { Doctor } from "./doctor";
 
 export interface Appointment {
   _id: string;
-  doctor: Doctor;
+  doctorId: Doctor;
   patientId: User;
   date: string;
   time: string;

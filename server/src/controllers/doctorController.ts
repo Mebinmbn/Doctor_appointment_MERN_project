@@ -142,10 +142,15 @@ const timeSlots = async (req: Request, res: Response) => {
 };
 
 const removeTimeSlots = async (req: Request, res: Response) => {
-  const { doctorId, date, time } = req.body;
-  console.log(doctorId, date, time);
+  const { doctorId, date } = req.params;
+  const time = req.body;
+  console.log(time.timeSlotsToRemove);
   try {
-    const timeSlots = await removeDoctorTimeSlots(doctorId, date, time);
+    const timeSlots = await removeDoctorTimeSlots(
+      doctorId,
+      date,
+      time.timeSlotsToRemove
+    );
     if (timeSlots) {
       res.status(200).json({
         success: true,

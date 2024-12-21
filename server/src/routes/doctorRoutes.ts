@@ -44,7 +44,7 @@ router.get(
 );
 
 router.put(
-  "/timeSlots",
+  "/timeSlots/:doctorId/:date",
   authMiddleware,
   roleMiddleware("doctor"),
   doctorController.removeTimeSlots
