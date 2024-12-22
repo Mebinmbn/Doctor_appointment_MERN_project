@@ -50,4 +50,11 @@ router.put(
   doctorController.removeTimeSlots
 );
 
+router.get(
+  "/notifications/:id",
+  authMiddleware,
+  roleMiddleware("doctor"),
+  doctorController.notifications
+);
+
 export default router;

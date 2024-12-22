@@ -1,5 +1,7 @@
+import { query } from "express";
 import AppointmentModel, { IAppointment } from "../models/appointmentModel";
 import DoctorModel from "../models/doctorModel";
+import NotificationModel from "../models/notificationModel";
 import PatientDetailsModel, {
   IPatientDetails,
 } from "../models/patientDetailsModel";
@@ -162,6 +164,25 @@ const cancel = async (id: string) => {
   }
 };
 
+const notifications = async (id: string, page: number, limit: number) => {
+  console.log("patient repo", id, page, limit);
+  try {
+    const notifications = await NotificationModel.find({ recipientId: id })
+      .skip((page - 1) * limit)
+      .limit(limit);
+    console.log(notifications);
+    const totalDocs = await NotificationModel.countDocuments({
+      recipientId: id,
+    });
+    const totalPages = Math.ceil(totalDocs / limit);
+    console.log(totalDocs, totalPages);
+
+    return { notifications, totalDocs, totalPages };
+  } catch (error) {
+    throw new Error("Error in fetching notifications");
+  }
+};
+
 export default {
   createPatient,
   findPatientByEmail,
@@ -176,4 +197,5 @@ export default {
   lockTimeSlot,
   fetchAppointments,
   cancel,
+  notifications,
 };

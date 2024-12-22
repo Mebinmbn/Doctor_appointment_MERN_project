@@ -383,7 +383,7 @@ const InputField = ({
   placeholder,
 }: {
   name: string;
-  value: string;
+  value?: string;
   error?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
@@ -409,7 +409,7 @@ const PassField = ({
   placeholder,
 }: {
   name: string;
-  value: string;
+  value?: string;
   error?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;

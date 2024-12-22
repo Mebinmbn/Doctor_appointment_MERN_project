@@ -5,7 +5,8 @@ import timeSlotsRepository from "../repositories/timeSlotsRepository";
 import { comparePassword, hashPassword } from "../services/bcryptService";
 import { generateToken } from "../services/tokenService";
 import validation from "../utils/validation";
-
+import express, { Application } from "express";
+const app = express();
 export const registerDoctor = async (doctorData: IDoctor) => {
   console.log("doctorUsecases", doctorData);
   try {
@@ -59,15 +60,16 @@ export const getAppointments = async (id: string) => {
   }
 };
 
-export const cancelAppointment = async (id: string) => {
+export const cancelAppointment = async (id: string, app: Application) => {
   try {
     const appointment = await doctorRepository.cancel(id);
     if (appointment) {
       const notification =
         await notificationsRepository.createAppointmentNotification(
           appointment,
-          "cancelld",
-          "doctor"
+          "cancelled",
+          "doctor",
+          app
         );
     }
     return appointment;
@@ -110,5 +112,17 @@ export const removeDoctorTimeSlots = async (
     return await doctorRepository.updateTimeSlots(doctorId, date, time);
   } catch (error) {
     throw new Error("Error in removing time slots");
+  }
+};
+
+export const getDoctorNotifications = async (
+  id: string,
+  page: number,
+  limit: number
+) => {
+  try {
+    return await doctorRepository.notifications(id, page, limit);
+  } catch (error) {
+    throw new Error("Error in fetching notificaions");
   }
 };

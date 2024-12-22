@@ -125,14 +125,15 @@ function PatientLogin() {
         setEmail(formData.email);
         setUserType("patient");
 
-        // Signup request
         const response = await api.post("/patients/signup", formData);
 
         console.log("Patient created:", response.data);
         toast.success("Account created, please verify your account");
 
-        // Send OTP request
-        await api.post("/otp/send", { email: formData.email });
+        await api.post("/otp/send", {
+          email: formData.email,
+          userType: "patient",
+        });
         if (response.data.success) navigate("/otp");
         setFormData(initialValues);
       } catch (error) {
@@ -207,6 +208,7 @@ function PatientLogin() {
           const response = await api.post("/otp/send", {
             email: formData.email,
           });
+          console.log(response.data.success);
           if (response.data.success) navigate("/otp");
           setFormData(initialValues);
         }

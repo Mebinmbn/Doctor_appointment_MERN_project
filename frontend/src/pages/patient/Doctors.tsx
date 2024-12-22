@@ -13,7 +13,7 @@ import api from "../../api/api";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
-  const [filteredDoctors, setFilteredDoctors] = useState<IDoctor[]>([]);
+  // const [filteredDoctors, setFilteredDoctors] = useState<IDoctor[]>([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -154,9 +154,9 @@ const Doctors = () => {
       </div>
 
       <div className="flex w-90 flex-wrap justify-center gap-5 ml-auto p-5 border-8">
-        {doctors.map((doctor: IDoctor) => (
+        {doctors.map((doctor: IDoctor, index) => (
           <div
-            key={doctor._id}
+            key={index}
             className="gap-5 border-[2px] border-[#007E85] h-fit w-[15rem] my-4 rounded-lg p-5"
           >
             <img

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import ClipLoader from "react-spinners/ClipLoader";
 import Navbar from "../../components/patient/Navbar";
+import api from "../../api/api";
 
 const override: CSSProperties = {
   display: "block",
@@ -44,16 +45,15 @@ const OTPVerification = () => {
     console.log(otp);
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        "http://localhost:8080/api/otp/verify",
+      const response = await api.post(
+        "/otp/verify",
         {
           email,
           otp,
           userType,
         },
         {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
+          headers: { "User-Type": "patient" },
         }
       );
       console.log(isLoading, response);

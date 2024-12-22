@@ -3,6 +3,7 @@ import {
   cancelAppointment,
   createDoctorTimeSlots,
   getAppointments,
+  getDoctorNotifications,
   registerDoctor,
   removeDoctorTimeSlots,
   signinDoctor,
@@ -82,7 +83,7 @@ const appointments = async (req: Request, res: Response) => {
 const cancel = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const appointment = await cancelAppointment(id);
+    const appointment = await cancelAppointment(id, req.app);
 
     res
       .status(200)
@@ -164,6 +165,26 @@ const removeTimeSlots = async (req: Request, res: Response) => {
   }
 };
 
+const notifications = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const page = parseInt(req.query.page as string) | 1;
+    const limit = parseInt(req.query.limit as string) | 10;
+
+    const { notifications, totalDocs, totalPages } =
+      await getDoctorNotifications(id, page, limit);
+
+    res.status(200).json({
+      success: true,
+      data: notifications,
+      meta: { page, limit, totalDocs, totalPages },
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   register,
   signin,
@@ -174,4 +195,5 @@ export default {
   timeSlots,
   removeTimeSlots,
   createTimeSlots,
+  notifications,
 };

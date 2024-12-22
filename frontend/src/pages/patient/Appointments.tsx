@@ -18,7 +18,7 @@ function Appointments() {
   useEffect(() => {
     const toastId = "loginToContinue";
     if (!user) {
-      navigate("/doctor/login");
+      navigate("/login");
       if (!toast.isActive(toastId)) {
         toast.warn("Login to continue", { toastId });
       }

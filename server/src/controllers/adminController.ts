@@ -81,12 +81,43 @@ const reject = async (req: Request, res: Response) => {
 
 const doctors = async (req: Request, res: Response) => {
   try {
-    const doctors = await getDoctors();
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 7;
+    const search = (req.query.search as string) || "";
+    const specialization = (req.query.specialization as string) || "";
+    const gender = (req.query.gender as string) || "";
+    const experience = (req.query.experience as string) || "";
+
+    const query: any = {};
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+      ];
+    }
+    if (specialization) {
+      query.specialization = { $regex: specialization, $options: "i" };
+    }
+    if (gender) {
+      query.gender = gender;
+    }
+    if (experience) {
+      query.experience = { $gte: parseInt(experience, 10) };
+    }
+    query.isApproved = true;
+    query.isVerified = true;
+    query.isRejected = false;
+
+    const { doctors, totalDocs, totalPages } = await getDoctors(
+      page,
+      limit,
+      query
+    );
     console.log(applications);
     res.status(200).json({
       success: true,
-      doctors,
-      message: "Doctors fetched successfully",
+      data: doctors,
+      meta: { page, limit, totalDocs, totalPages },
     });
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
@@ -96,12 +127,29 @@ const doctors = async (req: Request, res: Response) => {
 
 const patients = async (req: Request, res: Response) => {
   try {
-    const patients = await getPatients();
-    console.log(applications);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 7;
+    const search = (req.query.search as string) || "";
+
+    const query: any = {};
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const { patients, totalDocs, totalPages } = await getPatients(
+      page,
+      limit,
+      query
+    );
+
     res.status(200).json({
       success: true,
-      patients,
-      message: "Doctors fetched successfully",
+      data: patients,
+      meta: { page, limit, totalDocs, totalPages },
+      message: "Patients fetched successfully",
     });
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";

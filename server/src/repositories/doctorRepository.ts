@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import DoctorModel, { IDoctor } from "./../models/doctorModel";
 import AppointmentModel from "../models/appointmentModel";
 import TimeSlotsModel from "../models/timeSlotsModel";
+import NotificationModel from "../models/notificationModel";
 
 const checkDoctorByEmail = async (email: string): Promise<IDoctor | null> => {
   console.log("check doctor");
@@ -89,13 +90,9 @@ const updateTimeSlots = async (
       throw new Error("Time slot record not found");
     }
 
-    // console.log("Before filtering:", timeSlotRecord.timeSlots);
-
     timeSlotRecord.timeSlots = timeSlotRecord.timeSlots.filter(
       (timeSlot) => !time.includes(timeSlot.time)
     );
-
-    // console.log("After filtering:", timeSlotRecord.timeSlots);
 
     await timeSlotRecord.save();
     console.log(timeSlotRecord);
@@ -103,6 +100,24 @@ const updateTimeSlots = async (
   } catch (error) {
     console.error("Error in updating time slots:", error);
     throw new Error("Error in updating time slots");
+  }
+};
+
+/////////////////////////////////////////////////////////////////////
+
+const notifications = async (id: string, page: number, limit: number) => {
+  try {
+    const notifications = await NotificationModel.find({ recipientId: id })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const totalDocs = await NotificationModel.countDocuments({
+      recipientId: id,
+    });
+    const totalPages = Math.ceil(totalDocs / limit);
+    return { notifications, totalDocs, totalPages };
+  } catch (error) {
+    throw new Error("Error in fetching notificaions");
   }
 };
 
@@ -114,4 +129,5 @@ export default {
   cancel,
   // reject,
   updateTimeSlots,
+  notifications,
 };

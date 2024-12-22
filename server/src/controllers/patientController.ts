@@ -6,6 +6,7 @@ import {
   getAppointments,
   getDoctors,
   getPatient,
+  getPatientNotifications,
   getTimeSlots,
   ResetPassword,
   signInPatient,
@@ -174,7 +175,7 @@ const book = async (req: Request, res: Response) => {
   const appointmentData = req.body;
   console.log("patient controller", appointmentData);
   try {
-    const appointment = await bookAppointment(appointmentData);
+    const appointment = await bookAppointment(appointmentData, req.app);
     if (appointment) {
       res.status(200).json({
         success: true,
@@ -225,11 +226,35 @@ const appointments = async (req: Request, res: Response) => {
 const cancel = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const appointment = await cancelAppointment(id);
+    const appointment = await cancelAppointment(id, req.app);
 
     res
       .status(200)
       .json({ success: true, appointment, message: "Approved successfully" });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const notifications = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 1;
+    const { notifications, totalDocs, totalPages } =
+      await getPatientNotifications(id, page, limit);
+    console.log("notifications at controller", notifications);
+    res.status(200).json({
+      success: true,
+      data: notifications,
+      meta: {
+        page,
+        limit,
+        totalDocs,
+        totalPages,
+      },
+    });
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
     res.status(400).json({ success: false, error: errorMessage });
@@ -248,4 +273,5 @@ export default {
   lockTimeSlot,
   appointments,
   cancel,
+  notifications,
 };

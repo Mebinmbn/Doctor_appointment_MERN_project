@@ -7,13 +7,16 @@ import { AuthProvider } from "./contexts/AuthContext";
 import store from "./app/store.ts";
 import { Provider } from "react-redux";
 import { SearchProvider } from "./contexts/SearchContext.tsx";
+import { SocketProvider } from "./contexts/SocketContexts.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <AuthProvider>
         <SearchProvider>
-          <App />
+          <SocketProvider>
+            <App />
+          </SocketProvider>
         </SearchProvider>
       </AuthProvider>
     </Provider>

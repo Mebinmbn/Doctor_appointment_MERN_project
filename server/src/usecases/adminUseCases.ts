@@ -50,17 +50,17 @@ export const rejectApplication = async (email: string) => {
   }
 };
 
-export const getDoctors = async () => {
+export const getDoctors = async (page: number, limit: number, query: {}) => {
   try {
-    return await adminRepository.findAllDoctors();
+    return await adminRepository.findAllDoctors(page, limit, query);
   } catch (error) {
     throw new Error("Error while fetching applications");
   }
 };
 
-export const getPatients = async () => {
+export const getPatients = async (page: number, limit: number, query: {}) => {
   try {
-    return await adminRepository.findAllPatients();
+    return await adminRepository.findAllPatients(page, limit, query);
   } catch (error) {
     throw new Error("Error while fetching applications");
   }

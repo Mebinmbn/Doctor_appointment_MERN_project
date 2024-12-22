@@ -52,21 +52,29 @@ const rejectDoctor = async (email: string) => {
   }
 };
 /////////////////////////////////////////////////////////////////////
-const findAllDoctors = async () => {
+const findAllDoctors = async (page: number, limit: number, query: {}) => {
   try {
-    return await DoctorModel.find({
-      isApproved: true,
-      isVerified: true,
-      isRejected: false,
-    });
+    const doctors = await DoctorModel.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const totalDocs = await DoctorModel.countDocuments(query);
+    const totalPages = Math.ceil(totalDocs / limit);
+
+    return { doctors, totalDocs, totalPages };
   } catch {
     throw new Error("Error in fetching applications");
   }
 };
 /////////////////////////////////////////////////////////////////////
-const findAllPatients = async () => {
+const findAllPatients = async (page: number, limit: number, query: {}) => {
   try {
-    return await PatientModel.find({});
+    const patients = await PatientModel.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const totalDocs = await PatientModel.countDocuments(query);
+    const totalPages = Math.ceil(totalDocs / limit);
+    return { patients, totalDocs, totalPages };
   } catch {
     throw new Error("Error in fetching applications");
   }

@@ -7,6 +7,8 @@ import { PatientResponse } from "../models/authResponseModel";
 import { IPatientDetails } from "../models/patientDetailsModel";
 import { IAppointment } from "../models/appointmentModel";
 import notificationsRepository from "../repositories/notificationsRepository";
+import express, { Application } from "express";
+const app = express();
 
 export const signUpPatient = async (patientData: IPatient) => {
   validation.validatePatientSignup(patientData);
@@ -84,7 +86,10 @@ export const storePatientDetails = async (patientData: IPatientDetails) => {
   }
 };
 
-export const bookAppointment = async (appointmentData: IAppointment) => {
+export const bookAppointment = async (
+  appointmentData: IAppointment,
+  app: Application
+) => {
   try {
     const existingAppointment = await patientRepository.checkAppointment(
       appointmentData
@@ -100,7 +105,8 @@ export const bookAppointment = async (appointmentData: IAppointment) => {
       await notificationsRepository.createAppointmentNotification(
         appointment,
         "applied",
-        "patient"
+        "patient",
+        app
       );
     }
     return appointment;
@@ -133,19 +139,32 @@ export const getAppointments = async (id: string) => {
   }
 };
 
-export const cancelAppointment = async (id: string) => {
+export const cancelAppointment = async (id: string, app: Application) => {
   try {
     const appointment = await patientRepository.cancel(id);
     if (appointment) {
       const notification =
         await notificationsRepository.createAppointmentNotification(
           appointment,
-          "cancelld",
-          "doctor"
+          "cancelled",
+          "doctor",
+          app
         );
     }
     return appointment;
   } catch (error) {
     throw new Error("Error in cancelling");
+  }
+};
+
+export const getPatientNotifications = async (
+  id: string,
+  page: number,
+  limit: number
+) => {
+  try {
+    return await patientRepository.notifications(id, page, limit);
+  } catch (error) {
+    throw new Error("Error in fetching notifications");
   }
 };

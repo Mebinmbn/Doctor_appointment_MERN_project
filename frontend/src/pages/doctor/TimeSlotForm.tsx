@@ -64,7 +64,7 @@ const generateTimeSlots = (
 
 const TimeSlotForm: React.FC = () => {
   const { register, handleSubmit } = useForm<IFormInput>();
-  const [timeSlots, setTimeSlots] = useState<Date[]>([]);
+
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
 
   const [date, setDate] = useState<string>("");
@@ -118,19 +118,18 @@ const TimeSlotForm: React.FC = () => {
       })),
     };
     console.log("Payload:", JSON.stringify(payload, null, 2));
-    if (timeSlots) {
-      try {
-        const id = doctor?.id;
-        const response = await api.post(`/doctor/timeSlots/${id}`, payload, {
-          headers: { "User-Type": "doctor" },
-        });
-        if (response.data.success) {
-          toast.success("Time slots created successfully");
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error("Error in time slot creation");
+
+    try {
+      const id = doctor?.id;
+      const response = await api.post(`/doctor/timeSlots/${id}`, payload, {
+        headers: { "User-Type": "doctor" },
+      });
+      if (response.data.success) {
+        toast.success("Time slots created successfully");
       }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error in time slot creation");
     }
   };
 

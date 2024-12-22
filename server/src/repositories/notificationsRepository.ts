@@ -2,65 +2,73 @@ import { IAppointment } from "../models/appointmentModel";
 import DoctorModel from "../models/doctorModel";
 import NotificationModel, { INotification } from "../models/notificationModel";
 import PatientModel from "../models/patientModel";
+import express, { Application } from "express";
 
 const createAppointmentNotification = async (
-  appoinment: IAppointment,
+  appointment: IAppointment,
   type: string,
-  from: string
+  from: string,
+  app: Application
 ) => {
   try {
     let notificationData;
     if (from === "doctor") {
-      const doctor = await DoctorModel.findOne({ _id: appoinment.doctorId });
+      const doctor = await DoctorModel.findOne({ _id: appointment.doctorId });
       if (!doctor) {
         throw new Error("Doctor not found to create notification");
       }
       let status;
       if (type === "cancelled") {
         status = "cancelled";
-      } else {
-        status = "rejected";
       }
 
       notificationData = {
-        recipientId: appoinment.patientId.toString(),
-        senderId: appoinment.doctorId.toString(),
+        recipientId: appointment.patientId.toString(),
+        senderId: appointment.doctorId.toString(),
         recipientRole: "patient",
         type: type,
         content: `Your appointment to Dr.${doctor.firstName} ${
           doctor.lastName
-        } on ${appoinment.date.toString().slice(0, 10)} at ${
-          appoinment.time
+        } on ${appointment.date.toString().slice(0, 10)} at ${
+          appointment.time
         } has been ${status}`,
       };
     } else {
-      const patient = await PatientModel.findOne({ _id: appoinment.patientId });
+      const patient = await PatientModel.findOne({
+        _id: appointment.patientId,
+      });
       if (!patient) {
         throw new Error("Patient not found to create notification");
       }
 
       notificationData = {
-        recipientId: appoinment.doctorId.toString(),
-        senderId: appoinment.patientId.toString(),
+        recipientId: appointment.doctorId.toString(),
+        senderId: appointment.patientId.toString(),
         recipientRole: "doctor",
         type: type,
         content: `${patient.firstName} ${
           patient.lastName
-        } has applied for an appointment on ${appoinment.date
+        } has applied for an appointment on ${appointment.date
           .toString()
-          .slice(0, 10)} at ${appoinment.time} `,
+          .slice(0, 10)} at ${appointment.time} `,
       };
-      console.log("doctor notifi", notificationData);
     }
 
     const notification = new NotificationModel(notificationData);
-    notification.save();
+    await notification.save();
+    const io = app.get("io");
+    if (io) {
+      io.to(notification.recipientId).emit("notification", notification);
+    } else {
+      console.error("Socket.io instance not found on app");
+    }
     return notification;
   } catch (error) {
+    console.error("Error in creating notification:", error);
     throw new Error("Error in creating notification");
   }
 };
-
+//////////////////////////////////////////////////////////////
 const getNotifications = async (id: string) => {
   try {
     return await NotificationModel.find({

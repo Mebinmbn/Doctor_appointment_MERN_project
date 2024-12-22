@@ -7,7 +7,7 @@ export const sendVerification = async (req: Request, res: Response) => {
   console.log("otpcontroller");
   try {
     const { email, userType } = req.body;
-    console.log(email);
+    console.log(email, userType);
 
     await sendVerificationEmail(email, emailService, userType);
     res.status(200).json({ success: true, message: "OTP sent successfully" });

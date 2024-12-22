@@ -24,6 +24,8 @@ import DoctorTimeSlot from "./pages/doctor/DoctorTimeSlot";
 import TimeSlotForm from "./pages/doctor/TimeSlotForm";
 import Profile from "./pages/patient/Profile";
 import Appointments from "./pages/patient/Appointments";
+import Notifications from "./pages/patient/Notifications";
+import DoctorNotifications from "./pages/doctor/DoctorNotifications";
 
 function App() {
   return (
@@ -53,6 +55,7 @@ function App() {
           <Route path="/patientDetails" element={<PatientDetails />} />
           <Route path="/paymentPage" element={<PaymentPage />} />
           <Route path="/appointments" element={<Appointments />} />
+          <Route path="/notifications" element={<Notifications />} />
           {/* doctorRoutes */}
           <Route path="/doctor/signup" element={<DoctorRegister />} />
           <Route path="/doctor/login" element={<DoctorSignin />} />
@@ -60,6 +63,10 @@ function App() {
           <Route path="/doctor/appointments" element={<DoctorAppointments />} />
           <Route path="/doctor/timeSlot" element={<DoctorTimeSlot />} />
           <Route path="/doctor/timeSlotForm" element={<TimeSlotForm />} />
+          <Route
+            path="/doctor/notifications"
+            element={<DoctorNotifications />}
+          />
           {/* adminRoutes */}
           <Route path="/admin/login" element={<AdminSignin />} />
           <Route path="/admin" element={<AdminDashboard />} />

@@ -7,8 +7,10 @@ import { IoNotifications } from "react-icons/io5";
 
 import { clearUser } from "../../app/featrue/userSlice";
 import { toast } from "react-toastify";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { INotification } from "../../../../server/src/models/notificationModel";
+import api from "../../api/api";
+import { useSocket } from "../../contexts/SocketContexts";
 
 interface User {
   name: string;
@@ -24,6 +26,7 @@ const Navbar: React.FC = () => {
     (state: RootState) => state.user.user
   ) as User | null;
   const dispatch = useDispatch();
+  const socket = useSocket();
 
   const token = localStorage.getItem("token");
   console.log("user form navbar", user);
@@ -41,11 +44,23 @@ const Navbar: React.FC = () => {
     }
   }, [dispatch, token]);
 
+  useEffect(() => {
+    if (!socket) return;
+    socket.emit("join", user?.id);
+    socket.on("notification", (notification: INotification) => {
+      setNotifications((prev) => [...prev, notification]);
+      toast.info(notification.content);
+    });
+    return () => {
+      socket.off("notification");
+    };
+  }, [socket, user?.id]);
+
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/notification/${user?.id}`
-      );
+      const response = await api.get(`/notification/${user?.id}`, {
+        headers: { "User-Type": "patient" },
+      });
       if (response.data.success) {
         console.log(response.data);
         const fetchedNotifications = response.data.notifications;
@@ -135,16 +150,18 @@ const Navbar: React.FC = () => {
                           <li className="text-gray-500">No notifications</li>
                         ) : (
                           notifications.map((notification, index) => (
-                            <li
-                              key={index}
-                              className={`text-sm ${
-                                notification.type === "approved"
-                                  ? "bg-green-200"
-                                  : "bg-red-200"
-                              } text-black p-1 border-b last:border-b-0`}
-                            >
-                              {notification.content}
-                            </li>
+                            <Link to="/notifications">
+                              <li
+                                key={index}
+                                className={`text-sm ${
+                                  notification.type === "approved"
+                                    ? "bg-green-200"
+                                    : "bg-red-200"
+                                } text-black p-1 border-b last:border-b-0`}
+                              >
+                                {notification.content}
+                              </li>
+                            </Link>
                           ))
                         )}
                       </ul>

@@ -3,18 +3,35 @@ import { RootState } from "../../app/store";
 import { useEffect, useState } from "react";
 import { INotification } from "../../../../server/src/models/notificationModel";
 import { IoNotifications } from "react-icons/io5";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import api from "../../api/api";
+import { useSocket } from "../../contexts/SocketContexts";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 function DoctorTopBar() {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.emit("join", doctor?.id);
+    socket.on("notification", (notification: INotification) => {
+      setNotifications((prev) => [...prev, notification]);
+      toast.info(notification.content);
+    });
+    return () => {
+      socket.off("notification");
+    };
+  }, [doctor?.id]);
 
   const fetchNotifications = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/notification/${doctor?.id}`
-      );
+      const response = await api.get(`/notification/${doctor?.id}`, {
+        headers: { "User-Type": "doctor" },
+      });
       if (response.data.success) {
         console.log(response.data);
         const fetchedNotifications = response.data.notifications;
@@ -66,16 +83,18 @@ function DoctorTopBar() {
                     <li className="text-gray-500">No notifications</li>
                   ) : (
                     notifications.map((notification, index) => (
-                      <li
-                        key={index}
-                        className={`text-sm ${
-                          notification.type === "applied"
-                            ? "bg-yellow-200"
-                            : "bg-red-200"
-                        } text-black p-1 border-b last:border-b-0`}
-                      >
-                        {notification.content}
-                      </li>
+                      <Link to="/doctor/notifications">
+                        <li
+                          key={index}
+                          className={`text-sm ${
+                            notification.type === "applied"
+                              ? "bg-yellow-200"
+                              : "bg-red-200"
+                          } text-black p-1 border-b last:border-b-0`}
+                        >
+                          {notification.content}
+                        </li>
+                      </Link>
                     ))
                   )}
                 </ul>

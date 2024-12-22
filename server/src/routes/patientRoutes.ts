@@ -70,4 +70,11 @@ router.post(
   patientController.book
 );
 
+router.get(
+  "/notifications/:id",
+  authMiddleware,
+  roleMiddleware("user"),
+  patientController.notifications
+);
+
 export default router;
