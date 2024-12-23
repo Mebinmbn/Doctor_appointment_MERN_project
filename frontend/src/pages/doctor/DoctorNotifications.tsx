@@ -52,9 +52,15 @@ function DoctorNotifications() {
               notifications.map((notification: INotification, index) => (
                 <div
                   key={index}
-                  className={`h-10 w-[86%] bg-red-200 text-left p-2 m-2 mx-auto`}
+                  className={`h-20 w-[86%] bg-yellow-200 text-left py-1 px-5 m-2 mx-auto`}
                 >
-                  {notification.content}
+                  <p className="font-bold ">Appontment</p>
+                  <div className="flex">
+                    {notification.content}
+                    <p className="text-red-800 text-sm mt-5 ml-auto">
+                      {notification.createdAt?.toString().slice(0, 10)}
+                    </p>
+                  </div>
                 </div>
               ))
             ) : (

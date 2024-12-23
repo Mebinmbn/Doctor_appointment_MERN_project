@@ -3,10 +3,8 @@ import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
 import ClipLoader from "react-spinners/ClipLoader";
 import Navbar from "../../components/patient/Navbar";
-import api from "../../api/api";
 
 const override: CSSProperties = {
   display: "block",
@@ -45,22 +43,23 @@ const OTPVerification = () => {
     console.log(otp);
     try {
       setIsLoading(true);
-      const response = await api.post(
-        "/otp/verify",
+      const response = await axios.post(
+        "http://localhost:8080/api/otp/verify",
         {
           email,
           otp,
           userType,
         },
         {
-          headers: { "User-Type": "patient" },
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
       );
       console.log(isLoading, response);
       toast.success("OTP verified successfully. Your email is verified.");
       setOtpValues(initialValue);
       if (userType === "patient") navigate("/login");
-      else if (userType === "doctor") navigate("/doctorSignin");
+      else if (userType === "doctor") navigate("/doctor/login");
       else if (userType === "forgotPassword") navigate("/resetPassword");
     } catch (error) {
       console.log(error);

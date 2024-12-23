@@ -11,6 +11,7 @@ export const sendVerificationEmail = async (
   console.log("otpUsecases");
   if (userType === "forgotPass_patient") {
     const patient = await patientRepository.findPatientByEmail(email);
+    console.log("otp usecases patient", patient);
     if (!patient) {
       throw new Error("Email is not registerd with us");
     }
@@ -18,6 +19,7 @@ export const sendVerificationEmail = async (
   const otp = generateOTP(email);
   console.log(otp);
   await emailService.sendOTP(email, otp);
+  return otp;
 };
 
 export const verifyEmail = async (

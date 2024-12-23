@@ -1,14 +1,12 @@
-import axios from "axios";
-import { useState, useCallback, FormEvent, useEffect } from "react";
+import { useState, useCallback, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setDoctor } from "../../app/featrue/doctorSlice";
-import { AppDispatch, RootState } from "../../app/store";
-
-import { User } from "../../types/user";
+import { AppDispatch } from "../../app/store";
 import api from "../../api/api";
+import axios from "axios";
 
 interface FormValues {
   firstName: string;
@@ -122,9 +120,11 @@ function DoctorSignin() {
           axiosError.response?.data.error
         );
         toast.error(axiosError.response?.data.error);
-        if (axiosError.response?.data.error === "User is not verified") {
-          const response = await api.post(
-            "/otp/send",
+        if (
+          axiosError.response?.data.error === "Error: Email is not verified"
+        ) {
+          const response = await axios.post(
+            "http://localhost:8080/api/otp/send",
             { email: formData.email },
             {
               headers: { "Content-Type": "application/json" },
@@ -175,7 +175,7 @@ function DoctorSignin() {
           Want to register?
           <span
             onClick={() => {
-              navigate("/doctorSignup");
+              navigate("/doctor/signup");
             }}
             className="text-blue-400 text-sm cursor-pointer"
           >

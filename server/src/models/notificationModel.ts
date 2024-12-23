@@ -1,6 +1,8 @@
 import mongoose, { Schema, Model, Document } from "mongoose";
+import { ReactNode } from "react";
 
 export interface INotification extends Document {
+  createdAt: ReactNode;
   recipientId: string;
   senderId: string;
   recipientRole: string;

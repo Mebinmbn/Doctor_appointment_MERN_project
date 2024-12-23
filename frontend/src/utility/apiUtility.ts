@@ -44,3 +44,17 @@ export const getLoginUrl = (userType: string) => {
       return "/login";
   }
 };
+
+export const setToken = (userType: string, token: string) => {
+  console.log("setToken", userType);
+  switch (userType) {
+    case "patient":
+      return localStorage.setItem("token", token);
+    case "admin":
+      return localStorage.setItem("adminToken", token);
+    case "doctor":
+      return localStorage.setItem("doctorToken", token);
+    default:
+      return null;
+  }
+};

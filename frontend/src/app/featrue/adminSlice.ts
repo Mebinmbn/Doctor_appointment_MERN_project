@@ -1,7 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+interface Admin {
+  name: string;
+  role: string;
+  id: string;
+  isApproved: boolean;
+}
+
 interface AuthState {
-  admin: string | null;
+  admin: Admin | null;
   adminToken: string | null;
 }
 

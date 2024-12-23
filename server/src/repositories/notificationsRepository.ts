@@ -1,5 +1,5 @@
 import { IAppointment } from "../models/appointmentModel";
-import DoctorModel from "../models/doctorModel";
+import DoctorModel, { IDoctor } from "../models/doctorModel";
 import NotificationModel, { INotification } from "../models/notificationModel";
 import PatientModel from "../models/patientModel";
 import express, { Application } from "express";
@@ -80,4 +80,28 @@ const getNotifications = async (id: string) => {
   }
 };
 
-export default { createAppointmentNotification, getNotifications };
+//////////////////////////////////////////////////////////////
+
+const applicationsNotification = async (doctor: IDoctor) => {
+  try {
+    let notificationData = {
+      recipientId: "6755139cbb339a450c37ecb8",
+      senderId: doctor.id.toString(),
+      recipientRole: "admin",
+      type: "application",
+      content: `Dr.${doctor.firstName} ${doctor.lastName} has applied to join the website`,
+    };
+
+    const notification = new NotificationModel(notificationData);
+    await notification.save();
+    return notification;
+  } catch (error) {
+    throw new Error("Error at creating notification");
+  }
+};
+
+export default {
+  createAppointmentNotification,
+  getNotifications,
+  applicationsNotification,
+};

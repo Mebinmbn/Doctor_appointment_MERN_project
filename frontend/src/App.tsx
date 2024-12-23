@@ -26,54 +26,160 @@ import Profile from "./pages/patient/Profile";
 import Appointments from "./pages/patient/Appointments";
 import Notifications from "./pages/patient/Notifications";
 import DoctorNotifications from "./pages/doctor/DoctorNotifications";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
       <Router>
         <Routes>
+          {/* patient */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<PatientLogin />} />
           <Route path="/otp" element={<OTPVerification />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
-          <Route path="/doctors" element={<Doctors />} />
-          <Route path="/pickDate" element={<PickDateTime />} />
-          <Route path="/patientDetails" element={<PatientDetails />} />
-          <Route path="/paymentPage" element={<PaymentPage />} />
-          <Route path="/appointments" element={<Appointments />} />
-          <Route path="/notifications" element={<Notifications />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute role="user">
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctors"
+            element={
+              <ProtectedRoute role="user">
+                <Doctors />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pickDate"
+            element={
+              <ProtectedRoute role="user">
+                <PickDateTime />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/patientDetails"
+            element={
+              <ProtectedRoute role="user">
+                <PatientDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/paymentPage"
+            element={
+              <ProtectedRoute role="user">
+                <PaymentPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/appointments"
+            element={
+              <ProtectedRoute role="user">
+                <Appointments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute role="user">
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
           {/* doctorRoutes */}
           <Route path="/doctor/signup" element={<DoctorRegister />} />
           <Route path="/doctor/login" element={<DoctorSignin />} />
-          <Route path="/doctor" element={<DoctorDashboard />} />
-          <Route path="/doctor/appointments" element={<DoctorAppointments />} />
-          <Route path="/doctor/timeSlot" element={<DoctorTimeSlot />} />
-          <Route path="/doctor/timeSlotForm" element={<TimeSlotForm />} />
+          <Route
+            path="/doctor"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/appointments"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorAppointments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/timeSlot"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorTimeSlot />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/timeSlotForm"
+            element={
+              <ProtectedRoute role="doctor">
+                <TimeSlotForm />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/doctor/notifications"
-            element={<DoctorNotifications />}
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorNotifications />
+              </ProtectedRoute>
+            }
           />
           {/* adminRoutes */}
           <Route path="/admin/login" element={<AdminSignin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/applications" element={<DoctorsList />} />
-          <Route path="/admin/doctors" element={<AllDoctors />} />
-          <Route path="/admin/patients" element={<AllPatients />} />
-          <Route path="/admin/appointments" element={<AdminAppointments />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/applications"
+            element={
+              <ProtectedRoute role="admin">
+                <DoctorsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/doctors"
+            element={
+              <ProtectedRoute role="admin">
+                <AllDoctors />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/patients"
+            element={
+              <ProtectedRoute role="admin">
+                <AllPatients />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/appointments"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminAppointments />
+              </ProtectedRoute>
+            }
+          />
 
           {/* errorPage */}
           <Route path="*" element={<ErrorPage />} />

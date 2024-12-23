@@ -73,7 +73,7 @@ function Home() {
             <p className="text-xl  font-bold">
               Would you like to work with us?
             </p>
-            <Link to="/doctor/login" className="text-blue-500">
+            <Link to="/doctor/signup" className="text-blue-500">
               <button className="bg-blue-400 rounded-lg p-2  text-white w-48 h-10 font-bold hover:bg-green-700 transition duration-300">
                 Register
               </button>

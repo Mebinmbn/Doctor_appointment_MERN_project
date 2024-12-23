@@ -4,7 +4,7 @@ import { IDoctor } from "../models/doctorModel";
 import { IPatient } from "../models/patientModel";
 import adminRepository from "../repositories/adminRepository";
 import { hashPassword } from "../services/bcryptService";
-import { generateToken } from "../services/tokenService";
+import { generateRefreshToken, generateToken } from "../services/tokenService";
 
 export const signInAdmin = async (
   email: string,
@@ -20,7 +20,8 @@ export const signInAdmin = async (
       throw new Error("Invalid Creditials");
     }
     const token = generateToken(admin.id, admin.role, false);
-    return { token, admin };
+    const refreshToken = generateRefreshToken(admin.id, admin.role, false);
+    return { token, refreshToken, admin };
   } catch (error: any) {
     throw new Error(error);
   }

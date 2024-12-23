@@ -2,7 +2,7 @@ import patientRepository from "../repositories/patientRepository";
 import { IPatient } from "../models/patientModel";
 import validation from "../utils/validation";
 import { comparePassword, hashPassword } from "../services/bcryptService";
-import { generateToken } from "../services/tokenService";
+import { generateRefreshToken, generateToken } from "../services/tokenService";
 import { PatientResponse } from "../models/authResponseModel";
 import { IPatientDetails } from "../models/patientDetailsModel";
 import { IAppointment } from "../models/appointmentModel";
@@ -41,7 +41,12 @@ export const signInPatient = async (
     throw new Error("Invalid credentials");
   }
   const token = generateToken(patient.id, patient.role, patient.isBlocked);
-  return { token, patient };
+  const refreshToken = generateRefreshToken(
+    patient.id,
+    patient.role,
+    patient.isBlocked
+  );
+  return { token, refreshToken, patient };
 };
 
 export const ResetPassword = async (password: string, email: string) => {

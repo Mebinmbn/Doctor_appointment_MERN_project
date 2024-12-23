@@ -46,7 +46,16 @@ const register = async (req: Request, res: Response) => {
 const signin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
-    const { token, doctor } = await signinDoctor(email, password);
+    const { token, refreshToken, doctor } = await signinDoctor(email, password);
+    console.log("Generated Refresh Token:");
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+      maxAge: 1 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       success: true,
       user: {

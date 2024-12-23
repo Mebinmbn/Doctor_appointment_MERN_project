@@ -3,7 +3,7 @@ import doctorRepository from "../repositories/doctorRepository";
 import notificationsRepository from "../repositories/notificationsRepository";
 import timeSlotsRepository from "../repositories/timeSlotsRepository";
 import { comparePassword, hashPassword } from "../services/bcryptService";
-import { generateToken } from "../services/tokenService";
+import { generateRefreshToken, generateToken } from "../services/tokenService";
 import validation from "../utils/validation";
 import express, { Application } from "express";
 const app = express();
@@ -21,6 +21,10 @@ export const registerDoctor = async (doctorData: IDoctor) => {
     doctorData.password = await hashPassword(doctorData.password);
 
     const doctor = await doctorRepository.createDoctor(doctorData);
+    if (doctor) {
+      const notification =
+        await notificationsRepository.applicationsNotification(doctor);
+    }
     return doctor;
   } catch (error) {
     throw new Error("Error in registration");
@@ -33,7 +37,7 @@ export const signinDoctor = async (email: string, password: string) => {
     if (!doctor) {
       throw new Error("Doctor not found");
     } else if (!doctor.isVerified) {
-      throw new Error("Doctor is not verified");
+      throw new Error("Email is not verified");
     } else if (doctor.isBlocked) {
       throw new Error("Your account is blocked");
     }
@@ -44,8 +48,13 @@ export const signinDoctor = async (email: string, password: string) => {
       throw new Error("Invalid creditials");
     }
     const token = generateToken(doctor.id, doctor.role, doctor.isBlocked);
+    const refreshToken = generateRefreshToken(
+      doctor.id,
+      doctor.role,
+      doctor.isBlocked
+    );
 
-    return { token, doctor };
+    return { token, refreshToken, doctor };
   } catch (error: any) {
     throw new Error(error);
   }

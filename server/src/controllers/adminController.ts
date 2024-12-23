@@ -20,11 +20,19 @@ const signin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   console.log("adminController");
   try {
-    const { token, admin } = await signInAdmin(email, password);
+    const { token, refreshToken, admin } = await signInAdmin(email, password);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+      maxAge: 1 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       success: true,
       token,
-      user: { name: admin.name, role: admin.role },
+      user: { name: admin.name, role: admin.role, id: admin._id },
     });
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";

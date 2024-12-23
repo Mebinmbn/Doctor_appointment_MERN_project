@@ -9,6 +9,7 @@ import Navbar from "../../components/patient/Navbar";
 import { User } from "../../types/user";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import api from "../../api/api";
+import axios from "axios";
 
 interface FormValues {
   firstName: string;
@@ -130,10 +131,17 @@ function PatientLogin() {
         console.log("Patient created:", response.data);
         toast.success("Account created, please verify your account");
 
-        await api.post("/otp/send", {
-          email: formData.email,
-          userType: "patient",
-        });
+        await axios.post(
+          "http://localhost:8080/api/otp/send",
+          {
+            email: formData.email,
+            userType: "patient",
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
         if (response.data.success) navigate("/otp");
         setFormData(initialValues);
       } catch (error) {

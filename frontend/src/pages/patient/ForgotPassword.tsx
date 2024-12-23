@@ -3,7 +3,7 @@ import Navbar from "../../components/patient/Navbar";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/api";
+import axios from "axios";
 
 function ForgotPassword() {
   const [userEmail, setUserEmail] = useState("");
@@ -15,14 +15,25 @@ function ForgotPassword() {
     setEmail(userEmail);
     setUserType("forgotPassword");
     try {
-      const response = await api.post("/otp/send", {
-        email: userEmail,
-        userType: "forgotPass_patient",
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/otp/send",
+        {
+          email: userEmail,
+          userType: "forgotPass_patient",
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      console.log(response);
       if (response.data.success) {
         console.log(response.data.message);
         toast.success("OTP sent successfully");
         navigate("/otp");
+      } else {
+        console.error("Error response from server:", response.data);
+        toast.error(response.data.message || "Error sending OTP");
       }
       setUserEmail("");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

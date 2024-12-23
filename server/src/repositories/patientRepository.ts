@@ -17,7 +17,9 @@ const createPatient = async (
 };
 /////////////////////////////////////////////////////////////////////
 const findPatientByEmail = async (email: string): Promise<IPatient | null> => {
-  return await PatientModel.findOne({ email });
+  const patient = await PatientModel.findOne({ email });
+  console.log("find patient by email ", patient);
+  return patient;
 };
 /////////////////////////////////////////////////////////////////////
 const verifyPatient = async (email: string): Promise<IPatient | null> => {

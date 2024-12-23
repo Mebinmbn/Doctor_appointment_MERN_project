@@ -1,11 +1,13 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { clearDoctor } from "../../app/featrue/doctorSlice";
 import { useDispatch } from "react-redux";
 
 function DoctorNav() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(clearDoctor());
+    navigate("/doctor/login");
   };
   return (
     <div className="flex content-center justify-center h-screen w-40  ml-1">

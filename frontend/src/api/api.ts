@@ -1,6 +1,10 @@
 import axios from "axios";
-import { clearToken, getLoginUrl, getToken } from "../utility/apiUtility";
-// import { toast } from "react-toastify";
+import {
+  clearToken,
+  getLoginUrl,
+  getToken,
+  setToken,
+} from "../utility/apiUtility";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api/",
@@ -31,16 +35,29 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     console.log(error.response.status);
-    if (
-      (error.response && error.response.status === 403) ||
-      error.response.status === 401
-    ) {
-      const userType = error.config.headers["User-Type"];
+    const originalRequest = error.config;
+    const userType = error.config.headers["User-Type"];
 
+    if (error.response && error.response.status === 403) {
       clearToken(userType);
       window.location.href = getLoginUrl(userType);
+    } else if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const { data } = await axios.post(
+          "http://localhost:8080/api/token",
+          {},
+          { withCredentials: true }
+        );
+        console.log("user at response", userType);
+        setToken(userType, data.token);
+        api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+        return api(originalRequest);
+      } catch (err) {
+        return Promise.reject(err);
+      }
     }
     return Promise.reject(error);
   }

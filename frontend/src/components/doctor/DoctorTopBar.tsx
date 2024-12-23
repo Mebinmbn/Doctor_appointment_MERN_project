@@ -60,11 +60,6 @@ function DoctorTopBar() {
   return (
     <div>
       <div className="flex justify-evenly mx-5 w-[90%]  mx-auto">
-        {/* <input
-              type="text"
-              placeholder="Search"
-              className="rounded-lg h-10 w-[50%] back bg-gray-200 border-[1px] ml-5 p-3"
-            /> */}
         <div className=" rounded-xl w-fit flex  p-2 ml-auto ">
           <div className="relative flex ">
             <IoNotifications

@@ -17,7 +17,7 @@ function PatientSideBar() {
           <NavLink to="/profile">Profile</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="/doctor/timeSlot">Time Slots</NavLink>
+          <NavLink to="">Time Slots</NavLink>
         </div>
 
         <div className="h-9  border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">

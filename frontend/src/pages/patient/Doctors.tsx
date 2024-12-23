@@ -13,7 +13,6 @@ import api from "../../api/api";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
-  // const [filteredDoctors, setFilteredDoctors] = useState<IDoctor[]>([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -74,7 +73,7 @@ const Doctors = () => {
     if (searchKey) {
       setSearchQuery(searchKey);
     }
-  }, [searchKey]);
+  }, [searchKey, navigate]);
 
   const handleAppointment = (doctor: IDoctor) => {
     dispatch(setDoctorToConsult(doctor));

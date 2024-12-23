@@ -3,6 +3,7 @@ import AdminNav from "../../components/admin/AdminNav";
 import { RootState } from "../../app/store";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import AdminTopBar from "../../components/admin/AdminTopBar";
 
 function AdminDashboard() {
   const admin = useSelector((state: RootState) => state.admin.admin);
@@ -16,6 +17,7 @@ function AdminDashboard() {
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
       <AdminNav />
       <div className="bg-gray-200 h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+        <AdminTopBar />
         <h1>Dashboard</h1>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import EditDoctorModel from "../../components/admin/EditDoctorModel";
 import { clearAdmin } from "../../app/featrue/adminSlice";
 import api from "../../api/api";
+import AdminTopBar from "../../components/admin/AdminTopBar";
 
 const AllDoctors = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
@@ -119,11 +120,7 @@ const AllDoctors = () => {
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
       <Navbar />
       <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
-        <div className="flex justify-evenly m-1 w-[90%] mx-auto">
-          <div className="bg-gray-100 rounded-xl w-20 p-2 ml-auto">
-            <p className="text-black font-bold">Admin</p>
-          </div>
-        </div>
+        <AdminTopBar />
         <div className="flex justify-center items-center">
           <div className="w-full max-w-6xl mt-1 shadow-lg rounded-lg bg-[#007E85]">
             <h2 className="text-2xl font-bold mb-1 text-white p-4 text-white border-b text-white">

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import EditPatientModal from "../../components/admin/EditPatientModal";
 import { User } from "../../types/user";
 import api from "../../api/api";
+import AdminTopBar from "../../components/admin/AdminTopBar";
 
 function AllPatients() {
   const [patients, setPatients] = useState<User[]>([]);
@@ -109,12 +110,8 @@ function AllPatients() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
       <AdminNav />
-      <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
-        <div className="flex justify-evenly m-5 w-[90%] mx-auto">
-          <div className="bg-gray-100 rounded-xl w-20 p-2 ml-auto ">
-            <p className="text-black font-bold">Admin</p>
-          </div>
-        </div>
+      <div className="bg-white h-[98vh] w-[88vw] text-center px-4 py-2 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+        <AdminTopBar />
         <div className="flex justify-center items-center">
           <div className="w-full max-w-6xl  shadow-lg rounded-lg bg-[#007E85]">
             <h2 className="text-2xl font-bold mb-1 text-white p-4 text-white border-b text-white">

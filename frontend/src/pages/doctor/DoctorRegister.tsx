@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../api/api";
+import axios from "axios";
 
 interface FormValues {
   firstName: string;
@@ -173,9 +174,16 @@ function DoctorRegister() {
           "Application submitted successfully, please wait for approval"
         );
 
-        await api.post("/otp/send", {
-          email: formData.email,
-        });
+        await axios.post(
+          "http://localhost:8080/api/otp/send",
+          {
+            email: formData.email,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
         navigate("/otp");
         setFormData(initialValues);
       } catch (error) {
@@ -393,7 +401,7 @@ function DoctorRegister() {
             Already have an Account?
             <span
               onClick={() => {
-                navigate("/doctorSignin");
+                navigate("/doctor/login");
               }}
               className="text-blue-400 text-sm cursor-pointer"
             >

@@ -16,6 +16,22 @@ export const generateToken = (
   return jwt.sign(
     { id: userId, role: userRole, isBlocked: userIsBlocked },
     secret,
-    { expiresIn: "1h" }
+    { expiresIn: "30m" }
+  );
+};
+
+export const generateRefreshToken = (
+  userId: string,
+  userRole: string,
+  userIsBlocked: boolean
+): string => {
+  const refreshSecret = process.env.REFRESH_TOKEN_SECRET;
+  if (!refreshSecret) {
+    throw new Error("REFRESH_TOKEN_SECRET not defined");
+  }
+  return jwt.sign(
+    { id: userId, role: userRole, isBlocked: userIsBlocked },
+    refreshSecret,
+    { expiresIn: "7d" }
   );
 };
