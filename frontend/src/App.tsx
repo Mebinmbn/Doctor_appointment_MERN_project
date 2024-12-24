@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PatientLogin from "./pages/patient/PatientLogin";
-import { ToastContainer } from "react-toastify";
 import OTPVerification from "./pages/patient/OtpVeryfication";
 import Home from "./pages/patient/Home";
 import DoctorRegister from "./pages/doctor/DoctorRegister";
@@ -27,6 +26,8 @@ import Appointments from "./pages/patient/Appointments";
 import Notifications from "./pages/patient/Notifications";
 import DoctorNotifications from "./pages/doctor/DoctorNotifications";
 import ProtectedRoute from "./ProtectedRoute";
+import DoctorLeave from "./pages/doctor/DoctorLeave";
+import LeaveRequests from "./pages/admin/LeaveRequests";
 
 function App() {
   return (
@@ -138,6 +139,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="doctor/leave"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorLeave />
+              </ProtectedRoute>
+            }
+          />
           {/* adminRoutes */}
           <Route path="/admin/login" element={<AdminSignin />} />
           <Route
@@ -180,6 +189,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/admin/requests" element={<LeaveRequests />} />
 
           {/* errorPage */}
           <Route path="*" element={<ErrorPage />} />

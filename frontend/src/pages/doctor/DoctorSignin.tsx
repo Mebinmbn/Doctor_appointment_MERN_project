@@ -116,7 +116,7 @@ function DoctorSignin() {
       } catch (error) {
         const axiosError = error as AxiosError;
         console.log(
-          "Error in signup request:",
+          "Error in signin request:",
           axiosError.response?.data.error
         );
         toast.error(axiosError.response?.data.error);

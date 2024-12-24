@@ -72,6 +72,7 @@ const Doctors = () => {
   useEffect(() => {
     if (searchKey) {
       setSearchQuery(searchKey);
+      fetchDoctors();
     }
   }, [searchKey, navigate]);
 

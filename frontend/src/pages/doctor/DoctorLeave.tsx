@@ -1,0 +1,106 @@
+// ApplyLeaveForm.js
+import React, { FormEvent, useState } from "react";
+import api from "../../api/api";
+import DoctorNav from "../../components/doctor/DoctorNav";
+import DoctorTopBar from "../../components/doctor/DoctorTopBar";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+
+function DoctorLeave() {
+  const [leaveType, setLeaveType] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [reason, setReason] = useState("");
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("doctor/leave/apply", {
+        leaveType,
+        startDate,
+        endDate,
+        reason,
+      });
+      toast.success(response.data.message);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.log("Error in signup request:", axiosError.response?.data.error);
+      toast.error(axiosError.response?.data.error);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+      <DoctorNav />
+
+      <div className="bg-gray-200 h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+        <DoctorTopBar />
+        <form
+          onSubmit={handleSubmit}
+          className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md"
+        >
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Apply for Leave
+          </h2>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Leave Type
+            </label>
+            <input
+              type="text"
+              value={leaveType}
+              onChange={(e) => setLeaveType(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+              placeholder="Leave Type"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Start Date
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              End Date
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Reason
+            </label>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+              placeholder="Reason for Leave"
+              required
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+          >
+            Apply for Leave
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default DoctorLeave;

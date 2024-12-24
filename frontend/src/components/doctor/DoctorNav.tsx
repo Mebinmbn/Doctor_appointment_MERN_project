@@ -28,7 +28,7 @@ function DoctorNav() {
         </div>
 
         <div className="h-9  border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="/doctor/timeSlot">Time Slots</NavLink>
+          <NavLink to="/doctor/leave">Apply Leave</NavLink>
         </div>
 
         <div

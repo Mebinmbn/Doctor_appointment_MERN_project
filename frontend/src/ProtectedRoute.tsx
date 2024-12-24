@@ -16,12 +16,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, role }) => {
   const location = useLocation();
 
   useEffect(() => {
+    const toastId = "loginToContinue";
     if (role === "admin" && !admin) {
       toast.error("Login to continue!", { autoClose: 3000 });
     } else if (role === "doctor" && !doctor) {
       toast.error("Doctor login required!", { autoClose: 3000 });
     } else if (role === "user" && !user) {
-      toast.error("Please log in as a user!", { autoClose: 3000 });
+      if (!toast.isActive(toastId)) {
+        toast.warn("Login to continue", { toastId });
+      }
     }
   }, [role, admin, doctor, user]);
 
