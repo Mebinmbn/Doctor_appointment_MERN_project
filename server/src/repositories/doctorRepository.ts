@@ -3,6 +3,7 @@ import DoctorModel, { IDoctor } from "./../models/doctorModel";
 import AppointmentModel from "../models/appointmentModel";
 import TimeSlotsModel from "../models/timeSlotsModel";
 import NotificationModel from "../models/notificationModel";
+import LeaveModel from "../models/leaveModel";
 
 const checkDoctorByEmail = async (email: string): Promise<IDoctor | null> => {
   console.log("check doctor");

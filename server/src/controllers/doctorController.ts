@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+  applyLeave,
   cancelAppointment,
   createDoctorTimeSlots,
   getAppointments,
@@ -9,7 +10,6 @@ import {
   signinDoctor,
 } from "../usecases/doctorUseCases";
 import { getTimeSlots } from "../usecases/patientUseCases";
-import { ITimeSlots } from "../models/timeSlotsModel";
 
 const register = async (req: Request, res: Response) => {
   console.log(req.file);
@@ -31,7 +31,7 @@ const register = async (req: Request, res: Response) => {
       },
     };
 
-    const doctor = await registerDoctor(doctorData);
+    const doctor = await registerDoctor(doctorData, req.app);
     if (doctor) {
       res
         .status(200)
@@ -194,6 +194,32 @@ const notifications = async (req: Request, res: Response) => {
   }
 };
 
+interface UserPayload {
+  id: string;
+  role: string;
+  isBlocked: boolean;
+}
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: UserPayload;
+  }
+}
+
+const leave = async (req: Request, res: Response) => {
+  try {
+    const leaveData = { doctorId: req.user?.id, ...req.body };
+    const leave = await applyLeave(leaveData);
+    if (leave) {
+      res
+        .status(200)
+        .json({ success: true, leave, message: "Leave applied successfully" });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   register,
   signin,
@@ -205,4 +231,5 @@ export default {
   removeTimeSlots,
   createTimeSlots,
   notifications,
+  leave,
 };

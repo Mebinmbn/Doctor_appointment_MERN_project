@@ -91,4 +91,18 @@ router.get(
   adminController.appointments
 );
 
+router.get(
+  "/leave/requests",
+  authMiddleware,
+  roleMiddleware("admin"),
+  adminController.requests
+);
+
+router.put(
+  "/leave/update/:id",
+  authMiddleware,
+  roleMiddleware("admin"),
+  adminController.updateRequest
+);
+
 export default router;

@@ -82,18 +82,24 @@ const getNotifications = async (id: string) => {
 
 //////////////////////////////////////////////////////////////
 
-const applicationsNotification = async (doctor: IDoctor) => {
+const applicationsNotification = async (doctor: IDoctor, app: Application) => {
   try {
     let notificationData = {
       recipientId: "6755139cbb339a450c37ecb8",
       senderId: doctor.id.toString(),
       recipientRole: "admin",
       type: "application",
-      content: `Dr.${doctor.firstName} ${doctor.lastName} has applied to join the website`,
+      content: `There is an application from Dr.${doctor.firstName} ${doctor.lastName}`,
     };
 
     const notification = new NotificationModel(notificationData);
     await notification.save();
+    const io = app.get("io");
+    if (io) {
+      io.to(notification.recipientId).emit("notification", notification);
+    } else {
+      console.error("Socket.io instance not found on app");
+    }
     return notification;
   } catch (error) {
     throw new Error("Error at creating notification");

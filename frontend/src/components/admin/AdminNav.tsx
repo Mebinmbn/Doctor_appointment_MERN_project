@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import { clearAdmin } from "../../app/featrue/adminSlice";
 import { useDispatch } from "react-redux";
@@ -27,7 +26,7 @@ function AdminNav() {
           <NavLink to="/admin/applications">Applications</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="">Payments</NavLink>
+          <NavLink to="/admin/requests">Requests</NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-2 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
           <NavLink to="/admin/appointments">Appointments</NavLink>

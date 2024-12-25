@@ -6,8 +6,13 @@ import PatientModel from "../models/patientModel";
 
 config();
 
+interface UserPayload extends jwt.JwtPayload {
+  id: string;
+  role: string;
+  isBlocked: boolean;
+}
 interface AuthenticatedRequest extends Request {
-  user?: JwtPayload | string;
+  user?: UserPayload;
 }
 
 const authMiddleware = async (
@@ -24,7 +29,7 @@ const authMiddleware = async (
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
     console.log("decoded", decoded);
     req.user = decoded;
     let user;

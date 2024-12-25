@@ -57,4 +57,11 @@ router.get(
   doctorController.notifications
 );
 
+router.post(
+  "/leave/apply",
+  authMiddleware,
+  roleMiddleware("doctor"),
+  doctorController.leave
+);
+
 export default router;

@@ -1,5 +1,5 @@
 // ApplyLeaveForm.js
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import api from "../../api/api";
 import DoctorNav from "../../components/doctor/DoctorNav";
 import DoctorTopBar from "../../components/doctor/DoctorTopBar";
@@ -14,6 +14,10 @@ function DoctorLeave() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (new Date(endDate) < new Date(startDate)) {
+      toast.error("End date should not be less than start date");
+      return;
+    }
     try {
       const response = await api.post("doctor/leave/apply", {
         leaveType,
@@ -22,6 +26,10 @@ function DoctorLeave() {
         reason,
       });
       toast.success(response.data.message);
+      setLeaveType("");
+      setStartDate("");
+      setEndDate("");
+      setReason("");
     } catch (error) {
       const axiosError = error as AxiosError;
       console.log("Error in signup request:", axiosError.response?.data.error);
@@ -42,19 +50,7 @@ function DoctorLeave() {
           <h2 className="text-2xl font-bold mb-4 text-center">
             Apply for Leave
           </h2>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Leave Type
-            </label>
-            <input
-              type="text"
-              value={leaveType}
-              onChange={(e) => setLeaveType(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-              placeholder="Leave Type"
-              required
-            />
-          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Start Date

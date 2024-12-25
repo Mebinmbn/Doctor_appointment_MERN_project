@@ -3,6 +3,7 @@ import { AdminResponse } from "../models/authResponseModel";
 import { IDoctor } from "../models/doctorModel";
 import { IPatient } from "../models/patientModel";
 import adminRepository from "../repositories/adminRepository";
+import leaveRepository from "../repositories/leaveRepository";
 import { hashPassword } from "../services/bcryptService";
 import { generateRefreshToken, generateToken } from "../services/tokenService";
 
@@ -129,5 +130,23 @@ export const getAppointments = async () => {
     return await adminRepository.fetchAppointments();
   } catch (error) {
     throw new Error("Error in fetching appointments");
+  }
+};
+
+export const leaveApplications = async (page: number, limit: number) => {
+  try {
+    const requests = await leaveRepository.findAllRequests(page, limit);
+    console.log("usecases", requests);
+    return requests;
+  } catch (error) {
+    throw new Error("Error in fetching requests");
+  }
+};
+
+export const updateLeaveRequest = async (id: string, status: string) => {
+  try {
+    return await leaveRepository.updateLeaveStatus(id, status);
+  } catch (error) {
+    throw new Error("Error in updating  leave request");
   }
 };

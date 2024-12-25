@@ -1,6 +1,7 @@
 import AdminModel, { IAdmin } from "../models/adminModel";
 import AppointmentModel from "../models/appointmentModel";
 import DoctorModel, { IDoctor } from "../models/doctorModel";
+import LeaveModel from "../models/leaveModel";
 import PatientModel, { IPatient } from "../models/patientModel";
 
 const findAdminByEmail = async (email: string): Promise<IAdmin | null> => {
@@ -207,6 +208,8 @@ const fetchAppointments = async () => {
     throw new Error("Error in fetching appointments");
   }
 };
+
+/////////////////////////////////////////////////////////////////////
 
 export default {
   findAdminByEmail,

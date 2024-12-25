@@ -42,7 +42,10 @@ function DoctorTopBar() {
               !notifications.find((existing) => existing._id === notif._id)
           ),
         ];
-        setNotifications(combinedNotifications);
+        const sortedNotifications = combinedNotifications.sort(
+          (a, b) => b.createdAt - a.createdAt
+        );
+        setNotifications(sortedNotifications);
       }
     } catch (error) {
       const axiosError = error as AxiosError;

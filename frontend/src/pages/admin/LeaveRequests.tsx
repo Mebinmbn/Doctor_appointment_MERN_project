@@ -1,89 +1,143 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../api/api";
 import { toast } from "react-toastify";
 import { ILeave } from "./../../../../server/src/models/leaveModel";
+import AdminNav from "../../components/admin/AdminNav";
+import AdminTopBar from "../../components/admin/AdminTopBar";
 
 function LeaveRequests() {
   const [leaveRequests, setLeaveRequests] = useState<ILeave[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const fetchLeaveRequests = async () => {
+    try {
+      const response = await api.get(
+        `admin/leave/requests?page=${currentPage}&limit=7`,
+        {
+          headers: { "User-Type": "admin" },
+        }
+      );
+      setLeaveRequests(response.data.requests);
+      setTotalPages(response.data.meta.totalPages);
+    } catch (error) {
+      console.error("Error fetching leave requests:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchLeaveRequests = async () => {
-      try {
-        const response = await api.get("admin/leave/requests");
-        setLeaveRequests(response.data.requests);
-      } catch (error) {
-        console.error("Error fetching leave requests:", error);
-      }
-    };
-
     fetchLeaveRequests();
   }, []);
 
-  //   const updateLeaveStatus = async (id, status) => {
-  //     try {
-  //       const response = await api.put(`/leave/update/${id}`, { status });
-  //       toast.success(response.data.message);
-  //       setLeaveRequests((prevRequests) =>
-  //         prevRequests.map((request) =>
-  //           request._id === id ? { ...request, status } : request
-  //         )
-  //       );
-  //     } catch (error) {
-  //       toast.error("Error updating leave status");
-  //       console.error("Error updating leave status:", error);
-  //     }
-  //   };
+  const updateLeaveStatus = async (id: string, status: string) => {
+    try {
+      const response = await api.put(
+        `admin/leave/update/${id}`,
+        { status },
+        {
+          headers: { "User-Type": "admin" },
+        }
+      );
+      toast.success(response.data.message);
+      fetchLeaveRequests();
+    } catch (error) {
+      toast.error("Error updating leave status");
+      console.error("Error updating leave status:", error);
+    }
+  };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Leave Requests</h2>
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border-b">Doctor</th>
-            <th className="py-2 px-4 border-b">Leave Type</th>
-            <th className="py-2 px-4 border-b">Start Date</th>
-            <th className="py-2 px-4 border-b">End Date</th>
-            <th className="py-2 px-4 border-b">Reason</th>
-            <th className="py-2 px-4 border-b">Status</th>
-            <th className="py-2 px-4 border-b">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaveRequests.map((leave) => (
-            <tr key={leave._id}>
-              <td className="py-2 px-4 border-b">{leave.doctorId.name}</td>
-              <td className="py-2 px-4 border-b">{leave.leaveType}</td>
-              <td className="py-2 px-4 border-b">
-                {new Date(leave.startDate).toLocaleDateString()}
-              </td>
-              <td className="py-2 px-4 border-b">
-                {new Date(leave.endDate).toLocaleDateString()}
-              </td>
-              <td className="py-2 px-4 border-b">{leave.reason}</td>
-              <td className="py-2 px-4 border-b">{leave.status}</td>
-              <td className="py-2 px-4 border-b">
-                {leave.status === "Pending" && (
-                  <div className="flex space-x-2">
+    <div>
+      <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+        <AdminNav />
+        <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+          <AdminTopBar />
+          <div className="flex justify-center  items-center ">
+            <div className="w-full max-w-6xl mt-5  shadow-lg rounded-lg bg-[#007E85]">
+              <h2 className="text-2xl font-bold mb-4 text-white p-4 text-white border-b text-white">
+                Applications
+              </h2>
+              <table className="min-w-full bg-[#007E85] border">
+                <thead>
+                  <tr>
+                    <th className="py-2 px-4 text-white border-b">Doctor</th>
+
+                    <th className="py-2 px-4 text-white border-b">
+                      Start Date
+                    </th>
+
+                    <th className="py-2 px-4 text-white border-b">End Date</th>
+                    <th className="py-2 px-4 text-white border-b">Reason</th>
+                    <th className="py-2 px-4 text-white border-b">Status</th>
+
+                    <th className="py-2 px-4 text-white border-b">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaveRequests?.map((leave: ILeave, index) => (
+                    <tr key={index}>
+                      <td className="py-2 px-4 text-white border-b">
+                        {leave.doctorId.firstName} {leave.doctorId.lastName}
+                      </td>
+
+                      <td className="py-2 px-4 text-white border-b">
+                        {new Date(leave.startDate).toLocaleDateString()}
+                      </td>
+
+                      <td className="py-2 px-4 text-white border-b">
+                        {new Date(leave.endDate).toLocaleDateString()}
+                      </td>
+                      <td className="py-2 px-4 text-white border-b">
+                        {leave.reason}
+                      </td>
+                      <td className="py-2 px-4 text-white border-b">
+                        {leave.status}
+                      </td>
+
+                      <td className="py-2 px-4 text-white border-b">
+                        <div>
+                          <button
+                            className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
+                            onClick={() => {
+                              updateLeaveStatus(leave._id, "Approved");
+                            }}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                            onClick={() => {
+                              updateLeaveStatus(leave._id, "Rejected");
+                            }}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="flex justify-center mt-4">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
                     <button
-                      //   onClick={() => updateLeaveStatus(leave._id, "Approved")}
-                      className="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-2 py-1 mb-1 ${
+                        currentPage === page
+                          ? "bg-blue-500 text-white rounded-full"
+                          : "text-black"
+                      }`}
                     >
-                      Approve
+                      {page}
                     </button>
-                    <button
-                      //   onClick={() => updateLeaveStatus(leave._id, "Rejected")}
-                      className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
-                    >
-                      Reject
-                    </button>
-                  </div>
+                  )
                 )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

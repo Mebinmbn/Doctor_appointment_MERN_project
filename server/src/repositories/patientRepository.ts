@@ -7,6 +7,7 @@ import PatientDetailsModel, {
 } from "../models/patientDetailsModel";
 import PatientModel, { IPatient } from "../models/patientModel";
 import TimeSlotsModel from "../models/timeSlotsModel";
+import LeaveModel from "../models/leaveModel";
 
 const createPatient = async (
   patientData: Partial<IPatient>
@@ -134,7 +135,7 @@ const lockTimeSlot = async (doctorId: string, date: string, time: string) => {
     throw new Error("Error in locking time slot");
   }
 };
-
+////////////////////////////////////////////////////////
 const fetchAppointments = async (id: string) => {
   console.log("patient repo", id);
   try {
@@ -150,7 +151,7 @@ const fetchAppointments = async (id: string) => {
     throw new Error("Error in fetching appointments");
   }
 };
-
+////////////////////////////////////////////////////////////////
 const cancel = async (id: string) => {
   console.log("patient repo");
   try {
@@ -165,7 +166,7 @@ const cancel = async (id: string) => {
     throw new Error("Error in approving appointments");
   }
 };
-
+////////////////////////////////////////////////////////////////////////////////
 const notifications = async (id: string, page: number, limit: number) => {
   console.log("patient repo", id, page, limit);
   try {

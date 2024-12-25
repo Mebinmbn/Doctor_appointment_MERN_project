@@ -10,10 +10,12 @@ import {
   getAppointments,
   getDoctors,
   getPatients,
+  leaveApplications,
   rejectApplication,
   signInAdmin,
   unblockDoctor,
   unblockPatient,
+  updateLeaveRequest,
 } from "../usecases/adminUseCases";
 
 const signin = async (req: Request, res: Response) => {
@@ -249,6 +251,43 @@ const appointments = async (req: Request, res: Response) => {
   }
 };
 
+const requests = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) | 1;
+    const limit = parseInt(req.query.limit as string) | 7;
+    const { requests, totalDocs, totalPages } = await leaveApplications(
+      page,
+      limit
+    );
+    console.log("controller", requests);
+
+    res.status(200).json({
+      success: true,
+      requests,
+      meta: { page, limit, totalDocs, totalPages },
+      message: "Requests fetched successfully",
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const updateRequest = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const request = await updateLeaveRequest(id, status);
+    res
+      .status(200)
+      .json({ success: true, message: "Leave request updated", data: request });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   signin,
   applications,
@@ -260,4 +299,6 @@ export default {
   unblock,
   edit,
   appointments,
+  requests,
+  updateRequest,
 };

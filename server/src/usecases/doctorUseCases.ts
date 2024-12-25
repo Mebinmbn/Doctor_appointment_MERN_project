@@ -1,5 +1,7 @@
 import { IDoctor } from "../models/doctorModel";
+import { ILeave } from "../models/leaveModel";
 import doctorRepository from "../repositories/doctorRepository";
+import leaveRepository from "../repositories/leaveRepository";
 import notificationsRepository from "../repositories/notificationsRepository";
 import timeSlotsRepository from "../repositories/timeSlotsRepository";
 import { comparePassword, hashPassword } from "../services/bcryptService";
@@ -7,7 +9,7 @@ import { generateRefreshToken, generateToken } from "../services/tokenService";
 import validation from "../utils/validation";
 import express, { Application } from "express";
 const app = express();
-export const registerDoctor = async (doctorData: IDoctor) => {
+export const registerDoctor = async (doctorData: IDoctor, app: Application) => {
   console.log("doctorUsecases", doctorData);
   try {
     validation.validateDoctorRegister(doctorData);
@@ -23,7 +25,7 @@ export const registerDoctor = async (doctorData: IDoctor) => {
     const doctor = await doctorRepository.createDoctor(doctorData);
     if (doctor) {
       const notification =
-        await notificationsRepository.applicationsNotification(doctor);
+        await notificationsRepository.applicationsNotification(doctor, app);
     }
     return doctor;
   } catch (error) {
@@ -133,5 +135,19 @@ export const getDoctorNotifications = async (
     return await doctorRepository.notifications(id, page, limit);
   } catch (error) {
     throw new Error("Error in fetching notificaions");
+  }
+};
+
+export const applyLeave = async (leaveData: ILeave) => {
+  try {
+    const existing = await leaveRepository.checkExistingLeaveApplication(
+      leaveData
+    );
+    if (existing) {
+      throw new Error("Application already exists");
+    }
+    return await leaveRepository.leaveApplication(leaveData);
+  } catch (error) {
+    throw new Error("Error in applying leave");
   }
 };

@@ -82,10 +82,10 @@ function AdminTopBar() {
                         <li
                           key={index}
                           className={`text-sm ${
-                            notification.type === "applied"
+                            notification.type === "application"
                               ? "bg-yellow-200"
                               : "bg-red-200"
-                          } text-black p-1 border-b last:border-b-0`}
+                          } text-black p-1 border-b border-2 last:border-b-0`}
                         >
                           {notification.content}
                         </li>
