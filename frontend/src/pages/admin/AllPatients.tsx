@@ -65,11 +65,11 @@ function AllPatients() {
     fetchPatients();
   }, [fetchPatients]);
 
-  const handleUnblock = async (id: string) => {
+  const handleUpdateStatus = async (id: string, status: boolean) => {
     try {
-      const response = await api.post(
-        `/admin/patients/unblock/${id}`,
-        { role: "patients" },
+      const response = await api.put(
+        `/admin/patients/update/${id}`,
+        { role: "patients", status },
         {
           headers: {
             "User-Type": "admin",
@@ -83,27 +83,6 @@ function AllPatients() {
     } catch (error) {
       console.error("Error in unblocking patient:", error);
       toast.error("Error in unblocking");
-    }
-  };
-
-  const handleBlock = async (id: string) => {
-    try {
-      const response = await api.post(
-        `/admin/patients/block/${id}`,
-        { role: "patients" },
-        {
-          headers: {
-            "User-Type": "admin",
-          },
-        }
-      );
-      if (response.data.success) {
-        fetchPatients();
-        toast.success("Patient blocked successfully");
-      }
-    } catch (error) {
-      console.error("Error in blocking patient:", error);
-      toast.error("Error in blocking");
     }
   };
 
@@ -166,14 +145,18 @@ function AllPatients() {
                         {patient.isBlocked ? (
                           <button
                             className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
-                            onClick={() => handleUnblock(patient._id)}
+                            onClick={() =>
+                              handleUpdateStatus(patient._id, false)
+                            }
                           >
                             Unblock
                           </button>
                         ) : (
                           <button
                             className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                            onClick={() => handleBlock(patient._id)}
+                            onClick={() =>
+                              handleUpdateStatus(patient._id, true)
+                            }
                           >
                             Block
                           </button>

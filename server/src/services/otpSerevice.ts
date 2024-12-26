@@ -4,7 +4,7 @@ export const generateOTP = (email: string): string => {
   const otp = Math.floor(1000 + Math.random() * 9000).toString();
   otpMap.set(email, otp);
 
-  setTimeout(() => otpMap.delete(email), 5 * 60 * 1000);
+  setTimeout(() => otpMap.delete(email), 2 * 60 * 1000);
   return otp;
 };
 //////////////////////////////////////////////////////

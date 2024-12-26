@@ -74,11 +74,11 @@ const AllDoctors = () => {
     fetchDoctors();
   }, [fetchDoctors]);
 
-  const handleUnblock = async (id: string | null) => {
+  const handleStatusUpdate = async (id: string | null, status: boolean) => {
     try {
-      const response = await api.post(
-        `/admin/doctors/unblock/${id}`,
-        { role: "doctor" },
+      const response = await api.put(
+        `/admin/doctors/update/${id}`,
+        { role: "doctor", status: status },
         {
           headers: {
             "User-Type": "admin",
@@ -87,32 +87,11 @@ const AllDoctors = () => {
       );
       if (response.data.success) {
         fetchDoctors();
-        toast.success("Doctor unblocked");
+        toast.success("Status updated");
       }
     } catch (error) {
       console.error("Error in unblocking doctor:", error);
       toast.error("Error in unblocking");
-    }
-  };
-
-  const handleBlock = async (id: string) => {
-    try {
-      const response = await api.post(
-        `/admin/doctors/block/${id}`,
-        { role: "doctor" },
-        {
-          headers: {
-            "User-Type": "admin",
-          },
-        }
-      );
-      if (response.data.success) {
-        fetchDoctors();
-        toast.success("Doctor blocked successfully");
-      }
-    } catch (error) {
-      console.error("Error in blocking doctor:", error);
-      toast.error("Error in blocking");
     }
   };
 
@@ -227,14 +206,18 @@ const AllDoctors = () => {
                         {doctor.isBlocked ? (
                           <button
                             className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
-                            onClick={() => handleUnblock(doctor._id as string)}
+                            onClick={() =>
+                              handleStatusUpdate(doctor._id as string, false)
+                            }
                           >
                             Unblock
                           </button>
                         ) : (
                           <button
                             className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                            onClick={() => handleBlock(doctor._id as string)}
+                            onClick={() =>
+                              handleStatusUpdate(doctor._id as string, true)
+                            }
                           >
                             Block
                           </button>

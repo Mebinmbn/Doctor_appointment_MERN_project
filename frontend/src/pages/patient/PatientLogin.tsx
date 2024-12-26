@@ -10,6 +10,7 @@ import { User } from "../../types/user";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import api from "../../api/api";
 import axios from "axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 interface FormValues {
   firstName: string;
@@ -45,12 +46,13 @@ function PatientLogin() {
   };
 
   const { setEmail, setUserType } = useAuth();
-
   const [signState, setSignState] = useState("Sign In");
   const [formData, setFormData] = useState<FormValues>(initialValues);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+
   const user = useSelector(
     (state: RootState) => state.user.user
   ) as User | null;
@@ -130,6 +132,7 @@ function PatientLogin() {
 
         console.log("Patient created:", response.data);
         toast.success("Account created, please verify your account");
+        setLoading(true);
 
         await axios.post(
           "http://localhost:8080/api/otp/send",
@@ -142,7 +145,12 @@ function PatientLogin() {
             withCredentials: true,
           }
         );
-        if (response.data.success) navigate("/otp");
+        if (response.data.success) {
+          const startTime = new Date().getTime();
+          localStorage.setItem("otpStartTime", startTime.toString());
+          navigate("/otp");
+        }
+        setLoading(false);
         setFormData(initialValues);
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -256,87 +264,91 @@ function PatientLogin() {
     <>
       <Navbar />
       <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
-        <div className="bg-gray-200 h-[35rem] w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
-          <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
-            {signState}
-          </h1>
-          {signState === "Sign Up" ? (
-            <form onSubmit={handleSignup}>
-              <InputField
-                name="firstName"
-                value={formData.firstName}
-                error={formErrors.firstName}
-                onChange={handleChange}
-                placeholder="First Name"
-              />
-              <InputField
-                name="lastName"
-                value={formData.lastName}
-                error={formErrors.lastName}
-                onChange={handleChange}
-                placeholder="Last Name"
-              />
-              <InputField
-                name="email"
-                value={formData.email}
-                error={formErrors.email}
-                onChange={handleChange}
-                placeholder="Email"
-              />
-              <InputField
-                name="phone"
-                value={formData.phone}
-                error={formErrors.phone}
-                onChange={handleChange}
-                placeholder="Phone"
-              />
-              <PassField
-                name="password"
-                value={formData.password}
-                error={formErrors.password}
-                onChange={handleChange}
-                placeholder="Password"
-              />
-              <button className="bg-[#007E85] rounded-lg p-2 mt-4 mt-2 text-white w-24 font-bold">
-                Sign Up
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleSignIn}>
-              <InputField
-                name="email"
-                value={formData.email}
-                error={formErrors.email}
-                onChange={handleChange}
-                placeholder="Email"
-              />
-              <PassField
-                name="password"
-                value={formData.password}
-                error={formErrors.password}
-                onChange={handleChange}
-                placeholder="Password"
-              />
-              <Link to="/forgotPassword">
-                <p className="text-right mr-5 my-5 text-blue-800 cursor-pointer">
-                  Forgot password?
-                </p>
-              </Link>
-              <button
-                type="submit"
-                className="bg-[#007E85] rounded-lg p-2 mt-4 my-5 text-white w-24 font-bold"
-              >
-                Sign In
-              </button>
-            </form>
-          )}
-          <div className="w-100 flex justify-center my-2 ">
-            <GoogleOAuthProvider clientId="169581545565-89ueco0qk9b1ino9hfckstb0v5ehkn65.apps.googleusercontent.com">
-              <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
-            </GoogleOAuthProvider>
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <div className="bg-gray-200 h-[35rem] w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
+            <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
+              {signState}
+            </h1>
+            {signState === "Sign Up" ? (
+              <form onSubmit={handleSignup}>
+                <InputField
+                  name="firstName"
+                  value={formData.firstName}
+                  error={formErrors.firstName}
+                  onChange={handleChange}
+                  placeholder="First Name"
+                />
+                <InputField
+                  name="lastName"
+                  value={formData.lastName}
+                  error={formErrors.lastName}
+                  onChange={handleChange}
+                  placeholder="Last Name"
+                />
+                <InputField
+                  name="email"
+                  value={formData.email}
+                  error={formErrors.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                />
+                <InputField
+                  name="phone"
+                  value={formData.phone}
+                  error={formErrors.phone}
+                  onChange={handleChange}
+                  placeholder="Phone"
+                />
+                <PassField
+                  name="password"
+                  value={formData.password}
+                  error={formErrors.password}
+                  onChange={handleChange}
+                  placeholder="Password"
+                />
+                <button className="bg-[#007E85] rounded-lg p-2 mt-4 mt-2 text-white w-24 font-bold">
+                  Sign Up
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleSignIn}>
+                <InputField
+                  name="email"
+                  value={formData.email}
+                  error={formErrors.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                />
+                <PassField
+                  name="password"
+                  value={formData.password}
+                  error={formErrors.password}
+                  onChange={handleChange}
+                  placeholder="Password"
+                />
+                <Link to="/forgotPassword">
+                  <p className="text-right mr-5 my-5 text-blue-800 cursor-pointer">
+                    Forgot password?
+                  </p>
+                </Link>
+                <button
+                  type="submit"
+                  className="bg-[#007E85] rounded-lg p-2 mt-4 my-5 text-white w-24 font-bold"
+                >
+                  Sign In
+                </button>
+              </form>
+            )}
+            <div className="w-100 flex justify-center my-2 ">
+              <GoogleOAuthProvider clientId="169581545565-89ueco0qk9b1ino9hfckstb0v5ehkn65.apps.googleusercontent.com">
+                <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
+              </GoogleOAuthProvider>
+            </div>
+            <SwitchForm signState={signState} setSignState={setSignState} />
           </div>
-          <SwitchForm signState={signState} setSignState={setSignState} />
-        </div>
+        )}
       </div>
     </>
   );

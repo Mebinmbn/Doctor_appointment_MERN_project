@@ -89,23 +89,6 @@ export const cancelAppointment = async (id: string, app: Application) => {
   }
 };
 
-// export const rejectAppointment = async (id: string) => {
-//   try {
-//     const appointment = await doctorRepository.reject(id);
-//     if (appointment) {
-//       const notification =
-//         await notificationsRepository.createAppointmentNotification(
-//           appointment,
-//           "rejected",
-//           "doctor"
-//         );
-//     }
-//     return appointment;
-//   } catch (error) {
-//     throw new Error("Error in rejection");
-//   }
-// };
-
 export const createDoctorTimeSlots = async (doctorId: string, slots: []) => {
   try {
     return await timeSlotsRepository.createNewTimeSlotRecord(doctorId, slots);
@@ -138,7 +121,7 @@ export const getDoctorNotifications = async (
   }
 };
 
-export const applyLeave = async (leaveData: ILeave) => {
+export const applyLeave = async (leaveData: ILeave, app: Application) => {
   try {
     const existing = await leaveRepository.checkExistingLeaveApplication(
       leaveData
@@ -146,7 +129,14 @@ export const applyLeave = async (leaveData: ILeave) => {
     if (existing) {
       throw new Error("Application already exists");
     }
-    return await leaveRepository.leaveApplication(leaveData);
+    const leave = await leaveRepository.leaveApplication(leaveData);
+    if (leave) {
+      const notification = notificationsRepository.createLeaveNotification(
+        leave,
+        app
+      );
+    }
+    return leave;
   } catch (error) {
     throw new Error("Error in applying leave");
   }

@@ -103,20 +103,6 @@ const cancel = async (req: Request, res: Response) => {
   }
 };
 
-// const reject = async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   try {
-//     const appointment = await rejectAppointment(id);
-
-//     res
-//       .status(200)
-//       .json({ success: true, appointment, message: "Rejected successfully" });
-//   } catch (error: any) {
-//     const errorMessage = error.message || "An unexpected error occurred";
-//     res.status(400).json({ success: false, error: errorMessage });
-//   }
-// };
-
 const createTimeSlots = async (req: Request, res: Response) => {
   console.log("doctor timeslots");
   const { id } = req.params;
@@ -208,7 +194,7 @@ declare module "express-serve-static-core" {
 const leave = async (req: Request, res: Response) => {
   try {
     const leaveData = { doctorId: req.user?.id, ...req.body };
-    const leave = await applyLeave(leaveData);
+    const leave = await applyLeave(leaveData, req.app);
     if (leave) {
       res
         .status(200)
@@ -224,8 +210,7 @@ export default {
   register,
   signin,
   appointments,
-  // approve,
-  // reject,
+
   cancel,
   timeSlots,
   removeTimeSlots,

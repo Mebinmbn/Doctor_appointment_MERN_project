@@ -42,18 +42,11 @@ router.put(
   adminController.edit
 );
 
-router.post(
-  "/doctors/block/:id",
+router.put(
+  "/doctors/update/:id",
   authMiddleware,
   roleMiddleware("admin"),
-  adminController.block
-);
-
-router.post(
-  "/doctors/unblock/:id",
-  authMiddleware,
-  roleMiddleware("admin"),
-  adminController.unblock
+  adminController.blockUnblock
 );
 
 router.get(
@@ -70,18 +63,11 @@ router.put(
   adminController.edit
 );
 
-router.post(
-  "/patients/block/:id",
+router.put(
+  "/patients/update/:id",
   authMiddleware,
   roleMiddleware("admin"),
-  adminController.block
-);
-
-router.post(
-  "/patients/unblock/:id",
-  authMiddleware,
-  roleMiddleware("admin"),
-  adminController.unblock
+  adminController.blockUnblock
 );
 
 router.get(

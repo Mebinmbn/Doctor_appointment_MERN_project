@@ -68,34 +68,18 @@ export const getPatients = async (page: number, limit: number, query: {}) => {
   }
 };
 
-export const blockDoctor = async (id: string) => {
+export const blocUnblockDoctor = async (id: string, status: boolean) => {
   console.log("usecases - bolckdr");
   try {
-    return await adminRepository.blockDoctor(id);
+    return await adminRepository.blockUnblockDoctor(id, status);
   } catch (error) {
     throw new Error("Error occurred in blocking");
   }
 };
 
-export const unblockDoctor = async (id: string) => {
+export const blockUnblockPatient = async (id: string, status: boolean) => {
   try {
-    return await adminRepository.unblockDoctor(id);
-  } catch (error) {
-    throw new Error("Error occurred in unblocking");
-  }
-};
-
-export const unblockPatient = async (id: string) => {
-  try {
-    return await adminRepository.unblockPatient(id);
-  } catch (error) {
-    throw new Error("Error occurred in unblocking");
-  }
-};
-
-export const blockPatient = async (id: string) => {
-  try {
-    return await adminRepository.blockPatient(id);
+    return await adminRepository.blockUnblockPatient(id, status);
   } catch (error) {
     throw new Error("Error occurred in unblocking");
   }

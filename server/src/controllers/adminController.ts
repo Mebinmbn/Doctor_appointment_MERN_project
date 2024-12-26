@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import AdminModel from "../models/adminModel";
+
 import {
   approveApplication,
-  blockDoctor,
-  blockPatient,
+  blockUnblockPatient,
+  blocUnblockDoctor,
   editDoctor,
   editPatient,
   getApplications,
@@ -13,8 +13,6 @@ import {
   leaveApplications,
   rejectApplication,
   signInAdmin,
-  unblockDoctor,
-  unblockPatient,
   updateLeaveRequest,
 } from "../usecases/adminUseCases";
 
@@ -167,17 +165,18 @@ const patients = async (req: Request, res: Response) => {
   }
 };
 
-const block = async (req: Request, res: Response) => {
+const blockUnblock = async (req: Request, res: Response) => {
   const id = req.params.id;
-  let { role } = req.body;
+  let { role, status } = req.body;
+  console.log(role, status);
 
   let response;
   console.log("controller", role);
   try {
     if (role === "doctor") {
-      response = await blockDoctor(id);
+      response = await blocUnblockDoctor(id, status);
     } else {
-      response = await blockPatient(id);
+      response = await blockUnblockPatient(id, status);
     }
     console.log(response);
 
@@ -190,30 +189,6 @@ const block = async (req: Request, res: Response) => {
     }
   } catch (error) {
     res.status(400).json({ success: false, error: "Error in blocking" });
-  }
-};
-
-const unblock = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  const { role } = req.body;
-  console.log(id, role);
-  let response;
-  try {
-    if (role === "doctor") {
-      response = await unblockDoctor(id);
-    } else {
-      response = await unblockPatient(id);
-    }
-
-    if (response) {
-      res
-        .status(200)
-        .json({ success: true, message: "Doctor unblocked successfully" });
-    } else {
-      res.status(400).json({ success: false, error: "Error in unblocking" });
-    }
-  } catch (error) {
-    res.status(400).json({ success: false, error: "Error in unblocking" });
   }
 };
 
@@ -295,10 +270,9 @@ export default {
   reject,
   doctors,
   patients,
-  block,
-  unblock,
   edit,
   appointments,
   requests,
   updateRequest,
+  blockUnblock,
 };

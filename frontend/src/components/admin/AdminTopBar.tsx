@@ -78,7 +78,7 @@ function AdminTopBar() {
                     <li className="text-gray-500">No notifications</li>
                   ) : (
                     notifications.map((notification, index) => (
-                      <Link to="/doctor/notifications">
+                      <Link to="">
                         <li
                           key={index}
                           className={`text-sm ${

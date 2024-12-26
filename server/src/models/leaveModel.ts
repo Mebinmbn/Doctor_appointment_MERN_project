@@ -2,7 +2,7 @@ import mongoose, { Schema, Model, Document } from "mongoose";
 
 export interface ILeave extends Document {
   doctorId: mongoose.Schema.Types.ObjectId;
-  leaveType: String;
+
   startDate: Date;
   endDate: Date;
   status: String;
@@ -16,7 +16,7 @@ const LeaveSchema: Schema<ILeave> = new Schema<ILeave>(
       ref: "Doctor",
       required: true,
     },
-    leaveType: { type: String, required: true },
+
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     status: {

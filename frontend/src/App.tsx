@@ -190,7 +190,14 @@ function App() {
             }
           />
 
-          <Route path="/admin/requests" element={<LeaveRequests />} />
+          <Route
+            path="/admin/requests"
+            element={
+              <ProtectedRoute role="admin">
+                <LeaveRequests />
+              </ProtectedRoute>
+            }
+          />
 
           {/* errorPage */}
           <Route path="*" element={<ErrorPage />} />

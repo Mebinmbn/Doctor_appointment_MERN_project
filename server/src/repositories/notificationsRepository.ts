@@ -1,5 +1,6 @@
 import { IAppointment } from "../models/appointmentModel";
 import DoctorModel, { IDoctor } from "../models/doctorModel";
+import { ILeave } from "../models/leaveModel";
 import NotificationModel, { INotification } from "../models/notificationModel";
 import PatientModel from "../models/patientModel";
 import express, { Application } from "express";
@@ -106,8 +107,34 @@ const applicationsNotification = async (doctor: IDoctor, app: Application) => {
   }
 };
 
+const createLeaveNotification = async (leave: ILeave, app: Application) => {
+  try {
+    const doctor = await DoctorModel.findOne(leave.doctorId);
+    let notificationData = {
+      recipientId: "6755139cbb339a450c37ecb8",
+      senderId: leave.doctorId.toString(),
+      recipientRole: "admin",
+      type: "application",
+      content: `There is a leave request from Dr.${doctor?.firstName} ${doctor?.lastName}`,
+    };
+
+    const notification = new NotificationModel(notificationData);
+    await notification.save();
+    const io = app.get("io");
+    if (io) {
+      io.to(notification.recipientId).emit("notification", notification);
+    } else {
+      console.error("Socket.io instance not found on app");
+    }
+    return notification;
+  } catch (error) {
+    throw new Error("Error at creating notification");
+  }
+};
+
 export default {
   createAppointmentNotification,
   getNotifications,
   applicationsNotification,
+  createLeaveNotification,
 };

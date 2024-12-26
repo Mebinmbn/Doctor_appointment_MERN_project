@@ -10,8 +10,10 @@ const checkExistingLeaveApplication = async (leaveData: ILeave) => {
 
 const leaveApplication = async (leaveData: {}) => {
   try {
+    console.log("leave repo", leaveData);
     const leave = new LeaveModel(leaveData);
     await leave.save();
+    console.log("leave repo", leave);
     return leave;
   } catch (error) {
     throw new Error("Error in applying leave");

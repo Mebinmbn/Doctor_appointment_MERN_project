@@ -1,7 +1,6 @@
 import AdminModel, { IAdmin } from "../models/adminModel";
 import AppointmentModel from "../models/appointmentModel";
 import DoctorModel, { IDoctor } from "../models/doctorModel";
-import LeaveModel from "../models/leaveModel";
 import PatientModel, { IPatient } from "../models/patientModel";
 
 const findAdminByEmail = async (email: string): Promise<IAdmin | null> => {
@@ -82,12 +81,12 @@ const findAllPatients = async (page: number, limit: number, query: {}) => {
 };
 /////////////////////////////////////////////////////////////////////
 
-const blockDoctor = async (id: string) => {
+const blockUnblockDoctor = async (id: string, status: boolean) => {
   try {
     return await DoctorModel.findOneAndUpdate(
       { _id: id },
       {
-        $set: { isBlocked: true },
+        $set: { isBlocked: status },
       },
       { new: true }
     );
@@ -98,28 +97,12 @@ const blockDoctor = async (id: string) => {
 
 /////////////////////////////////////////////////////////////////////
 
-const unblockDoctor = async (id: string) => {
-  try {
-    return await DoctorModel.findOneAndUpdate(
-      { _id: id },
-      {
-        $set: { isBlocked: false },
-      },
-      { new: true }
-    );
-  } catch (error) {
-    throw new Error("Error in unblocking");
-  }
-};
-
-/////////////////////////////////////////////////////////////////////
-
-const unblockPatient = async (id: string) => {
+const blockUnblockPatient = async (id: string, status: boolean) => {
   try {
     return await PatientModel.findOneAndUpdate(
       { _id: id },
       {
-        $set: { isBlocked: false },
+        $set: { isBlocked: status },
       },
       { new: true }
     );
@@ -218,9 +201,8 @@ export default {
   rejectDoctor,
   findAllDoctors,
   findAllPatients,
-  blockDoctor,
-  unblockDoctor,
-  unblockPatient,
+  blockUnblockDoctor,
+  blockUnblockPatient,
   blockPatient,
   updatePatient,
   updateDoctor,
