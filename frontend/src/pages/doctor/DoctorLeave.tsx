@@ -1,16 +1,21 @@
-// ApplyLeaveForm.js
 import { FormEvent, useState } from "react";
 import api from "../../api/api";
 import DoctorNav from "../../components/doctor/DoctorNav";
 import DoctorTopBar from "../../components/doctor/DoctorTopBar";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import ConfirmationModal from "../../components/confirmationModal";
 
 function DoctorLeave() {
   const [leaveType, setLeaveType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reason, setReason] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
+    () => () => {}
+  );
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -18,23 +23,35 @@ function DoctorLeave() {
       toast.error("End date should not be less than start date");
       return;
     }
-    try {
-      const response = await api.post("doctor/leave/apply", {
-        leaveType,
-        startDate,
-        endDate,
-        reason,
-      });
-      toast.success(response.data.message);
-      setLeaveType("");
-      setStartDate("");
-      setEndDate("");
-      setReason("");
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      console.log("Error in signup request:", axiosError.response?.data.error);
-      toast.error(axiosError.response?.data.error);
-    }
+    showConfirmationModal("Do you want to apply for leave?", async () => {
+      try {
+        const response = await api.post("doctor/leave/apply", {
+          leaveType,
+          startDate,
+          endDate,
+          reason,
+        });
+        toast.success(response.data.message);
+        setLeaveType("");
+        setStartDate("");
+        setEndDate("");
+        setReason("");
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        console.log(
+          "Error in applying for leave:",
+          axiosError.response?.data.error
+        );
+        toast.error(axiosError.response?.data.error);
+      }
+      setIsConfirmModalOpen(false);
+    });
+  };
+
+  const showConfirmationModal = (message: string, onConfirm: () => void) => {
+    setMessage(message);
+    setIsConfirmModalOpen(true);
+    setConfirmationCallback(() => onConfirm);
   };
 
   return (
@@ -95,6 +112,15 @@ function DoctorLeave() {
           </button>
         </form>
       </div>
+      <ConfirmationModal
+        showModal={isConfirmModalOpen}
+        message={message}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          if (confirmationCallback) confirmationCallback();
+          setIsConfirmModalOpen(false);
+        }}
+      />
     </div>
   );
 }

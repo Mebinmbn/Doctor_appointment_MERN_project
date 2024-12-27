@@ -7,6 +7,7 @@ import DoctorNav from "../../components/doctor/DoctorNav";
 import { Appointment } from "../../types/appointment";
 import DoctorTopBar from "../../components/doctor/DoctorTopBar";
 import api from "../../api/api";
+import ConfirmationModal from "../../components/confirmationModal";
 
 const DoctorAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -14,6 +15,11 @@ const DoctorAppointments: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
+    () => () => {}
+  );
 
   useEffect(() => {
     const toastId = "loginToContinue";
@@ -49,25 +55,37 @@ const DoctorAppointments: React.FC = () => {
   }, [doctor, fetchAppointments]);
   console.log(appointments);
 
+  const showConfirmationModal = (message: string, onConfirm: () => void) => {
+    setMessage(message);
+    setIsConfirmModalOpen(true);
+    setConfirmationCallback(() => onConfirm);
+  };
+
   const handleCancel = async (id: string) => {
-    try {
-      const response = await api.put(
-        `/doctor/appointments/cancel/${id}`,
-        { role: "Appointments" },
-        {
-          headers: {
-            "User-Type": "doctor",
-          },
+    showConfirmationModal(
+      "Do you want to cancel this appointment?",
+      async () => {
+        try {
+          const response = await api.put(
+            `/doctor/appointments/cancel/${id}`,
+            { role: "Appointments" },
+            {
+              headers: {
+                "User-Type": "doctor",
+              },
+            }
+          );
+          if (response.data.success) {
+            fetchAppointments();
+            toast.success("Appointment Cancelled");
+          }
+        } catch (error) {
+          console.error("Error cancelling appointment:", error);
+          toast.error("Error in cancellation");
         }
-      );
-      if (response.data.success) {
-        fetchAppointments();
-        toast.success("Appointment Cancelled");
+        setIsConfirmModalOpen(false);
       }
-    } catch (error) {
-      console.error("Error cancelling appointment:", error);
-      toast.error("Error in cancellation");
-    }
+    );
   };
 
   const indexOfLastAppointment = currentPage * itemsPerPage;
@@ -168,6 +186,15 @@ const DoctorAppointments: React.FC = () => {
           </div>
         </div>
       </div>
+      <ConfirmationModal
+        showModal={isConfirmModalOpen}
+        message={message}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          if (confirmationCallback) confirmationCallback();
+          setIsConfirmModalOpen(false);
+        }}
+      />
     </div>
   );
 };

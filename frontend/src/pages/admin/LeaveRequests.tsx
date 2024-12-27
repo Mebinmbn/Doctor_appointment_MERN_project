@@ -4,11 +4,18 @@ import { toast } from "react-toastify";
 import { ILeave } from "./../../../../server/src/models/leaveModel";
 import AdminNav from "../../components/admin/AdminNav";
 import AdminTopBar from "../../components/admin/AdminTopBar";
+import ConfirmationModal from "../../components/confirmationModal";
 
 function LeaveRequests() {
   const [leaveRequests, setLeaveRequests] = useState<ILeave[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
+    () => () => {}
+  );
+
   const fetchLeaveRequests = async () => {
     try {
       const response = await api.get(
@@ -26,23 +33,35 @@ function LeaveRequests() {
 
   useEffect(() => {
     fetchLeaveRequests();
-  }, []);
+  }, [currentPage]);
 
   const updateLeaveStatus = async (id: string, status: string) => {
-    try {
-      const response = await api.put(
-        `admin/leave/update/${id}`,
-        { status },
-        {
-          headers: { "User-Type": "admin" },
+    showConfirmationModal(
+      `Do you want to ${status.toLowerCase()} this leave request?`,
+      async () => {
+        try {
+          const response = await api.put(
+            `admin/leave/update/${id}`,
+            { status },
+            {
+              headers: { "User-Type": "admin" },
+            }
+          );
+          toast.success(response.data.message);
+          fetchLeaveRequests();
+        } catch (error) {
+          toast.error("Error updating leave status");
+          console.error("Error updating leave status:", error);
         }
-      );
-      toast.success(response.data.message);
-      fetchLeaveRequests();
-    } catch (error) {
-      toast.error("Error updating leave status");
-      console.error("Error updating leave status:", error);
-    }
+        setIsConfirmModalOpen(false);
+      }
+    );
+  };
+
+  const showConfirmationModal = (message: string, onConfirm: () => void) => {
+    setMessage(message);
+    setIsConfirmModalOpen(true);
+    setConfirmationCallback(() => onConfirm);
   };
 
   return (
@@ -51,8 +70,8 @@ function LeaveRequests() {
         <AdminNav />
         <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
           <AdminTopBar />
-          <div className="flex justify-center  items-center ">
-            <div className="w-full max-w-6xl mt-5  shadow-lg rounded-lg bg-[#007E85]">
+          <div className="flex justify-center items-center">
+            <div className="w-full max-w-6xl mt-5 shadow-lg rounded-lg bg-[#007E85]">
               <h2 className="text-2xl font-bold mb-4 text-white p-4 text-white border-b text-white">
                 Applications
               </h2>
@@ -60,15 +79,12 @@ function LeaveRequests() {
                 <thead>
                   <tr>
                     <th className="py-2 px-4 text-white border-b">Doctor</th>
-
                     <th className="py-2 px-4 text-white border-b">
                       Start Date
                     </th>
-
                     <th className="py-2 px-4 text-white border-b">End Date</th>
                     <th className="py-2 px-4 text-white border-b">Reason</th>
                     <th className="py-2 px-4 text-white border-b">Status</th>
-
                     <th className="py-2 px-4 text-white border-b">Action</th>
                   </tr>
                 </thead>
@@ -78,11 +94,9 @@ function LeaveRequests() {
                       <td className="py-2 px-4 text-white border-b">
                         {leave.doctorId.firstName} {leave.doctorId.lastName}
                       </td>
-
                       <td className="py-2 px-4 text-white border-b">
                         {new Date(leave.startDate).toLocaleDateString()}
                       </td>
-
                       <td className="py-2 px-4 text-white border-b">
                         {new Date(leave.endDate).toLocaleDateString()}
                       </td>
@@ -92,7 +106,6 @@ function LeaveRequests() {
                       <td className="py-2 px-4 text-white border-b">
                         {leave.status}
                       </td>
-
                       <td className="py-2 px-4 text-white border-b">
                         <div>
                           <button
@@ -138,6 +151,15 @@ function LeaveRequests() {
           </div>
         </div>
       </div>
+      <ConfirmationModal
+        showModal={isConfirmModalOpen}
+        message={message}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          if (confirmationCallback) confirmationCallback();
+          setIsConfirmModalOpen(false);
+        }}
+      />
     </div>
   );
 }

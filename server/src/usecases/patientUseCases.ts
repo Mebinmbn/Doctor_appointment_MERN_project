@@ -8,6 +8,7 @@ import { IPatientDetails } from "../models/patientDetailsModel";
 import { IAppointment } from "../models/appointmentModel";
 import notificationsRepository from "../repositories/notificationsRepository";
 import express, { Application } from "express";
+import paymentService from "../services/paymentService";
 const app = express();
 
 export const signUpPatient = async (patientData: IPatient) => {
@@ -171,5 +172,13 @@ export const getPatientNotifications = async (
     return await patientRepository.notifications(id, page, limit);
   } catch (error) {
     throw new Error("Error in fetching notifications");
+  }
+};
+
+export const createPaymentOrder = async (amout: number, currency: string) => {
+  try {
+    return await paymentService.createOrder(amout, currency);
+  } catch (error) {
+    throw new Error("Error in creating order");
   }
 };

@@ -3,6 +3,7 @@ import {
   bookAppointment,
   cancelAppointment,
   conformTimeSlot,
+  createPaymentOrder,
   getAppointments,
   getDoctors,
   getPatient,
@@ -272,6 +273,20 @@ const notifications = async (req: Request, res: Response) => {
   }
 };
 
+const createOrder = async (req: Request, res: Response) => {
+  try {
+    const { amount, currency = "INR" } = req.body;
+    console.log("amount", amount);
+    const order = await createPaymentOrder(amount, currency);
+    res.status(200).json({
+      data: order,
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   signUp,
   signIn,
@@ -285,4 +300,5 @@ export default {
   appointments,
   cancel,
   notifications,
+  createOrder,
 };

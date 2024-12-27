@@ -8,6 +8,7 @@ import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
+import ConfirmationModal from "../../components/confirmationModal";
 
 function DoctorsList() {
   const [doctorApplications, setDoctorApplications] = useState([]);
@@ -17,37 +18,34 @@ function DoctorsList() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
-
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
+    () => {}
+  );
   useEffect(() => {
     if (!admin) {
       navigate("/admin/login");
     }
-  });
-
+  }, [admin, navigate]);
   useEffect(() => {
     fetchDoctorApplications();
   }, []);
-
   console.log(doctorApplications);
   const fetchDoctorApplications = async () => {
     try {
       const applicationResponse = await api.get("/admin/applications", {
-        headers: {
-          "User-Type": "admin",
-        },
+        headers: { "User-Type": "admin" },
         withCredentials: true,
       });
-
       console.log("applicationResponse", applicationResponse.data);
       if (applicationResponse.data) {
         setDoctorApplications(applicationResponse.data.applications);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
     }
   };
-
   const openModal = (imageUrl: string) => {
     setSelectedImage(imageUrl);
     setIsModalOpen(true);
@@ -56,43 +54,44 @@ function DoctorsList() {
     setIsModalOpen(false);
     setSelectedImage(null);
   };
-
-  const handleApprove = async (id: string) => {
-    try {
-      const resposnse = await api.post(
-        `/admin/applications/approve/${id}`,
-        {},
-        {
-          headers: {
-            "User-Type": "admin",
-          },
-        }
-      );
-      if (resposnse.data.success) {
-        fetchDoctorApplications();
-        toast.success("Application approved");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error in approval");
-    }
+  const showConfirmationModal = (message: string, onConfirm: () => void) => {
+    setMessage(message);
+    setIsConfirmModalOpen(true);
+    setConfirmationCallback(() => onConfirm);
   };
-
-  const handleReject = async (email: string) => {
-    try {
-      const resposnse = await api.post(`/admin/applications/reject/${email}`, {
-        headers: {
-          "User-Type": "admin",
-        },
-      });
-      if (resposnse.data.success) {
-        fetchDoctorApplications();
-        toast.success("Application Rejected");
+  const handleApprove = (id: string) => {
+    showConfirmationModal("Do you want to confirm the approval?", async () => {
+      try {
+        const response = await api.post(
+          `/admin/applications/approve/${id}`,
+          {},
+          { headers: { "User-Type": "admin" } }
+        );
+        if (response.data.success) {
+          fetchDoctorApplications();
+          toast.success("Application approved");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Error in approval");
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Error in approval");
-    }
+    });
+  };
+  const handleReject = (email: string) => {
+    showConfirmationModal("Do you want to confirm the rejection?", async () => {
+      try {
+        const response = await api.post(`/admin/applications/reject/${email}`, {
+          headers: { "User-Type": "admin" },
+        });
+        if (response.data.success) {
+          fetchDoctorApplications();
+          toast.success("Application Rejected");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Error in rejection");
+      }
+    });
   };
 
   const indexOfLastDoctorApplications = currentPage * itemsPerPage;
@@ -222,6 +221,15 @@ function DoctorsList() {
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         imageUrl={selectedImage || ""}
+      />
+      <ConfirmationModal
+        showModal={isConfirmModalOpen}
+        message={message}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          if (confirmationCallback) confirmationCallback();
+          setIsConfirmModalOpen(false);
+        }}
       />
     </div>
   );

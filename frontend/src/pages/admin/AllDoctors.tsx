@@ -9,6 +9,7 @@ import EditDoctorModel from "../../components/admin/EditDoctorModel";
 import { clearAdmin } from "../../app/featrue/adminSlice";
 import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
+import ConfirmationModal from "../../components/confirmationModal";
 
 const AllDoctors = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
@@ -20,27 +21,25 @@ const AllDoctors = () => {
   const [specialization, setSpecialization] = useState("");
   const [gender, setGender] = useState("");
   const [experience, setExperience] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
+    () => () => {}
+  );
   const dispatch = useDispatch();
   const admin = useSelector((state: RootState) => state.admin.admin);
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!admin) {
       navigate("/admin/login");
     }
   }, [navigate, admin]);
-
   const fetchDoctors = useCallback(async () => {
     try {
       const response = await api.get(
         `/admin/doctors?page=${currentPage}&limit=7&search=${searchQuery}&specialization=${specialization}&gender=${gender}&experience=${experience}`,
-        {
-          headers: {
-            "User-Type": "admin",
-          },
-        }
+        { headers: { "User-Type": "admin" } }
       );
-
       if (response.data.success) {
         setDoctors(response.data.data);
         setTotalPages(response.data.meta.totalPages);
@@ -50,11 +49,9 @@ const AllDoctors = () => {
       dispatch(clearAdmin());
     }
   }, [currentPage, searchQuery, specialization, gender, experience, dispatch]);
-
   useEffect(() => {
     fetchDoctors();
   }, [fetchDoctors]);
-
   const clearFilter = () => {
     setSearchQuery("");
     setSpecialization("");
@@ -62,37 +59,46 @@ const AllDoctors = () => {
     setExperience("");
     setCurrentPage(1);
   };
-
   const openModal = (index: number) => {
     setIsEditModalOpen(true);
     setDoctorToEdit(doctors[index]);
   };
-
   const closeModal = useCallback(() => {
     setIsEditModalOpen(false);
     setDoctorToEdit(null);
     fetchDoctors();
   }, [fetchDoctors]);
-
+  const showConfirmationModal = (message: string, onConfirm: () => void) => {
+    setMessage(message);
+    setIsConfirmModalOpen(true);
+    setConfirmationCallback(() => onConfirm);
+  };
   const handleStatusUpdate = async (id: string | null, status: boolean) => {
-    try {
-      const response = await api.put(
-        `/admin/doctors/update/${id}`,
-        { role: "doctor", status: status },
-        {
-          headers: {
-            "User-Type": "admin",
-          },
+    showConfirmationModal(
+      `Do you want to ${status ? "block" : "unblock"} this doctor?`,
+      async () => {
+        try {
+          const response = await api.put(
+            `/admin/doctors/update/${id}`,
+            { role: "doctor", status: status },
+            { headers: { "User-Type": "admin" } }
+          );
+          if (response.data.success) {
+            fetchDoctors();
+            toast.success(
+              `Doctor ${status ? "blocked" : "unblocked"} successfully`
+            );
+          }
+        } catch (error) {
+          console.error(
+            `Error in ${status ? "blocking" : "unblocking"} doctor:`,
+            error
+          );
+          toast.error(`Error in ${status ? "blocking" : "unblocking"}`);
         }
-      );
-      if (response.data.success) {
-        fetchDoctors();
-        toast.success("Status updated");
+        setIsConfirmModalOpen(false);
       }
-    } catch (error) {
-      console.error("Error in unblocking doctor:", error);
-      toast.error("Error in unblocking");
-    }
+    );
   };
 
   return (
@@ -255,6 +261,15 @@ const AllDoctors = () => {
           doctor={doctorToEdit}
         />
       )}
+      <ConfirmationModal
+        showModal={isConfirmModalOpen}
+        message={message}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          if (confirmationCallback) confirmationCallback();
+          setIsConfirmModalOpen(false);
+        }}
+      />
     </div>
   );
 };

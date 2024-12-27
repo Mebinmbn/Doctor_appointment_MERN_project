@@ -44,7 +44,7 @@ function Home() {
         </div>
       </div>
 
-      <div className="w-10/12 h-1/3 bg-gray-100  mx-auto px-10 py-3 my-5 align-middle ">
+      {/* <div className="w-10/12 h-1/3 bg-gray-100  mx-auto px-10 py-3 my-5 align-middle ">
         <p className="text-xl font-bold mx-5">Find A Doctor</p>
         <form onSubmit={handleSubmit} className="flex justify-evenly">
           <div className="w-3/5">
@@ -63,7 +63,7 @@ function Home() {
             Search
           </button>
         </form>
-      </div>
+      </div> */}
 
       <div className="bg-[#007E85] text-white px-10 pt-5 text-center my-5">
         <p className="text-3xl  font-extrabold">Are You A Doctor?</p>

@@ -5,9 +5,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
 import EditPatientModal from "../../components/admin/EditPatientModal";
+
 import { User } from "../../types/user";
 import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
+import ConfirmationModal from "../../components/confirmationModal";
 
 function AllPatients() {
   const [patients, setPatients] = useState<User[]>([]);
@@ -18,6 +20,11 @@ function AllPatients() {
   const [searchQuery, setSearchQuery] = useState("");
   const admin = useSelector((state: RootState) => state.admin.admin);
   const navigate = useNavigate();
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
+    () => () => {}
+  );
 
   useEffect(() => {
     if (!admin) {
@@ -65,25 +72,42 @@ function AllPatients() {
     fetchPatients();
   }, [fetchPatients]);
 
+  const showConfirmationModal = (message: string, onConfirm: () => void) => {
+    setMessage(message);
+    setIsConfirmModalOpen(true);
+    setConfirmationCallback(() => onConfirm);
+  };
+
   const handleUpdateStatus = async (id: string, status: boolean) => {
-    try {
-      const response = await api.put(
-        `/admin/patients/update/${id}`,
-        { role: "patients", status },
-        {
-          headers: {
-            "User-Type": "admin",
-          },
+    showConfirmationModal(
+      `Do you want to ${status ? "block" : "unblock"} this patient?`,
+      async () => {
+        try {
+          const response = await api.put(
+            `/admin/patients/update/${id}`,
+            { role: "patients", status },
+            {
+              headers: {
+                "User-Type": "admin",
+              },
+            }
+          );
+          if (response.data.success) {
+            fetchPatients();
+            toast.success(
+              `Patient ${status ? "blocked" : "unblocked"} successfully`
+            );
+          }
+        } catch (error) {
+          console.error(
+            `Error in ${status ? "blocking" : "unblocking"} patient:`,
+            error
+          );
+          toast.error(`Error in ${status ? "blocking" : "unblocking"}`);
         }
-      );
-      if (response.data.success) {
-        fetchPatients();
-        toast.success("Patient unblocked");
+        setIsConfirmModalOpen(false);
       }
-    } catch (error) {
-      console.error("Error in unblocking patient:", error);
-      toast.error("Error in unblocking");
-    }
+    );
   };
 
   return (
@@ -92,8 +116,8 @@ function AllPatients() {
       <div className="bg-white h-[98vh] w-[88vw] text-center px-4 py-2 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
         <div className="flex justify-center items-center">
-          <div className="w-full max-w-6xl  shadow-lg rounded-lg bg-[#007E85]">
-            <h2 className="text-2xl font-bold mb-1 text-white p-4 text-white border-b text-white">
+          <div className="w-full max-w-6xl shadow-lg rounded-lg bg-[#007E85]">
+            <h2 className="text-2xl font-bold mb-1 text-white p-4 border-b">
               Patients
             </h2>
             <input
@@ -105,7 +129,7 @@ function AllPatients() {
             />
             <button
               onClick={clearFilter}
-              className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85]  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+              className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
             >
               Clear Search
             </button>
@@ -194,6 +218,15 @@ function AllPatients() {
           patient={patientToEdit}
         />
       )}
+      <ConfirmationModal
+        showModal={isConfirmModalOpen}
+        message={message}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={() => {
+          if (confirmationCallback) confirmationCallback();
+          setIsConfirmModalOpen(false);
+        }}
+      />
     </div>
   );
 }

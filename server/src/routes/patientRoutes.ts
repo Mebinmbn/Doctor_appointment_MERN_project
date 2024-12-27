@@ -77,4 +77,11 @@ router.get(
   patientController.notifications
 );
 
+router.post(
+  "/create-order",
+  authMiddleware,
+  roleMiddleware("user"),
+  patientController.createOrder
+);
+
 export default router;

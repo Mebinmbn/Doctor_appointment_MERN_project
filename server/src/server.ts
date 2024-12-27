@@ -18,15 +18,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-//HTTP server
 const server = createServer(app);
 
 setupSocketIO(server, app);
 
-// Database connection
 dbConnect();
 
-// Middlewares
 app.use(
   cors({
     credentials: true,
@@ -38,10 +35,8 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
-// static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
 app.use("/api/patients", patientRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/admin", adminRoutes);
