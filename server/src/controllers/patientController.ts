@@ -13,6 +13,7 @@ import {
   signInPatient,
   signUpPatient,
   storePatientDetails,
+  verifyPayment,
 } from "../usecases/patientUseCases";
 
 const signUp = async (req: Request, res: Response) => {
@@ -204,9 +205,9 @@ const book = async (req: Request, res: Response) => {
 };
 
 const lockTimeSlot = async (req: Request, res: Response) => {
-  const { doctorId, date, time } = req.body;
+  const { doctorId, date, time, status } = req.body;
   try {
-    const timeSlot = await conformTimeSlot(doctorId, date, time);
+    const timeSlot = await conformTimeSlot(doctorId, date, time, status);
     if (timeSlot) {
       res.status(200).json({
         success: true,
@@ -275,12 +276,35 @@ const notifications = async (req: Request, res: Response) => {
 
 const createOrder = async (req: Request, res: Response) => {
   try {
-    const { amount, currency = "INR" } = req.body;
+    const { amount, currency = "INR", timeSlot } = req.body;
     console.log("amount", amount);
-    const order = await createPaymentOrder(amount, currency);
+    const order = await createPaymentOrder(amount, currency, timeSlot);
     res.status(200).json({
       data: order,
     });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
+const verify = async (req: Request, res: Response) => {
+  try {
+    const { razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
+    console.log(razorpayPaymentId, razorpayOrderId, razorpaySignature);
+    const response = await verifyPayment(
+      razorpayPaymentId,
+      razorpayOrderId,
+      razorpaySignature
+    );
+    if (response) {
+      res.status(200).json({ success: true, message: "Payment verified" });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Payment verification failed",
+      });
+    }
   } catch (error: any) {
     const errorMessage = error.message || "An unexpected error occurred";
     res.status(400).json({ success: false, error: errorMessage });
@@ -301,4 +325,5 @@ export default {
   cancel,
   notifications,
   createOrder,
+  verify,
 };

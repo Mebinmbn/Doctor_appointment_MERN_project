@@ -69,7 +69,7 @@ const getDoctorTimeSlots = async (id: string) => {
 
     date.setUTCHours(0, 0, 0, 0);
 
-    return await TimeSlotsModel.find({ doctor: id, date: { $gte: date } })
+    return await TimeSlotsModel.find({ doctor: id, date: { $gt: date } })
       .sort({ date: 1 })
       .limit(7);
   } catch (error) {
@@ -101,11 +101,15 @@ const createPatientDetails = async (patientData: IPatientDetails) => {
 };
 ////////////////////////////////////////////////////////////////////////
 
-const checkAppointment = async (appontmentData: IAppointment) => {
+const checkAppointment = async (appointmentData: {
+  doctorId: string;
+  date: string;
+  time: string;
+}) => {
   return await AppointmentModel.findOne({
-    doctorId: appontmentData.doctorId,
-    date: appontmentData.date,
-    time: appontmentData.time,
+    doctorId: appointmentData.doctorId,
+    date: appointmentData.date,
+    time: appointmentData.time,
   });
 };
 
@@ -124,11 +128,17 @@ const createAppointment = async (appointmentData: IAppointment) => {
 
 ////////////////////////////////////////////////////////////////////////
 
-const lockTimeSlot = async (doctorId: string, date: string, time: string) => {
+const lockTimeSlot = async (
+  doctorId: string,
+  date: string,
+  time: string,
+  status: string
+) => {
+  console.log(status);
   try {
     return await TimeSlotsModel.findOneAndUpdate(
       { doctor: doctorId, date: date },
-      { $set: { "timeSlots.$[element].isBooked": true } },
+      { $set: { "timeSlots.$[element].isBooked": status } },
       { arrayFilters: [{ "element.time": time }], new: true }
     );
   } catch (error) {
@@ -140,7 +150,7 @@ const fetchAppointments = async (id: string) => {
   console.log("patient repo", id);
   try {
     const appointments = await AppointmentModel.find({
-      patientId: id,
+      userId: id,
     })
       .sort({ createdAt: -1 })
       .populate("doctorId", "firstName lastName specialization")

@@ -236,8 +236,10 @@ function PatientDetails() {
 
         if (response.data.success) {
           toast.success("Patient's details stored successfully");
+          const patientId = response.data.patient._id;
           navigate("/paymentPage", {
-            state: { selectedDate, selectedTime, formData, doctor },
+            state: { selectedDate, selectedTime, formData, doctor, patientId },
+            replace: true,
           });
         }
       } catch (error) {

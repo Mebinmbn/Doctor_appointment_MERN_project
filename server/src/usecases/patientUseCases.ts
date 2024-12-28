@@ -97,8 +97,14 @@ export const bookAppointment = async (
   app: Application
 ) => {
   try {
+    const timeSlotData = {
+      doctorId: appointmentData.doctorId.toString(),
+      date: appointmentData.date.toString(),
+      time: appointmentData.time,
+    };
+
     const existingAppointment = await patientRepository.checkAppointment(
-      appointmentData
+      timeSlotData
     );
     if (existingAppointment) {
       console.log("Time slot already booked");
@@ -128,12 +134,27 @@ export const bookAppointment = async (
 export const conformTimeSlot = async (
   doctorId: string,
   date: string,
-  time: string
+  time: string,
+  status: string
 ) => {
   try {
-    return await patientRepository.lockTimeSlot(doctorId, date, time);
-  } catch (error) {
-    throw new Error("Error in locking  timeSlot");
+    const timeSlotData = {
+      doctorId,
+      date,
+      time,
+    };
+    const existingAppointment = await patientRepository.checkAppointment(
+      timeSlotData
+    );
+    if (existingAppointment) {
+      console.log("Time slot already booked");
+      throw new Error("Time slot already booked");
+    }
+    return await patientRepository.lockTimeSlot(doctorId, date, time, status);
+  } catch (error: any) {
+    if (error.message === "Time slot already booked") {
+      throw error;
+    } else throw new Error("Error in locking  timeSlot");
   }
 };
 
@@ -175,10 +196,41 @@ export const getPatientNotifications = async (
   }
 };
 
-export const createPaymentOrder = async (amout: number, currency: string) => {
+export const createPaymentOrder = async (
+  amout: number,
+  currency: string,
+  timeSlot: {
+    doctorId: string;
+    date: string;
+    time: string;
+  }
+) => {
   try {
+    const existingAppointment = await patientRepository.checkAppointment(
+      timeSlot
+    );
+    if (existingAppointment) {
+      console.log("Time slot already booked");
+      throw new Error("Time slot already booked");
+    }
     return await paymentService.createOrder(amout, currency);
   } catch (error) {
     throw new Error("Error in creating order");
+  }
+};
+
+export const verifyPayment = async (
+  razorpayPaymentId: string,
+  razorpayOrderId: string,
+  razorpaySignature: string
+) => {
+  try {
+    return await paymentService.verify(
+      razorpayPaymentId,
+      razorpayOrderId,
+      razorpaySignature
+    );
+  } catch (error) {
+    throw new Error("Error in payment verification");
   }
 };

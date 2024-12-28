@@ -1,5 +1,6 @@
 import Razorpay from "razorpay";
 import { config } from "dotenv";
+import { createHmac } from "crypto";
 
 config();
 
@@ -28,4 +29,29 @@ const createOrder = async (amount: number, currency: string) => {
   }
 };
 
-export default { createOrder };
+const verify = async (
+  razorpayPaymentId: string,
+  razorpayOrderId: string,
+  razorpaySignature: string
+) => {
+  try {
+    const generatedSignature = createHmac(
+      "sha256",
+      process.env.RAZORPAY_KEY_SECRET as string
+    )
+      .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+      .digest("hex");
+
+    if (generatedSignature === razorpaySignature) {
+      console.log("verified");
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error verifying payment:", error);
+    throw new Error("Error in payment verification");
+  }
+};
+
+export default { createOrder, verify };

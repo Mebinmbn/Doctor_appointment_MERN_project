@@ -69,6 +69,11 @@ function Appointments() {
     }
   };
 
+  const handleView = (appointmentId: string) => {
+    console.log(appointmentId);
+    navigate("/appointment", { state: { appointmentId } });
+  };
+
   const indexOfLastAppointment = currentPage * itemsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - itemsPerPage;
   const currentAppointments = appointments.slice(
@@ -122,7 +127,12 @@ function Appointments() {
                       </td>
                       <td className="py-2 px-4 text-white border-b">
                         <div>
-                          <button className="bg-blue-500 rounded-xl px-2 py-1 border-[1px] mr-2">
+                          <button
+                            className="bg-blue-500 rounded-xl px-2 py-1 border-[1px] mr-2"
+                            onClick={() => {
+                              handleView(appointment._id);
+                            }}
+                          >
                             View
                           </button>
                           {appointment.status !== "cancelled" && (

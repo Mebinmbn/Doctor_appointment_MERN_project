@@ -10,21 +10,40 @@ import razorpay from "../../assets/razorpay.png";
 function PaymentPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedDate, selectedTime, formData, doctor } =
+  const { selectedDate, selectedTime, formData, doctor, patientId } =
     location.state || null;
   const { user } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    const toastId = "loginToContinue";
-    if (!user) {
-      navigate("/login");
-      if (!toast.isActive(toastId)) {
-        toast.warn("Login to continue", { toastId });
-      }
+    if (
+      location.state === null ||
+      selectedDate === null ||
+      selectedTime === null ||
+      doctor === null
+    ) {
+      navigate("/doctors", { replace: true });
+      toast.warn("Invalid access to payment page");
     }
-  }, [user, navigate]);
+  }, [location.state, selectedDate, selectedTime, doctor, navigate]);
 
-  // Load Razorpay Script
+  const unlockTimSlot = async () => {
+    const response = await api.put(
+      "/patients/appointments/lockTimeSlot",
+      {
+        doctorId: doctor?._id,
+        date: selectedDate,
+        time: selectedTime.time,
+        status: "false",
+      },
+      {
+        headers: {
+          "User-Type": "patient",
+        },
+      }
+    );
+    console.log(response.data);
+  };
+
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -35,7 +54,6 @@ function PaymentPage() {
     });
   };
 
-  // Razorpay Payment Handler
   const handleRazorpayPayment = async () => {
     const isScriptLoaded = await loadRazorpayScript();
 
@@ -43,16 +61,20 @@ function PaymentPage() {
       toast.error("Failed to load Razorpay script. Please try again.");
       return;
     }
-
+    const timeSlot = {
+      doctorId: doctor.id,
+      date: selectedDate,
+      time: selectedTime,
+    };
     try {
-      // Step 1: Create Razorpay order
       const totalAmount =
-        Math.ceil((doctor.fees * 10) / 100) + parseInt(doctor.fees); // Total Amount
+        Math.ceil((doctor.fees * 10) / 100) + parseInt(doctor.fees);
       const { data } = await api.post(
-        "/patients/create-order",
+        "/patients/payments/create-order",
         {
           amount: totalAmount,
           currency: "INR",
+          timeSlot,
         },
         {
           headers: { "User-Type": "patient" },
@@ -68,51 +90,62 @@ function PaymentPage() {
       }
 
       const options = {
-        key: razorpayKey, // Accessing Razorpay key from env
+        key: razorpayKey,
         amount: data.data.amount,
         currency: data.data.currency,
         name: "Health Care",
         description: "Consultation Fees",
         order_id: data.data.id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handler: async function (response: any) {
-          // Step 2: Verify payment
-          // const verifyResponse = await api.post("/payments/verify", {
-          //   razorpayPaymentId: response.razorpay_payment_id,
-          //   razorpayOrderId: response.razorpay_order_id,
-          //   razorpaySignature: response.razorpay_signature,
-          // });
-
-          // if (verifyResponse.data.success) {
-          console.log(response);
-          toast.success("Payment Successful!");
-
-          // Step 3: Book the Appointment
-          const appointmentData = {
-            doctorId: doctor._id,
-            patientId: formData.userId,
-            date: selectedDate,
-            time: selectedTime.time,
-          };
-
-          const bookingResponse = await api.post(
-            "/patients/appointments/book",
-            appointmentData,
+          const verifyResponse = await api.post(
+            "patients/payments/verify",
+            {
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpaySignature: response.razorpay_signature,
+            },
             {
               headers: { "User-Type": "patient" },
             }
           );
 
-          if (bookingResponse.data.success) {
-            toast.success(
-              "Appointment booked successfully. Wait for confirmation!"
+          if (verifyResponse.data.success) {
+            console.log(response);
+            toast.success("Payment Successful!");
+
+            const appointmentData = {
+              doctorId: doctor._id,
+              userId: formData.userId,
+              patientId: patientId,
+              date: selectedDate,
+              time: selectedTime.time,
+              payment: "paid",
+              paymentId: response.razorpay_payment_id,
+              amount: totalAmount,
+            };
+
+            const bookingResponse = await api.post(
+              "/patients/appointments/book",
+              appointmentData,
+              {
+                headers: { "User-Type": "patient" },
+              }
             );
-            navigate("/appointments"); // Navigate to appointments page
+
+            if (bookingResponse.data.success) {
+              navigate("/aknowledgement", {
+                state: { paymentStatus: "success" },
+                replace: true,
+              });
+            } else {
+              toast.error(bookingResponse.data.message);
+            }
           } else {
-            toast.error(bookingResponse.data.message);
+            unlockTimSlot();
+            toast.error("Your payment failed. Please try again");
+            navigate("/doctors");
           }
-          // } else {
-          //   toast.error("Payment verification failed.");
-          // }
         },
         prefill: {
           name: user?.name,
@@ -120,8 +153,17 @@ function PaymentPage() {
         theme: {
           color: "#007E85",
         },
+        modal: {
+          ondismiss: function () {
+            unlockTimSlot();
+            toast.error("Payment process was canceled.");
+
+            navigate("/doctors", { replace: true });
+          },
+        },
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const paymentObject = new (window as any).Razorpay(options);
       paymentObject.open();
     } catch (error) {

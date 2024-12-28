@@ -28,6 +28,8 @@ import DoctorNotifications from "./pages/doctor/DoctorNotifications";
 import ProtectedRoute from "./ProtectedRoute";
 import DoctorLeave from "./pages/doctor/DoctorLeave";
 import LeaveRequests from "./pages/admin/LeaveRequests";
+import Aknowledement from "./pages/patient/Aknowledement";
+import Appointment from "./pages/patient/Appointment";
 
 function App() {
   return (
@@ -81,10 +83,26 @@ function App() {
             }
           />
           <Route
+            path="/aknowledgement"
+            element={
+              <ProtectedRoute role="user">
+                <Aknowledement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/appointments"
             element={
               <ProtectedRoute role="user">
                 <Appointments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/appointment"
+            element={
+              <ProtectedRoute role="user">
+                <Appointment />
               </ProtectedRoute>
             }
           />

@@ -36,7 +36,7 @@ const createAppointmentNotification = async (
       };
     } else {
       const patient = await PatientModel.findOne({
-        _id: appointment.patientId,
+        _id: appointment.userId,
       });
       if (!patient) {
         throw new Error("Patient not found to create notification");
@@ -44,7 +44,7 @@ const createAppointmentNotification = async (
 
       notificationData = {
         recipientId: appointment.doctorId.toString(),
-        senderId: appointment.patientId.toString(),
+        senderId: appointment.userId.toString(),
         recipientRole: "doctor",
         type: type,
         content: `${patient.firstName} ${

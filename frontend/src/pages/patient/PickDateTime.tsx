@@ -108,7 +108,12 @@ function PickDateTime() {
     }
     const response = await api.put(
       "/patients/appointments/lockTimeSlot",
-      { doctorId: doctor?._id, date: selectedDate, time: selectedTime.time },
+      {
+        doctorId: doctor?._id,
+        date: selectedDate,
+        time: selectedTime.time,
+        status: "true",
+      },
       {
         headers: {
           "User-Type": "patient",
@@ -118,6 +123,7 @@ function PickDateTime() {
     if (response.data.success) {
       navigate("/patientDetails", {
         state: { selectedDate, selectedTime, doctor },
+        replace: true,
       });
     } else {
       toast.error("Time slot is already booked, please select another time");

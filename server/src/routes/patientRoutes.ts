@@ -78,10 +78,17 @@ router.get(
 );
 
 router.post(
-  "/create-order",
+  "/payments/create-order",
   authMiddleware,
   roleMiddleware("user"),
   patientController.createOrder
+);
+
+router.post(
+  "/payments/verify",
+  authMiddleware,
+  roleMiddleware("user"),
+  patientController.verify
 );
 
 export default router;

@@ -6,6 +6,8 @@ export interface User {
   phone: string;
   gender: string;
   dob: string;
+  street?: string;
+  city?: string;
   password: string;
   isVerified: boolean;
   isRejected: boolean;
