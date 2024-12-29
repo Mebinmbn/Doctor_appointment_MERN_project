@@ -14,12 +14,28 @@ export const setupSocketIO = (server: any, app: Application) => {
 
   io.on("connection", (socket) => {
     console.log("New client connected", socket.id);
+
     socket.on("join", (room) => {
-      socket.join(room);
-      console.log(`Client joined room: ${room}`);
+      try {
+        socket.join(room);
+        console.log(`Client joined room: ${room}`);
+        socket.to(room).emit("user-connected");
+      } catch (error) {
+        console.error("Error joining room:", error);
+      }
     });
+
+    socket.on("signal", (data) => {
+      try {
+        io.to(data.roomId).emit("signal", data);
+        console.log("Signaling data emitted:", data);
+      } catch (error) {
+        console.error("Error handling signal:", error);
+      }
+    });
+
     socket.on("disconnect", () => {
-      console.log("Client disconnected");
+      console.log("Client disconnected", socket.id);
     });
   });
 

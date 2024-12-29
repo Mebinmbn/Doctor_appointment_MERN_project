@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/icon/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { IoNotifications } from "react-icons/io5";
-
 import { clearUser } from "../../app/featrue/userSlice";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
@@ -29,7 +28,6 @@ const Navbar: React.FC = () => {
   const socket = useSocket();
 
   const token = localStorage.getItem("token");
-  console.log("user form navbar", user);
 
   const handleLogout = () => {
     dispatch(clearUser());
@@ -62,7 +60,6 @@ const Navbar: React.FC = () => {
         headers: { "User-Type": "patient" },
       });
       if (response.data.success) {
-        console.log(response.data);
         const fetchedNotifications = response.data.notifications;
         const combinedNotifications = [
           ...notifications,
@@ -75,7 +72,7 @@ const Navbar: React.FC = () => {
       }
     } catch (error) {
       const axiosError = error as AxiosError;
-      console.error("Error in signup request:", axiosError);
+      console.error("Error in fetching notifications:", axiosError);
     }
   };
 
@@ -126,7 +123,6 @@ const Navbar: React.FC = () => {
           </div>
           <div className="hidden md:flex items-center space-x-3 ml-auto">
             <Link to="/profile">
-              {" "}
               <h1 className="text-[#007E85] font-bold">
                 {user?.name.toUpperCase()}
               </h1>
@@ -206,7 +202,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
       <div className={`mobile-menu ${isOpen ? "" : "hidden"} md:hidden`}>
-        <ul className="">
+        <ul>
           <li className="active">
             <Link
               to="/"

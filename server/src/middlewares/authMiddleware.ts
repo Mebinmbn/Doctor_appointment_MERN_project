@@ -20,9 +20,8 @@ const authMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("Middleware touched");
   const token = req.header("Authorization")?.split(" ")[1];
-  console.log("In middleware", token);
+
   if (!token) {
     res.status(401).json({ message: "No token, authorization denied" });
     return;
@@ -30,7 +29,7 @@ const authMiddleware = async (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
-    console.log("decoded", decoded);
+
     req.user = decoded;
     let user;
     if (decoded.role === "doctor") {
@@ -47,7 +46,6 @@ const authMiddleware = async (
     next();
   } catch (err: any) {
     if (err.name === "TokenExpiredError") {
-      console.log("Token expired");
       res.status(401).json({ message: "Token expired" });
       return;
     }

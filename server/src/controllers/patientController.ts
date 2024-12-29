@@ -38,7 +38,6 @@ const signIn = async (req: Request, res: Response) => {
       password
     );
 
-    console.log("Generated Refresh Token:");
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
@@ -67,9 +66,6 @@ const reset = async (req: Request, res: Response) => {
         patient,
         message: "Password reseted succesdfully",
       });
-      console.log(
-        "success: true" + patient + "message: Password reseted succesdfully"
-      );
     } else {
       res
         .status(400)
@@ -109,7 +105,6 @@ const doctors = async (req: Request, res: Response) => {
     query.isApproved = true;
     query.isVerified = true;
     query.isBlocked = false;
-    console.log(query);
 
     const { doctors, totalDocs, totalPages } = await getDoctors(
       page,
@@ -152,7 +147,7 @@ const timeSlots = async (req: Request, res: Response) => {
 
 const patient = async (req: Request, res: Response) => {
   const { id } = req.params;
-  console.log("fetch Patinet controller", id);
+
   try {
     const patient = await getPatient(id);
     if (patient) {
@@ -169,7 +164,7 @@ const patient = async (req: Request, res: Response) => {
 
 const patientData = async (req: Request, res: Response) => {
   const patientData = req.body;
-  console.log(patientData);
+
   try {
     const patient = await storePatientDetails(patientData);
     if (patient) {
@@ -186,7 +181,7 @@ const patientData = async (req: Request, res: Response) => {
 
 const book = async (req: Request, res: Response) => {
   const appointmentData = req.body;
-  console.log("patient controller", appointmentData);
+
   try {
     const appointment = await bookAppointment(appointmentData, req.app);
     if (appointment) {
@@ -257,7 +252,7 @@ const notifications = async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 1;
     const { notifications, totalDocs, totalPages } =
       await getPatientNotifications(id, page, limit);
-    console.log("notifications at controller", notifications);
+
     res.status(200).json({
       success: true,
       data: notifications,
@@ -277,7 +272,7 @@ const notifications = async (req: Request, res: Response) => {
 const createOrder = async (req: Request, res: Response) => {
   try {
     const { amount, currency = "INR", timeSlot } = req.body;
-    console.log("amount", amount);
+
     const order = await createPaymentOrder(amount, currency, timeSlot);
     res.status(200).json({
       data: order,
@@ -291,7 +286,7 @@ const createOrder = async (req: Request, res: Response) => {
 const verify = async (req: Request, res: Response) => {
   try {
     const { razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
-    console.log(razorpayPaymentId, razorpayOrderId, razorpaySignature);
+
     const response = await verifyPayment(
       razorpayPaymentId,
       razorpayOrderId,

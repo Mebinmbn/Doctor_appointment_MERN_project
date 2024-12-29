@@ -8,35 +8,47 @@ import React, {
 import { io, Socket } from "socket.io-client";
 
 const SOCKET_SERVER_URL = "http://localhost:8080";
+
+// Create a context to hold the socket instance
 const SocketContext = createContext<Socket | null>(null);
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useSocket = () => {
-  return useContext(SocketContext);
+// Custom hook for consuming the socket context
+export const useSocket = (): Socket | null => {
+  const socket = useContext(SocketContext);
+  if (!socket) {
+    console.warn("useSocket must be used within a SocketProvider");
+  }
+  return socket;
 };
 
 interface SocketProviderProps {
   children: ReactNode;
 }
 
+// Provider component to manage the socket connection
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(SOCKET_SERVER_URL);
-
-    socket.on("connect", () => {
-      console.log("Connected to Socket.io server");
+    // Initialize socket connection
+    const socketInstance = io(SOCKET_SERVER_URL, {
+      transports: ["websocket"], // Enforce WebSocket transport
     });
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from Socket.io server");
+    socketInstance.on("connect", () => {
+      console.log("Connected to Socket.io server, ID:", socketInstance.id);
     });
 
-    setSocket(socket);
+    socketInstance.on("disconnect", (reason) => {
+      console.log("Disconnected from Socket.io server, Reason:", reason);
+    });
 
+    setSocket(socketInstance);
+
+    // Cleanup on unmount
     return () => {
-      socket.disconnect();
+      socketInstance.disconnect();
+      console.log("Socket connection closed");
     };
   }, []);
 
