@@ -57,9 +57,13 @@ function DoctorTopBar() {
     fetchNotifications();
   }, []);
 
-  const toggleNotifications = () => {
+  const toggleNotifications = async () => {
+    const response = await api.put(`/notification/read/${doctor?.id}`);
+    console.log(response.data.success);
+    fetchNotifications();
     setIsNotificationOpen(!isNotificationOpen);
   };
+
   return (
     <div>
       <div className="flex justify-evenly mx-5 w-[90%]  mx-auto">

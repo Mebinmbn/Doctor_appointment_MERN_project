@@ -7,6 +7,7 @@ export interface IAppointment {
   date: Date;
   time: string;
   status?: string;
+  reason?: string;
   payment?: string;
   paymentId?: string;
   amount?: string;
@@ -30,9 +31,10 @@ const AppointmentSchema: Schema = new Schema<IAppointment>(
     time: { type: String, required: true },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "rejected", "cancelled"],
+      enum: ["pending", "confirmed", "cancelled", "consulted"],
       default: "pending",
     },
+    reason: { type: String },
     payment: { type: String, enum: ["pending", "paid"], default: "pending" },
     paymentId: { type: String, unique: true },
     amount: { type: String },

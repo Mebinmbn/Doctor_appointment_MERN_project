@@ -8,5 +8,6 @@ export interface Appointment {
   date: string;
   time: string;
   payment: string;
+  reason: string;
   status: string;
 }

@@ -71,9 +71,13 @@ export const getAppointments = async (id: string) => {
   }
 };
 
-export const cancelAppointment = async (id: string, app: Application) => {
+export const cancelAppointment = async (
+  id: string,
+  reason: string,
+  app: Application
+) => {
   try {
-    const appointment = await doctorRepository.cancel(id);
+    const appointment = await doctorRepository.cancel(id, reason);
     if (appointment) {
       const notification =
         await notificationsRepository.createAppointmentNotification(

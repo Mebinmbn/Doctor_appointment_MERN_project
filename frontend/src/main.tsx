@@ -12,10 +12,10 @@ import { SocketProvider } from "./contexts/SocketContexts.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Provider store={store}>
-      <AuthProvider>
-        <SearchProvider>
-          <SocketProvider>
+    <SocketProvider>
+      <Provider store={store}>
+        <AuthProvider>
+          <SearchProvider>
             <App />
             <ToastContainer
               position="top-center"
@@ -29,9 +29,9 @@ createRoot(document.getElementById("root")!).render(
               pauseOnHover
               theme="dark"
             />
-          </SocketProvider>
-        </SearchProvider>
-      </AuthProvider>
-    </Provider>
+          </SearchProvider>
+        </AuthProvider>
+      </Provider>
+    </SocketProvider>
   </StrictMode>
 );

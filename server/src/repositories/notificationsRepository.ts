@@ -132,9 +132,27 @@ const createLeaveNotification = async (leave: ILeave, app: Application) => {
   }
 };
 
+const markAsRead = async (id: string) => {
+  try {
+    console.log("mark as read repo", id);
+    const response = await NotificationModel.updateMany(
+      { recipientId: id },
+      { $set: { isRead: true } },
+      { new: true }
+    );
+    if (response) {
+      console.log(response);
+      return response;
+    }
+  } catch (error) {
+    throw new Error("Error in marking as read");
+  }
+};
+
 export default {
   createAppointmentNotification,
   getNotifications,
   applicationsNotification,
   createLeaveNotification,
+  markAsRead,
 };

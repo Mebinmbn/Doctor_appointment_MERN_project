@@ -30,6 +30,7 @@ import DoctorLeave from "./pages/doctor/DoctorLeave";
 import LeaveRequests from "./pages/admin/LeaveRequests";
 import Aknowledement from "./pages/patient/Aknowledement";
 import Appointment from "./pages/patient/Appointment";
+import DoctorAppointment from "./pages/doctor/DoctorAppointment";
 
 function App() {
   return (
@@ -130,6 +131,14 @@ function App() {
             element={
               <ProtectedRoute role="doctor">
                 <DoctorAppointments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/appointment"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorAppointment />
               </ProtectedRoute>
             }
           />

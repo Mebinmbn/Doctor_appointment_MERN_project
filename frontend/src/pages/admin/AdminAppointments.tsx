@@ -72,8 +72,8 @@ function AdminAppointments() {
 
                     <th className="py-2 px-4 text-white border-b">Date</th>
                     <th className="py-2 px-4 text-white border-b">Timet</th>
-
                     <th className="py-2 px-4 text-white border-b">Payment</th>
+                    <th className="py-2 px-4 text-white border-b">Reson</th>
                     <th className="py-2 px-4 text-white border-b">Status</th>
                   </tr>
                 </thead>
@@ -95,6 +95,9 @@ function AdminAppointments() {
                           </td>
                           <td className="py-2 px-4 text-white border-b">
                             {appointment.payment}
+                          </td>
+                          <td className="py-2 px-4 text-white border-b">
+                            {appointment.reason}
                           </td>
                           <td className="py-2 px-4 text-white border-b">
                             {appointment.status}

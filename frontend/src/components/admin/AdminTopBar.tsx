@@ -54,7 +54,10 @@ function AdminTopBar() {
     fetchNotifications();
   }, []);
 
-  const toggleNotifications = () => {
+  const toggleNotifications = async () => {
+    const response = await api.put(`/notification/read/${admin?.id}`);
+    console.log(response.data.success);
+    fetchNotifications();
     setIsNotificationOpen(!isNotificationOpen);
   };
   return (

@@ -80,7 +80,10 @@ const Navbar: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
-  const toggleNotifications = () => {
+  const toggleNotifications = async () => {
+    const response = await api.put(`/notification/read/${user?.id}`);
+    console.log(response.data.success);
+    fetchNotifications();
     setIsNotificationOpen(!isNotificationOpen);
   };
 
@@ -146,9 +149,8 @@ const Navbar: React.FC = () => {
                           <li className="text-gray-500">No notifications</li>
                         ) : (
                           notifications.map((notification, index) => (
-                            <Link to="/notifications">
+                            <Link to="/notifications" key={index}>
                               <li
-                                key={index}
                                 className={`text-sm ${
                                   notification.type === "approved"
                                     ? "bg-green-200"

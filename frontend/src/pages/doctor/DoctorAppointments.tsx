@@ -7,7 +7,8 @@ import DoctorNav from "../../components/doctor/DoctorNav";
 import { Appointment } from "../../types/appointment";
 import DoctorTopBar from "../../components/doctor/DoctorTopBar";
 import api from "../../api/api";
-import ConfirmationModal from "../../components/confirmationModal";
+
+import CancelModal from "../../components/CancelModal";
 
 const DoctorAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -17,9 +18,10 @@ const DoctorAppointments: React.FC = () => {
   const [itemsPerPage] = useState(7);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
-    () => () => {}
-  );
+
+  const [confirmationCallback, setConfirmationCallback] = useState<
+    (reason: string) => void
+  >(() => () => {});
 
   useEffect(() => {
     const toastId = "loginToContinue";
@@ -55,7 +57,10 @@ const DoctorAppointments: React.FC = () => {
   }, [doctor, fetchAppointments]);
   console.log(appointments);
 
-  const showConfirmationModal = (message: string, onConfirm: () => void) => {
+  const showConfirmationModal = (
+    message: string,
+    onConfirm: (reason: string) => void
+  ) => {
     setMessage(message);
     setIsConfirmModalOpen(true);
     setConfirmationCallback(() => onConfirm);
@@ -64,11 +69,11 @@ const DoctorAppointments: React.FC = () => {
   const handleCancel = async (id: string) => {
     showConfirmationModal(
       "Do you want to cancel this appointment?",
-      async () => {
+      async (reason: string) => {
         try {
           const response = await api.put(
             `/doctor/appointments/cancel/${id}`,
-            { role: "Appointments" },
+            { role: "Appointments", reason },
             {
               headers: {
                 "User-Type": "doctor",
@@ -98,6 +103,11 @@ const DoctorAppointments: React.FC = () => {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleView = (appointmentId: string) => {
+    console.log(appointmentId);
+    navigate("/doctor/appointment", { state: { appointmentId } });
   };
 
   return (
@@ -142,7 +152,10 @@ const DoctorAppointments: React.FC = () => {
                       </td>
                       <td className="py-2 px-4 text-white border-b">
                         <div>
-                          <button className="bg-blue-500 rounded-xl px-2 py-1 border-[1px] mr-2">
+                          <button
+                            className="bg-blue-500 rounded-xl px-2 py-1 border-[1px] mr-2"
+                            onClick={() => handleView(appointment._id)}
+                          >
                             View
                           </button>
                           {appointment.status !== "cancelled" && (
@@ -186,12 +199,12 @@ const DoctorAppointments: React.FC = () => {
           </div>
         </div>
       </div>
-      <ConfirmationModal
+      <CancelModal
         showModal={isConfirmModalOpen}
         message={message}
         onClose={() => setIsConfirmModalOpen(false)}
-        onConfirm={() => {
-          if (confirmationCallback) confirmationCallback();
+        onConfirm={(reason: string) => {
+          if (confirmationCallback) confirmationCallback(reason);
           setIsConfirmModalOpen(false);
         }}
       />

@@ -91,8 +91,9 @@ const appointments = async (req: Request, res: Response) => {
 
 const cancel = async (req: Request, res: Response) => {
   const { id } = req.params;
+  const { reason } = req.body;
   try {
-    const appointment = await cancelAppointment(id, req.app);
+    const appointment = await cancelAppointment(id, reason, req.app);
 
     res
       .status(200)
@@ -164,7 +165,7 @@ const notifications = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const page = parseInt(req.query.page as string) | 1;
-    const limit = parseInt(req.query.limit as string) | 10;
+    const limit = parseInt(req.query.limit as string) | 5;
 
     const { notifications, totalDocs, totalPages } =
       await getDoctorNotifications(id, page, limit);

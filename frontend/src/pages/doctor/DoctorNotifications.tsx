@@ -16,7 +16,7 @@ function DoctorNotifications() {
   const fetchNotifications = useCallback(async () => {
     try {
       const response = await api.get(
-        `/doctor/notifications/${doctor?.id}?page=${currentPage}&limit=10`,
+        `/doctor/notifications/${doctor?.id}?page=${currentPage}&limit=5`,
         {
           headers: { "User-Type": "doctor" },
         }
@@ -65,7 +65,7 @@ function DoctorNotifications() {
               ))
             ) : (
               <div className="py-2 px-4 text-white border-b">
-                No appointments found
+                No Notifications Found
               </div>
             )}
 

@@ -43,12 +43,12 @@ const fetchAppointments = async (id: string) => {
   }
 };
 /////////////////////////////////////////////////////////////////////
-const cancel = async (id: string) => {
+const cancel = async (id: string, reason: string) => {
   console.log("doctor repo");
   try {
     const appointments = await AppointmentModel.findByIdAndUpdate(
       { _id: id },
-      { $set: { status: "cancelled" } },
+      { $set: { status: "cancelled" }, reason: reason },
       { new: true }
     );
     console.log(appointments);
