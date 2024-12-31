@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../../components/patient/Navbar";
-import { toast } from "react-toastify";
 import { IDoctor } from "../../../../server/src/models/doctorModel";
 import doctorIcon from "../../assets/icon/doctor.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,17 +24,7 @@ const Doctors = () => {
   const { searchKey, setSearchKey } = useSearch();
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state: RootState) => state.user);
-
-  useEffect(() => {
-    const toastId = "loginToContinue";
-    if (!user || user.isBlocked) {
-      navigate("/login");
-      if (!toast.isActive(toastId)) {
-        toast.warn("Login to continue", { toastId });
-      }
-    }
-  }, [user, navigate]);
+  // const { user } = useSelector((state: RootState) => state.user);
 
   const fetchDoctors = useCallback(async () => {
     try {
@@ -73,12 +62,12 @@ const Doctors = () => {
     setPage(1);
   };
 
-  useEffect(() => {
-    if (searchKey) {
-      setSearchQuery(searchKey);
-      fetchDoctors();
-    }
-  }, [searchKey, navigate]);
+  // useEffect(() => {
+  //   if (searchKey) {
+  //     setSearchQuery(searchKey);
+  //     fetchDoctors();
+  //   }
+  // }, [searchKey, navigate]);
 
   const handleAppointment = (doctor: IDoctor) => {
     dispatch(setDoctorToConsult(doctor));

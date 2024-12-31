@@ -31,6 +31,7 @@ import LeaveRequests from "./pages/admin/LeaveRequests";
 import Aknowledement from "./pages/patient/Aknowledement";
 import Appointment from "./pages/patient/Appointment";
 import DoctorAppointment from "./pages/doctor/DoctorAppointment";
+import DoctorMedicalForm from "./pages/doctor/DoctorMedicalForm";
 
 function App() {
   return (
@@ -139,6 +140,14 @@ function App() {
             element={
               <ProtectedRoute role="doctor">
                 <DoctorAppointment />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/medicalform"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorMedicalForm />
               </ProtectedRoute>
             }
           />

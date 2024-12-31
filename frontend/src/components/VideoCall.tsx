@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useSocket } from "../contexts/SocketContexts";
+import { IoVolumeMute } from "react-icons/io5";
+import { IoMdCall } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 interface VideoCallProps {
   roomId: string;
@@ -8,11 +11,13 @@ interface VideoCallProps {
 
 const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [audioEnabled, setAudioEnabled] = useState(true);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const negotiationPendingRef = useRef(false);
   const socket = useSocket();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let hasJoined = false;
@@ -41,12 +46,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
       if (data.caller !== socket.id) {
         await handleSignal(data);
       }
-    });
-
-    // Listen for user connected event
-    socket?.on("user-connected", () => {
-      console.log("User connected, initiating call");
-      callUser();
     });
 
     // Cleanup on component unmount
@@ -217,25 +216,49 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     return peerConnection;
   }, [roomId, socket]);
 
+  const endCall = useCallback(() => {
+    console.log("Ending call");
+    console.log(usertype);
+    if (usertype === "doctor") {
+      navigate("/doctor/medicalform");
+    }
+    localStream?.getTracks().forEach((track) => track.stop());
+    peerConnectionRef.current?.close();
+    peerConnectionRef.current = null;
+  }, [localStream]);
+
   const toggleAudio = useCallback(() => {
     if (localStream) {
       localStream.getAudioTracks().forEach((track) => {
         track.enabled = !track.enabled;
+        setAudioEnabled(!audioEnabled);
       });
     }
   }, [localStream]);
 
   // const toggleVideo = useCallback(() => {
-  //   if (localStream) {
-  //     localStream.getVideoTracks().forEach((track) => {
-  //       track.enabled = !track.enabled);
-  //     });
+  //   if (localStream && peerConnectionRef.current) {
+  //     const videoTrack = localStream.getVideoTracks()[0];
+  //     if (videoTrack) {
+  //       if (videoEnabled) {
+  //         peerConnectionRef.current.getSenders().forEach((sender) => {
+  //           if (sender.track === videoTrack) {
+  //             peerConnectionRef.current?.removeTrack(sender);
+  //           }
+  //         });
+  //       } else {
+  //         peerConnectionRef.current.addTrack(videoTrack, localStream);
+  //       }
+  //       videoTrack.enabled = !videoEnabled;
+  //       setVideoEnabled(!videoEnabled);
+  //     }
   //   }
-  // }, [localStream]);
+  // }, [localStream, videoEnabled]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-[60%] bg-gray-100">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white rounded-lg shadow-lg">
+    <div className="flex flex-col items-center justify-center h-[60%]  px-2">
+      <strong>Consultation Room</strong>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white rounded-lg shadow-sm">
         <div className="relative bg-black rounded-lg overflow-hidden">
           <video
             ref={localVideoRef}
@@ -244,7 +267,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
             muted
           />
           <div className="absolute bottom-2 left-2 p-2 bg-black bg-opacity-50 text-white rounded-lg">
-            You
+            You {audioEnabled ?? "Muted"}
           </div>
         </div>
         <div className="relative bg-black rounded-lg overflow-hidden">
@@ -258,19 +281,32 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
           </div>
         </div>
       </div>
-      <div className="mt-4 flex space-x-4">
+      <div className="mt-1 flex space-x-4 bg-gray-300 p-4 rounded-lg">
+        <button
+          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
+          onClick={callUser}
+        >
+          <IoMdCall />
+        </button>
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
           onClick={toggleAudio}
         >
-          Toggle Audio
+          <IoVolumeMute />
         </button>
+
         <button
+          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none"
+          onClick={endCall}
+        >
+          <IoMdCall />
+        </button>
+        {/* <button
           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
-          // onClick={toggleVideo}
+          onClick={toggleVideo}
         >
           Toggle Video
-        </button>
+        </button> */}
       </div>
     </div>
   );
