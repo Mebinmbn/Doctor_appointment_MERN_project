@@ -4,6 +4,9 @@ import AppointmentModel from "../models/appointmentModel";
 import TimeSlotsModel from "../models/timeSlotsModel";
 import NotificationModel from "../models/notificationModel";
 import LeaveModel from "../models/leaveModel";
+import MedicalRecordModel, {
+  IMedicalRecord,
+} from "../models/MedicalRecordsModel";
 
 const checkDoctorByEmail = async (email: string): Promise<IDoctor | null> => {
   console.log("check doctor");
@@ -121,6 +124,8 @@ const notifications = async (id: string, page: number, limit: number) => {
     throw new Error("Error in fetching notificaions");
   }
 };
+
+/////////////////////////////////////////////////////////////////////
 
 export default {
   checkDoctorByEmail,

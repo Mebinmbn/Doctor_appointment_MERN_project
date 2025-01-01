@@ -96,17 +96,18 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
               <p>Gender: {appointment?.patientId.gender}</p>
             </div>
           </div>
-          <div className="flex justify-end items-end gap-5 h-20">
-            <button className="p-2 h-10 bg-red-500 rounded-lg text-white">
-              Cancel Appointment
-            </button>
-            <button
-              className="p-2 h-10 bg-[#007E85] rounded-lg text-white"
-              onClick={() => setIsVideoCall(true)}
-            >
-              Join Video Call
-            </button>
-          </div>
+          {appointment?.status !== "cancelled" ? (
+            <div className="flex justify-end items-end gap-5 h-20">
+              <button
+                className="p-2 h-10 bg-[#007E85] rounded-lg text-white"
+                onClick={() => setIsVideoCall(true)}
+              >
+                Go to Consultation Room
+              </button>
+            </div>
+          ) : (
+            <p className="text-red-500 text-center">Appointment Canelled</p>
+          )}
         </>
       )}
     </div>

@@ -13,4 +13,16 @@ const getAppointmentById = async (id: string) => {
   }
 };
 
-export default { getAppointmentById };
+const updateStatus = async (id: string) => {
+  try {
+    return await AppointmentModel.findOneAndUpdate(
+      { _id: id },
+      { $set: { status: "consulted" } },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in updating status");
+  }
+};
+
+export default { getAppointmentById, updateStatus };

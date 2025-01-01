@@ -32,6 +32,8 @@ import Aknowledement from "./pages/patient/Aknowledement";
 import Appointment from "./pages/patient/Appointment";
 import DoctorAppointment from "./pages/doctor/DoctorAppointment";
 import DoctorMedicalForm from "./pages/doctor/DoctorMedicalForm";
+import MedicalRecords from "./pages/patient/MedicalRecords";
+import DoctorMedicalRecord from "./pages/doctor/DoctorMedicalRecord";
 
 function App() {
   return (
@@ -109,6 +111,14 @@ function App() {
             }
           />
           <Route
+            path="/medicalrecord"
+            element={
+              <ProtectedRoute role="user">
+                <MedicalRecords />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/notifications"
             element={
               <ProtectedRoute role="user">
@@ -140,6 +150,14 @@ function App() {
             element={
               <ProtectedRoute role="doctor">
                 <DoctorAppointment />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/medicalrecord"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorMedicalRecord />
               </ProtectedRoute>
             }
           />

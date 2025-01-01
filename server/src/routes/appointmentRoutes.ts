@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.get("/:id", appointmentController.appointment);
 
+router.put("/:id", appointmentController.updateStatus);
+
 export default router;

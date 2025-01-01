@@ -3,6 +3,7 @@ import { useSocket } from "../contexts/SocketContexts";
 import { IoVolumeMute } from "react-icons/io5";
 import { IoMdCall } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import api from "../api/api";
 
 interface VideoCallProps {
   roomId: string;
@@ -22,7 +23,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
   useEffect(() => {
     let hasJoined = false;
 
-    // Get user media (camera and microphone)
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -33,14 +33,12 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
         console.error("Error accessing media devices:", error);
       });
 
-    // Join the room
     if (!hasJoined && socket) {
       console.log(`Joining room: ${roomId}`);
       socket.emit("join", roomId);
       hasJoined = true;
     }
 
-    // Listen for signaling data
     socket?.on("signal", async (data) => {
       console.log("Received signaling data:", JSON.stringify(data, null, 2));
       if (data.caller !== socket.id) {
@@ -48,7 +46,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
       }
     });
 
-    // Cleanup on component unmount
     return () => {
       console.log("Cleaning up resources");
 
@@ -62,7 +59,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     };
   }, [roomId, socket]);
 
-  // Attach stream to video elements
   useEffect(() => {
     if (localStream && localVideoRef.current) {
       localVideoRef.current.srcObject = localStream;
@@ -70,7 +66,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
   }, [localStream]);
 
   const callUser = useCallback(() => {
-    if (negotiationPendingRef.current) return; // Avoid multiple offers
+    if (negotiationPendingRef.current) return;
     console.log("Calling user");
 
     const peerConnection = createPeerConnection();
@@ -183,7 +179,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     console.log("Creating peer connection");
     const peerConnection = new RTCPeerConnection();
 
-    // Handle ICE candidates
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         console.log("Sending ICE candidate:", event.candidate);
@@ -196,7 +191,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
       }
     };
 
-    // Handle receiving remote tracks
     peerConnection.ontrack = (event) => {
       if (event.streams[0]) {
         console.log("Received remote stream:", event.streams[0]);
@@ -215,17 +209,42 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
 
     return peerConnection;
   }, [roomId, socket]);
+  const changeAppointmentStatus = useCallback(async () => {
+    try {
+      const response = await api.put(`/appointments/${roomId}`);
+      if (response.data.success) {
+        console.log("status updated");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => stopAllStreams(localStream);
+  }, []);
+
+  const stopAllStreams = (stream: MediaStream | null) => {
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+  };
 
   const endCall = useCallback(() => {
-    console.log("Ending call");
-    console.log(usertype);
-    if (usertype === "doctor") {
-      navigate("/doctor/medicalform");
-    }
-    localStream?.getTracks().forEach((track) => track.stop());
+    stopAllStreams(localStream);
+    setLocalStream(null);
     peerConnectionRef.current?.close();
     peerConnectionRef.current = null;
-  }, [localStream]);
+
+    if (usertype === "doctor") {
+      changeAppointmentStatus();
+      navigate("/doctor/medicalform", { state: { roomId } });
+    } else {
+      navigate("/appointments");
+    }
+  }, [localStream, usertype, navigate, changeAppointmentStatus, roomId]);
 
   const toggleAudio = useCallback(() => {
     if (localStream) {
@@ -235,25 +254,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
       });
     }
   }, [localStream]);
-
-  // const toggleVideo = useCallback(() => {
-  //   if (localStream && peerConnectionRef.current) {
-  //     const videoTrack = localStream.getVideoTracks()[0];
-  //     if (videoTrack) {
-  //       if (videoEnabled) {
-  //         peerConnectionRef.current.getSenders().forEach((sender) => {
-  //           if (sender.track === videoTrack) {
-  //             peerConnectionRef.current?.removeTrack(sender);
-  //           }
-  //         });
-  //       } else {
-  //         peerConnectionRef.current.addTrack(videoTrack, localStream);
-  //       }
-  //       videoTrack.enabled = !videoEnabled;
-  //       setVideoEnabled(!videoEnabled);
-  //     }
-  //   }
-  // }, [localStream, videoEnabled]);
 
   return (
     <div className="flex flex-col items-center justify-center h-[60%]  px-2">
@@ -301,12 +301,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
         >
           <IoMdCall />
         </button>
-        {/* <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
-          onClick={toggleVideo}
-        >
-          Toggle Video
-        </button> */}
       </div>
     </div>
   );

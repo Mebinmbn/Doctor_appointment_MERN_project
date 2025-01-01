@@ -69,9 +69,13 @@ function Appointments() {
     }
   };
 
-  const handleView = (appointmentId: string) => {
+  const handleView = (appointmentId: string, status: string) => {
     console.log(appointmentId);
-    navigate("/appointment", { state: { appointmentId } });
+    if (status === "consulted") {
+      navigate("/medicalrecord", { state: { appointmentId } });
+    } else {
+      navigate("/appointment", { state: { appointmentId } });
+    }
   };
 
   const indexOfLastAppointment = currentPage * itemsPerPage;
@@ -130,12 +134,12 @@ function Appointments() {
                           <button
                             className="bg-blue-500 rounded-xl px-2 py-1 border-[1px] mr-2"
                             onClick={() => {
-                              handleView(appointment._id);
+                              handleView(appointment._id, appointment.status);
                             }}
                           >
                             View
                           </button>
-                          {appointment.status !== "cancelled" && (
+                          {appointment.status === "pending" && (
                             <button
                               className="bg-red-500 rounded-xl p-1 border-[1px] mr-2"
                               onClick={() => handleCancel(appointment._id)}

@@ -1,14 +1,18 @@
 import { IDoctor } from "../models/doctorModel";
 import { ILeave } from "../models/leaveModel";
+import { IMedicalRecord } from "../models/MedicalRecordsModel";
 import doctorRepository from "../repositories/doctorRepository";
 import leaveRepository from "../repositories/leaveRepository";
+import medicalRecordRepository from "../repositories/medicalRecordRepository";
 import notificationsRepository from "../repositories/notificationsRepository";
+import { IPrescription } from "../models/prescriptionModel";
 import timeSlotsRepository from "../repositories/timeSlotsRepository";
 import { comparePassword, hashPassword } from "../services/bcryptService";
 import { generateRefreshToken, generateToken } from "../services/tokenService";
 import validation from "../utils/validation";
 import express, { Application } from "express";
 const app = express();
+
 export const registerDoctor = async (doctorData: IDoctor, app: Application) => {
   console.log("doctorUsecases", doctorData);
   try {
@@ -143,5 +147,25 @@ export const applyLeave = async (leaveData: ILeave, app: Application) => {
     return leave;
   } catch (error) {
     throw new Error("Error in applying leave");
+  }
+};
+
+export const createMedicalRecord = async (
+  medicalRecordData: IMedicalRecord,
+  prescriptionData: any
+) => {
+  try {
+    // const existingRecord = await medicalRecordRepository.checkMedicalRecord(
+    //   medicalRecordData.appointmentId
+    // );
+    // if (existingRecord) {
+    //   throw new Error("Record already exists");
+    // }
+    return await medicalRecordRepository.createMedicalRecord(
+      medicalRecordData,
+      prescriptionData
+    );
+  } catch (error) {
+    throw new Error("Record already exists");
   }
 };

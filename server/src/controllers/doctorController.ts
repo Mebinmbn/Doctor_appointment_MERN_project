@@ -3,6 +3,7 @@ import {
   applyLeave,
   cancelAppointment,
   createDoctorTimeSlots,
+  createMedicalRecord,
   getAppointments,
   getDoctorNotifications,
   registerDoctor,
@@ -207,15 +208,47 @@ const leave = async (req: Request, res: Response) => {
   }
 };
 
+const medicalRecord = async (req: Request, res: Response) => {
+  try {
+    const { appointmentId, symptoms, diagnosis, tests, prescriptions, advice } =
+      req.body;
+    const medicalRecordData = {
+      appointmentId,
+      symptoms,
+      diagnosis,
+      tests,
+      advice,
+    };
+    const prescriptionData = {
+      appointmentId,
+      prescriptions,
+    };
+    const medicalRecord = await createMedicalRecord(
+      medicalRecordData,
+      prescriptionData
+    );
+    if (medicalRecord) {
+      res.status(200).json({
+        success: true,
+        medicalRecord,
+        message: "Medical Record Created Successfully",
+      });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   register,
   signin,
   appointments,
-
   cancel,
   timeSlots,
   removeTimeSlots,
   createTimeSlots,
   notifications,
   leave,
+  medicalRecord,
 };

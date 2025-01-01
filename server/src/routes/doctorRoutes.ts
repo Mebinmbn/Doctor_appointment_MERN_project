@@ -64,4 +64,11 @@ router.post(
   doctorController.leave
 );
 
+router.post(
+  "/medicalRecord",
+  authMiddleware,
+  roleMiddleware("doctor"),
+  doctorController.medicalRecord
+);
+
 export default router;

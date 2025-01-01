@@ -1,15 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import debounce from "lodash.debounce";
 import Navbar from "../../components/patient/Navbar";
 import { IDoctor } from "../../../../server/src/models/doctorModel";
 import doctorIcon from "../../assets/icon/doctor.png";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setDoctorsArray } from "../../app/featrue/doctorsSlice";
-import { AppDispatch, RootState } from "../../app/store";
+import { AppDispatch } from "../../app/store";
 import { useNavigate } from "react-router-dom";
-import { useSearch } from "../../contexts/SearchContext";
-import { setDoctorToConsult } from "../../app/featrue/userSlice";
 import api from "../../api/api";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { setDoctorToConsult } from "../../app/featrue/userSlice";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
@@ -21,13 +27,17 @@ const Doctors = () => {
   const [gender, setGender] = useState("");
   const [experience, setExperience] = useState("");
   const [loading, setLoading] = useState(false);
-  const { searchKey, setSearchKey } = useSearch();
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  // const { user } = useSelector((state: RootState) => state.user);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+  }, []);
 
   const fetchDoctors = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await api.get(
         `/patients/doctors?page=${page}&limit=${limit}&search=${searchQuery}&specialization=${specialization}&gender=${gender}&experience=${experience}`,
         {
@@ -38,36 +48,41 @@ const Doctors = () => {
       );
 
       if (response.data.success) {
-        setLoading(false);
         setDoctors(response.data.data);
         setTotalPages(response.data.meta.totalPages);
         dispatch(setDoctorsArray({ doctors: response.data.data }));
       }
     } catch (error) {
       console.error("Error fetching doctors:", error);
+    } finally {
+      setLoading(false);
     }
   }, [page, limit, searchQuery, specialization, gender, experience, dispatch]);
 
+  const debouncedFetchDoctors = useMemo(
+    () => debounce(fetchDoctors, 700),
+    [fetchDoctors]
+  );
+
   useEffect(() => {
-    setLoading(true);
-    fetchDoctors();
-  }, [fetchDoctors]);
+    if (inputRef.current) inputRef.current.focus();
+  });
+
+  useEffect(() => {
+    debouncedFetchDoctors();
+
+    return () => {
+      debouncedFetchDoctors.cancel();
+    };
+  }, [searchQuery, specialization, gender, experience, debouncedFetchDoctors]);
 
   const clearFilter = () => {
     setSearchQuery("");
     setSpecialization("");
     setGender("");
     setExperience("");
-    setSearchKey("");
     setPage(1);
   };
-
-  // useEffect(() => {
-  //   if (searchKey) {
-  //     setSearchQuery(searchKey);
-  //     fetchDoctors();
-  //   }
-  // }, [searchKey, navigate]);
 
   const handleAppointment = (doctor: IDoctor) => {
     dispatch(setDoctorToConsult(doctor));
@@ -78,7 +93,7 @@ const Doctors = () => {
     <div>
       <Navbar />
       {loading ? (
-        <div className="spinner_div h-screen w-full flex justify-center item-center ">
+        <div className="spinner_div h-screen w-full flex justify-center item-center">
           <LoadingSpinner />
         </div>
       ) : (
@@ -88,6 +103,7 @@ const Doctors = () => {
               <div className="form-group flex-1 lg:flex-none">
                 <input
                   type="text"
+                  ref={inputRef}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="bg-gray-100 m-2 h-10 rounded-lg w-full lg:w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -144,7 +160,7 @@ const Doctors = () => {
               </div>
               <button
                 onClick={clearFilter}
-                className="bg-white m-2 px-3 py-2 border border-[#007E85]  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+                className="bg-white m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
               >
                 Clear Filters
               </button>
