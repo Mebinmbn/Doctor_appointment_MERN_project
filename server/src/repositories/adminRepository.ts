@@ -183,6 +183,7 @@ const fetchAppointments = async () => {
   console.log("doctor repo");
   try {
     const appointments = await AppointmentModel.find({})
+      .sort({ createdAt: -1 })
       .populate("doctorId", "firstName lastName specialization")
       .populate("patientId", "firstName lastName email");
 

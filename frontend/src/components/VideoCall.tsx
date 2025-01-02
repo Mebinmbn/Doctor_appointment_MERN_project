@@ -12,6 +12,7 @@ interface VideoCallProps {
 
 const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -194,6 +195,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     peerConnection.ontrack = (event) => {
       if (event.streams[0]) {
         console.log("Received remote stream:", event.streams[0]);
+        setRemoteStream(event.streams[0]);
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = event.streams[0];
         }
@@ -209,6 +211,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
 
     return peerConnection;
   }, [roomId, socket]);
+
   const changeAppointmentStatus = useCallback(async () => {
     try {
       const response = await api.put(`/appointments/${roomId}`);
@@ -271,6 +274,12 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
           </div>
         </div>
         <div className="relative bg-black rounded-lg overflow-hidden">
+          {!remoteStream && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 text-white">
+              Waiting for {usertype === "doctor" ? "Patient" : "Doctor"} to
+              join...
+            </div>
+          )}
           <video
             ref={remoteVideoRef}
             className="w-full h-full object-cover"
