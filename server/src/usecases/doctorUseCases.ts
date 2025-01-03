@@ -11,6 +11,9 @@ import { comparePassword, hashPassword } from "../services/bcryptService";
 import { generateRefreshToken, generateToken } from "../services/tokenService";
 import validation from "../utils/validation";
 import express, { Application } from "express";
+import { IWallet } from "../models/WalletModel";
+import appointmentRepository from "../repositories/appointmentRepository";
+import walletRepository from "../repositories/walletRepository";
 const app = express();
 
 export const registerDoctor = async (doctorData: IDoctor, app: Application) => {
@@ -81,16 +84,27 @@ export const cancelAppointment = async (
   app: Application
 ) => {
   try {
-    const appointment = await doctorRepository.cancel(id, reason);
+    const appointment = await appointmentRepository.cancel(id, reason);
     if (appointment) {
-      const notification =
-        await notificationsRepository.createAppointmentNotification(
-          appointment,
-          "cancelled",
-          "doctor",
-          app
-        );
+      await notificationsRepository.createAppointmentNotification(
+        appointment,
+        "cancelled",
+        "doctor",
+        app
+      );
+
+      const transaction = {
+        description: "Credit",
+        amount: appointment.amount,
+        date: new Date(),
+      };
+
+      await walletRepository.createTransaction(
+        transaction,
+        appointment.userId.toString()
+      );
     }
+
     return appointment;
   } catch (error) {
     throw new Error("Error in cancelling");

@@ -91,4 +91,6 @@ router.post(
   patientController.verify
 );
 
+router.get("/wallet/:id", patientController.wallet);
+
 export default router;

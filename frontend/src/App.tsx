@@ -34,6 +34,7 @@ import DoctorAppointment from "./pages/doctor/DoctorAppointment";
 import DoctorMedicalForm from "./pages/doctor/DoctorMedicalForm";
 import MedicalRecords from "./pages/patient/MedicalRecords";
 import DoctorMedicalRecord from "./pages/doctor/DoctorMedicalRecord";
+import Wallet from "./pages/patient/Wallet";
 
 function App() {
   return (
@@ -123,6 +124,14 @@ function App() {
             element={
               <ProtectedRoute role="user">
                 <Notifications />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wallet"
+            element={
+              <ProtectedRoute role="user">
+                <Wallet />
               </ProtectedRoute>
             }
           />

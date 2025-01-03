@@ -24,7 +24,7 @@ const createAppointmentNotification = async (
       }
 
       notificationData = {
-        recipientId: appointment.patientId.toString(),
+        recipientId: appointment.userId.toString(),
         senderId: appointment.doctorId.toString(),
         recipientRole: "patient",
         type: type,

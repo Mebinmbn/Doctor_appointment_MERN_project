@@ -7,6 +7,7 @@ import LeaveModel from "../models/leaveModel";
 import MedicalRecordModel, {
   IMedicalRecord,
 } from "../models/MedicalRecordsModel";
+import { IWallet } from "../models/WalletModel";
 
 const checkDoctorByEmail = async (email: string): Promise<IDoctor | null> => {
   console.log("check doctor");
@@ -43,21 +44,6 @@ const fetchAppointments = async (id: string) => {
     return appointments;
   } catch (error) {
     throw new Error("Error in fetching appointments");
-  }
-};
-/////////////////////////////////////////////////////////////////////
-const cancel = async (id: string, reason: string) => {
-  console.log("doctor repo");
-  try {
-    const appointments = await AppointmentModel.findByIdAndUpdate(
-      { _id: id },
-      { $set: { status: "cancelled" }, reason: reason },
-      { new: true }
-    );
-    console.log(appointments);
-    return appointments;
-  } catch (error) {
-    throw new Error("Error in approving appointments");
   }
 };
 
@@ -132,7 +118,7 @@ export default {
   createDoctor,
   verifyDoctor,
   fetchAppointments,
-  cancel,
+
   // reject,
   updateTimeSlots,
   notifications,

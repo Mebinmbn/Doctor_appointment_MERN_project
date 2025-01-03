@@ -9,6 +9,7 @@ import { IAppointment } from "../models/appointmentModel";
 import notificationsRepository from "../repositories/notificationsRepository";
 import express, { Application } from "express";
 import paymentService from "../services/paymentService";
+import walletRepository from "../repositories/walletRepository";
 const app = express();
 
 export const signUpPatient = async (patientData: IPatient) => {
@@ -110,6 +111,17 @@ export const bookAppointment = async (
       console.log("Time slot already booked");
       throw new Error("Time slot already booked");
     }
+    if (appointmentData.paymentId?.startsWith("wallet")) {
+      const transaction = {
+        description: "Debit",
+        amount: appointmentData.amount,
+        date: new Date(),
+      };
+      await walletRepository.createTransaction(
+        transaction,
+        appointmentData.userId.toString()
+      );
+    }
     const appointment = await patientRepository.createAppointment(
       appointmentData
     );
@@ -121,6 +133,7 @@ export const bookAppointment = async (
         app
       );
     }
+
     return appointment;
   } catch (error: any) {
     if (error.message === "Time slot already booked") {
@@ -170,13 +183,23 @@ export const cancelAppointment = async (id: string, app: Application) => {
   try {
     const appointment = await patientRepository.cancel(id);
     if (appointment) {
-      const notification =
-        await notificationsRepository.createAppointmentNotification(
-          appointment,
-          "cancelled",
-          "doctor",
-          app
-        );
+      await notificationsRepository.createAppointmentNotification(
+        appointment,
+        "cancelled",
+        "doctor",
+        app
+      );
+
+      const transaction = {
+        description: "Credit",
+        amount: appointment.amount,
+        date: new Date(),
+      };
+
+      await walletRepository.createTransaction(
+        transaction,
+        appointment.userId.toString()
+      );
     }
     return appointment;
   } catch (error) {
@@ -232,5 +255,13 @@ export const verifyPayment = async (
     );
   } catch (error) {
     throw new Error("Error in payment verification");
+  }
+};
+
+export const getWallet = async (id: string) => {
+  try {
+    return await walletRepository.getWallet(id);
+  } catch (error) {
+    throw new Error("Error in fetching wallet");
   }
 };

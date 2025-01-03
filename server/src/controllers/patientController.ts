@@ -9,6 +9,7 @@ import {
   getPatient,
   getPatientNotifications,
   getTimeSlots,
+  getWallet,
   ResetPassword,
   signInPatient,
   signUpPatient,
@@ -306,6 +307,23 @@ const verify = async (req: Request, res: Response) => {
   }
 };
 
+const wallet = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const wallet = await getWallet(id);
+    if (wallet) {
+      res.status(200).json({
+        success: true,
+        wallet,
+        message: "Feteched the wallet successfully",
+      });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   signUp,
   signIn,
@@ -321,4 +339,5 @@ export default {
   notifications,
   createOrder,
   verify,
+  wallet,
 };

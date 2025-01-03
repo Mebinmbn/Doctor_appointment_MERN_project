@@ -81,9 +81,10 @@ const Navbar: React.FC = () => {
   };
 
   const toggleNotifications = async () => {
+    console.log("toggle notification");
     const response = await api.put(`/notification/read/${user?.id}`);
     console.log(response.data.success);
-    fetchNotifications();
+
     setIsNotificationOpen(!isNotificationOpen);
   };
 
