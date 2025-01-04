@@ -10,6 +10,7 @@ import notificationsRepository from "../repositories/notificationsRepository";
 import express, { Application } from "express";
 import paymentService from "../services/paymentService";
 import walletRepository from "../repositories/walletRepository";
+import paymentRepository from "../repositories/paymentRepository";
 const app = express();
 
 export const signUpPatient = async (patientData: IPatient) => {
@@ -98,6 +99,7 @@ export const bookAppointment = async (
   app: Application
 ) => {
   try {
+    let paymentMethod;
     const timeSlotData = {
       doctorId: appointmentData.doctorId.toString(),
       date: appointmentData.date.toString(),
@@ -112,6 +114,7 @@ export const bookAppointment = async (
       throw new Error("Time slot already booked");
     }
     if (appointmentData.paymentId?.startsWith("wallet")) {
+      paymentMethod = "wallet";
       const transaction = {
         description: "Debit",
         amount: appointmentData.amount,
@@ -121,6 +124,8 @@ export const bookAppointment = async (
         transaction,
         appointmentData.userId.toString()
       );
+    } else {
+      paymentMethod = "online";
     }
     const appointment = await patientRepository.createAppointment(
       appointmentData
@@ -132,6 +137,17 @@ export const bookAppointment = async (
         "patient",
         app
       );
+      const payment = {
+        userId: appointment.userId,
+        appointmentId: appointment._id,
+        doctorId: appointment.doctorId,
+        amount: appointment.amount,
+        paymentMethod,
+        paymentStatus: "completed",
+        transactionId: appointment.paymentId,
+      };
+
+      await paymentRepository.savePayment(payment);
     }
 
     return appointment;

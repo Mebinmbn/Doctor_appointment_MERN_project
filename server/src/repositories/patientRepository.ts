@@ -1,4 +1,3 @@
-import { query } from "express";
 import AppointmentModel, { IAppointment } from "../models/appointmentModel";
 import DoctorModel from "../models/doctorModel";
 import NotificationModel from "../models/notificationModel";

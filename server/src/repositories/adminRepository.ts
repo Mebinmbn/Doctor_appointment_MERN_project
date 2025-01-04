@@ -2,6 +2,7 @@ import AdminModel, { IAdmin } from "../models/adminModel";
 import AppointmentModel from "../models/appointmentModel";
 import DoctorModel, { IDoctor } from "../models/doctorModel";
 import PatientModel, { IPatient } from "../models/patientModel";
+import PaymentModel from "../models/paymentModel";
 
 const findAdminByEmail = async (email: string): Promise<IAdmin | null> => {
   console.log("Find email by id");
@@ -195,6 +196,61 @@ const fetchAppointments = async () => {
 
 /////////////////////////////////////////////////////////////////////
 
+const getDashboardData = async (id: string, period: string | undefined) => {
+  try {
+    let groupBy;
+    switch (period) {
+      case "weekly":
+        groupBy = { $isoWeek: "$createdAt" };
+        break;
+      case "monthly":
+        groupBy = { $month: "$createdAt" };
+        break;
+      case "yearly":
+        groupBy = { $year: "$createdAt" };
+        break;
+      default:
+        groupBy = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+    }
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 7);
+    startDate.setHours(0, 0, 0, 0);
+
+    const appointmentCount: number = await AppointmentModel.countDocuments();
+    const doctorCount: number = await DoctorModel.countDocuments();
+    const patientCount: number = await PatientModel.countDocuments();
+    const newPatients = await PatientModel.find({
+      registeredAt: { $gt: startDate },
+    });
+
+    const chartDate =
+      startDate.getDate() -
+      (period === "yearly" ? 365 : period === "monthly" ? 30 : 7);
+
+    const revenueData = await PaymentModel.aggregate([
+      { $match: { createdAt: { $gt: startDate } } },
+      {
+        $group: {
+          _id: groupBy,
+          totalRevenue: { $sum: { $toDouble: "$amount" } },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    return {
+      appointmentCount,
+      doctorCount,
+      patientCount,
+      newPatients,
+      revenueData,
+    };
+  } catch (error) {
+    throw new Error("Error in fetching dashboard data");
+  }
+};
+
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,
@@ -208,4 +264,5 @@ export default {
   updatePatient,
   updateDoctor,
   fetchAppointments,
+  getDashboardData,
 };

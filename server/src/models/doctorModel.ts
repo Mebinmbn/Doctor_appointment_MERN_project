@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
-import { ObjectId } from "mongoose";
 
 export interface IDoctor extends Document {
   firstName: string;

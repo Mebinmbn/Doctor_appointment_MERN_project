@@ -134,3 +134,14 @@ export const updateLeaveRequest = async (id: string, status: string) => {
     throw new Error("Error in updating  leave request");
   }
 };
+
+export const getDashboardData = async (
+  id: string,
+  period: string | undefined
+) => {
+  try {
+    return await adminRepository.getDashboardData(id, period);
+  } catch (error) {
+    throw new Error("Error in fetching dashboard data");
+  }
+};

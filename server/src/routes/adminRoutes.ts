@@ -91,4 +91,11 @@ router.put(
   adminController.updateRequest
 );
 
+router.get(
+  "/dashboard/:id",
+  authMiddleware,
+  roleMiddleware("admin"),
+  adminController.dashboard
+);
+
 export default router;

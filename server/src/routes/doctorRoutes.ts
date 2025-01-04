@@ -71,4 +71,11 @@ router.post(
   doctorController.medicalRecord
 );
 
+router.get(
+  "/dashboard/:id",
+  authMiddleware,
+  roleMiddleware("doctor"),
+  doctorController.dashboard
+);
+
 export default router;

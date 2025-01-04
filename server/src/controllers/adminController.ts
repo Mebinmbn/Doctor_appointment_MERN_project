@@ -8,6 +8,7 @@ import {
   editPatient,
   getApplications,
   getAppointments,
+  getDashboardData,
   getDoctors,
   getPatients,
   leaveApplications,
@@ -263,6 +264,38 @@ const updateRequest = async (req: Request, res: Response) => {
   }
 };
 
+const dashboard = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const period = req.query.period as string;
+    console.log(period);
+    const {
+      appointmentCount,
+      doctorCount,
+      patientCount,
+      newPatients,
+      revenueData,
+    } = await getDashboardData(id, period);
+    const totalCount = {
+      appointmentCount,
+      doctorCount,
+      patientCount,
+    };
+    console.log("totalCount", totalCount);
+    res.status(200).json({
+      success: true,
+      data: {
+        totalCount,
+        newPatients,
+        revenueData,
+      },
+    });
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   signin,
   applications,
@@ -275,4 +308,5 @@ export default {
   requests,
   updateRequest,
   blockUnblock,
+  dashboard,
 };

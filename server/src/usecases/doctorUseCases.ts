@@ -183,3 +183,11 @@ export const createMedicalRecord = async (
     throw new Error("Record already exists");
   }
 };
+
+export const getDashboardData = async (id: string) => {
+  try {
+    return await doctorRepository.getDashboardData(id);
+  } catch (error) {
+    throw new Error("Error in fetching dashboard data");
+  }
+};
