@@ -15,16 +15,6 @@ function Appointments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
 
-  useEffect(() => {
-    const toastId = "loginToContinue";
-    if (!user) {
-      navigate("/login");
-      if (!toast.isActive(toastId)) {
-        toast.warn("Login to continue", { toastId });
-      }
-    }
-  }, [user, navigate]);
-
   const fetchAppointments = useCallback(async () => {
     if (!user) return;
 

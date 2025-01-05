@@ -66,8 +66,8 @@ function AdminDashboard() {
             {
               label: "Revenue",
               data: revenueData.map((item) => item.totalRevenue),
-              backgroundColor: "rgba(57, 16, 159, 0.2)",
-              borderColor: "rgb(235, 240, 236)",
+              backgroundColor: "rgba(44, 194, 28, 0.51)",
+              borderColor: "rgb(11, 75, 24)",
               borderWidth: 1,
             },
           ],
@@ -145,6 +145,9 @@ function AdminDashboard() {
           <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-auto w-64 h-96 bg-white p-2 drop-shadow-lg">
             <ul>
               <strong className="ml-2 mb-2">New Patients</strong>
+              {newPatients.length <= 0 && (
+                <p>No new registrations for this week</p>
+              )}
               {newPatients.map((patient, index) => (
                 <li
                   key={index}

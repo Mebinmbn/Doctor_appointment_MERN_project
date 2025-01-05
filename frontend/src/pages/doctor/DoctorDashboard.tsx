@@ -84,6 +84,10 @@ function DoctorDashboard() {
               <h2 className="text-lg font-bold text-gray-800">Patient List</h2>
               <div className="overflow-auto  h-52 px-2 hide-scrollbar">
                 <ul className="mt-4">
+                  {appointments.length <= 0 && (
+                    <p className="text-red-500">No appointments for today</p>
+                  )}
+
                   {appointments.map((patient, index) => (
                     <li
                       key={index}

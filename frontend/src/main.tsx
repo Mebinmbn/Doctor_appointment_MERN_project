@@ -9,29 +9,32 @@ import store from "./app/store.ts";
 import { Provider } from "react-redux";
 import { SearchProvider } from "./contexts/SearchContext.tsx";
 import { SocketProvider } from "./contexts/SocketContexts.tsx";
+import { ChatProvider } from "./contexts/ChatContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <SocketProvider>
-      <Provider store={store}>
-        <AuthProvider>
-          <SearchProvider>
-            <App />
-            <ToastContainer
-              position="top-center"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="dark"
-            />
-          </SearchProvider>
-        </AuthProvider>
-      </Provider>
+      <ChatProvider>
+        <Provider store={store}>
+          <AuthProvider>
+            <SearchProvider>
+              <App />
+              <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+              />
+            </SearchProvider>
+          </AuthProvider>
+        </Provider>
+      </ChatProvider>
     </SocketProvider>
   </StrictMode>
 );

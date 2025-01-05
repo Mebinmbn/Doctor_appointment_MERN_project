@@ -8,12 +8,16 @@ import api from "../../api/api";
 import { useSocket } from "../../contexts/SocketContexts";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { useChat } from "../../contexts/ChatContext";
+import AnimatedMessage from "../Icons/AnimatedMessage";
 
 function DoctorTopBar() {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [chatNotification, setChatNotification] = useState(false);
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
   const socket = useSocket();
+  const { openChat } = useChat();
 
   useEffect(() => {
     if (!socket) return;
@@ -26,6 +30,26 @@ function DoctorTopBar() {
       socket.off("notification");
     };
   }, [doctor?.id]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("chatNotification", (data) => {
+        console.log("Chat Notification:", data);
+        setChatNotification(true);
+        openChat(data.room, data.sender, "");
+
+        toast.info(`New message: ${data.message.text}`, {
+          onClick: () => {
+            openChat(data.room, data.sender, "");
+          },
+        });
+      });
+
+      return () => {
+        socket.off("chatNotification");
+      };
+    }
+  }, [socket, openChat]);
 
   const fetchNotifications = async () => {
     try {
@@ -69,8 +93,13 @@ function DoctorTopBar() {
       <div className="flex justify-evenly mx-5 w-[90%]  mx-auto">
         <div className=" rounded-xl w-fit flex  p-2 ml-auto ">
           <div className="relative flex ">
+            {chatNotification && (
+              <div className="mt-0">
+                <AnimatedMessage />
+              </div>
+            )}
             <IoNotifications
-              className="text-blue-800 h-5 w-5 cursor-pointer"
+              className="text-blue-800 h-5 w-5 cursor-pointer mt-4"
               onClick={toggleNotifications}
             />
             {notifications.length > 0 ? (
@@ -103,7 +132,7 @@ function DoctorTopBar() {
               </div>
             )}
           </div>
-          <p className="text-black font-bold ml-2 mb-3">
+          <p className="text-black font-bold ml-2 mt-4">
             DR. {doctor?.name.toUpperCase()}
           </p>
         </div>

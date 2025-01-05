@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import api from "../api/api";
 import { Appointment } from "../types/appointment";
 import VideoCall from "../components/VideoCall";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { useChat } from "../contexts/ChatContext";
 
 interface AppointmentProps {
   appointmentId: string | null;
@@ -14,6 +17,20 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
 }) => {
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [isVideoCall, setIsVideoCall] = useState(false);
+  const user = useSelector((state: RootState) => state.user.user);
+  const doctor = useSelector((state: RootState) => state.doctor.doctor);
+  const { openChat } = useChat();
+
+  let userName;
+  let recipientId;
+
+  if (userType === "doctor") {
+    userName = doctor?.name || "Doctor";
+    recipientId = appointment?.userId || "";
+  } else {
+    userName = user?.name || "User";
+    recipientId = appointment?.doctorId._id || "";
+  }
 
   const fetchAppointmentDetails = async () => {
     try {
@@ -32,6 +49,11 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
   useEffect(() => {
     fetchAppointmentDetails();
   }, [appointmentId, userType]);
+
+  const handleOpenChat = () => {
+    console.log("Opening chat with", { appointmentId, userName, recipientId });
+    openChat(appointmentId || "", userName, recipientId);
+  };
 
   return (
     <div className="w-[80vw] border-2 mx-auto mt-10 p-5">
@@ -100,13 +122,19 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
             <div className="flex justify-end items-end gap-5 h-20">
               <button
                 className="p-2 h-10 bg-[#007E85] rounded-lg text-white"
+                onClick={handleOpenChat}
+              >
+                Chat with doctor
+              </button>
+              <button
+                className="p-2 h-10 bg-[#007E85] rounded-lg text-white"
                 onClick={() => setIsVideoCall(true)}
               >
                 Go to Consultation Room
               </button>
             </div>
           ) : (
-            <p className="text-red-500 text-center">Appointment Canelled</p>
+            <p className="text-red-500 text-center">Appointment Cancelled</p>
           )}
         </>
       )}

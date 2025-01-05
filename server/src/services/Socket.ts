@@ -47,6 +47,25 @@ export const setupSocketIO = (server: any, app: Application) => {
       }
     });
 
+    socket.on("sendMessage", (data) => {
+      console.log("message received", data.text);
+      const { room, sender, text, timestamp, recipientId } = data;
+      const message = {
+        sender,
+        text,
+        timestamp,
+      };
+      io.to(room).emit("receiveMessage", message);
+      io.to(recipientId).emit("chatNotification", {
+        room,
+        message,
+      });
+
+      console.log(
+        `Message sent to room: ${room}, and notification to: ${recipientId} , ${message}`
+      );
+    });
+
     socket.on("disconnect", () => {
       console.log("Client disconnected", socket.id);
 

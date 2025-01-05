@@ -35,6 +35,7 @@ import DoctorMedicalForm from "./pages/doctor/DoctorMedicalForm";
 import MedicalRecords from "./pages/patient/MedicalRecords";
 import DoctorMedicalRecord from "./pages/doctor/DoctorMedicalRecord";
 import Wallet from "./pages/patient/Wallet";
+import ChatPage from "./components/ChatPage";
 
 function App() {
   return (
@@ -266,6 +267,7 @@ function App() {
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>
+      <ChatPage />
     </>
   );
 }
