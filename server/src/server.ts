@@ -10,6 +10,7 @@ import notificationRoutes from "./routes/notificationRoutes";
 import tokenRouter from "./routes/tokenRoutes";
 import appointmentRouter from "./routes/appointmentRoutes";
 import medicalRecordRoute from "./routes/medicalRecordRoute";
+import chatRoutes from "./routes/chatRotes";
 import path from "path";
 import { createServer } from "http";
 import { setupSocketIO } from "./services/Socket";
@@ -47,6 +48,7 @@ app.use("/api/doctor", doctorRoutes);
 app.use("/api/token", tokenRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/medicalRecord", medicalRecordRoute);
+app.use("/api/chats", chatRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

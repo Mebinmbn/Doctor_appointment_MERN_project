@@ -23,13 +23,19 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
 
   let userName;
   let recipientId;
+  let senderId;
+  let recipientName;
 
   if (userType === "doctor") {
     userName = doctor?.name || "Doctor";
     recipientId = appointment?.userId || "";
+    recipientName = "Patient";
+    senderId = appointment?.doctorId._id;
   } else {
     userName = user?.name || "User";
     recipientId = appointment?.doctorId._id || "";
+    recipientName = doctor?.name || "Doctor";
+    senderId = appointment?.userId;
   }
 
   const fetchAppointmentDetails = async () => {
@@ -52,7 +58,13 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
 
   const handleOpenChat = () => {
     console.log("Opening chat with", { appointmentId, userName, recipientId });
-    openChat(appointmentId || "", userName, recipientId);
+    openChat(
+      appointmentId || "",
+      userName,
+      recipientId,
+      recipientName,
+      senderId || ""
+    );
   };
 
   return (

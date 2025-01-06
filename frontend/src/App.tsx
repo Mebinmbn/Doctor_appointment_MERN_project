@@ -36,6 +36,7 @@ import MedicalRecords from "./pages/patient/MedicalRecords";
 import DoctorMedicalRecord from "./pages/doctor/DoctorMedicalRecord";
 import Wallet from "./pages/patient/Wallet";
 import ChatPage from "./components/ChatPage";
+import DoctorChats from "./pages/doctor/DoctorChats";
 
 function App() {
   return (
@@ -208,6 +209,14 @@ function App() {
             element={
               <ProtectedRoute role="doctor">
                 <DoctorLeave />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="doctor/chats"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorChats />
               </ProtectedRoute>
             }
           />

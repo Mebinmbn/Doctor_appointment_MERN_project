@@ -36,11 +36,23 @@ function DoctorTopBar() {
       socket.on("chatNotification", (data) => {
         console.log("Chat Notification:", data);
         setChatNotification(true);
-        openChat(data.room, data.sender, "");
+        openChat(
+          data.room,
+          doctor?.name || "Doctor",
+          data.senderId,
+          data.message.sender,
+          doctor?.id || ""
+        );
 
         toast.info(`New message: ${data.message.text}`, {
           onClick: () => {
-            openChat(data.room, data.sender, "");
+            openChat(
+              data.room,
+              doctor?.name || "Doctor",
+              data.senderId,
+              data.message.sender,
+              doctor?.id || ""
+            );
           },
         });
       });

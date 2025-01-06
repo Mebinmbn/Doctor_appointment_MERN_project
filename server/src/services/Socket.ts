@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { Application } from "express";
+import ChatModel from "../models/chatModel";
 
 interface SignalData {
   type: string;
@@ -47,18 +48,29 @@ export const setupSocketIO = (server: any, app: Application) => {
       }
     });
 
-    socket.on("sendMessage", (data) => {
+    socket.on("sendMessage", async (data) => {
       console.log("message received", data.text);
-      const { room, sender, text, timestamp, recipientId } = data;
+      const { room, sender, text, timestamp, recipientId, senderId } = data;
       const message = {
         sender,
         text,
         timestamp,
       };
+      const newMessage = {
+        roomId: room,
+        sender,
+        senderId,
+        recipientId,
+        text,
+        timestamp,
+      };
+      const newChat = new ChatModel(newMessage);
+      await newChat.save();
       io.to(room).emit("receiveMessage", message);
       io.to(recipientId).emit("chatNotification", {
         room,
         message,
+        senderId,
       });
 
       console.log(

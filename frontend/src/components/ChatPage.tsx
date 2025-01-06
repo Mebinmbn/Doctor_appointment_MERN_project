@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useChat } from "../contexts/ChatContext";
 import { useSocket } from "../contexts/SocketContexts";
+import api from "../api/api";
 
 interface Message {
   sender: string;
@@ -9,14 +10,32 @@ interface Message {
 }
 
 const ChatPage: React.FC = () => {
-  const { isOpen, roomId, userName, recipientId, closeChat } = useChat();
+  const {
+    isOpen,
+    roomId,
+    userName,
+    recipientId,
+    recipientName,
+    senderId,
+    closeChat,
+  } = useChat();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const socket = useSocket();
 
+  const fetchChat = async () => {
+    try {
+      const response = await api.get(`/chats/${roomId}`);
+      setMessages(response.data.chat);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (socket && roomId) {
       socket.emit("join", roomId);
+      fetchChat();
 
       const handleMessageReceive = (data: Message) => {
         console.log("receiveMessage", data);
@@ -42,13 +61,18 @@ const ChatPage: React.FC = () => {
         text: inputMessage,
         timestamp: new Date().toISOString(),
       };
-      socket.emit("sendMessage", { ...message, room: roomId, recipientId });
+      socket.emit("sendMessage", {
+        ...message,
+        room: roomId,
+        recipientId,
+        senderId,
+      });
       setMessages((prev) => [...prev, message]);
       setInputMessage("");
     }
   };
 
-  if (!isOpen) return null; // Don't render if chat is closed
+  if (!isOpen) return null;
 
   return (
     <div
@@ -56,7 +80,7 @@ const ChatPage: React.FC = () => {
       style={{ zIndex: 999 }}
     >
       <div className="bg-blue-600 text-white p-3 cursor-pointer flex justify-between items-center">
-        <h1 className="text-lg font-semibold">{userName}</h1>
+        <h1 className="text-lg font-semibold">{recipientName}</h1>
         <button onClick={closeChat} className="text-xl">
           ×
         </button>
