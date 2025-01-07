@@ -13,7 +13,7 @@ const getRooms = async (id: string) => {
   try {
     const rooms = await ChatModel.aggregate([
       { $match: { recipientId: id } },
-      { $sort: { timestamp: -1 } },
+      { $sort: { createdAt: -1 } },
       {
         $group: {
           _id: "$roomId",

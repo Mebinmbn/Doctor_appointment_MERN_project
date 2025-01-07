@@ -59,7 +59,7 @@ function Notifications() {
               ))
             ) : (
               <div className="py-2 px-4 text-white border-b">
-                No appointments found
+                No notifications found
               </div>
             )}
 

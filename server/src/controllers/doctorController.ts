@@ -7,6 +7,7 @@ import {
   getAppointments,
   getDashboardData,
   getDoctorNotifications,
+  getPayments,
   registerDoctor,
   removeDoctorTimeSlots,
   signinDoctor,
@@ -258,6 +259,23 @@ const dashboard = async (req: Request, res: Response) => {
   }
 };
 
+const payments = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const payments = await getPayments(id);
+    if (payments) {
+      res.status(200).json({
+        success: true,
+        payments,
+        message: "Payments fetched successfully",
+      });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 export default {
   register,
   signin,
@@ -270,4 +288,5 @@ export default {
   leave,
   medicalRecord,
   dashboard,
+  payments,
 };

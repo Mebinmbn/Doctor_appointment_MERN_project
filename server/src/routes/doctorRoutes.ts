@@ -78,4 +78,11 @@ router.get(
   doctorController.dashboard
 );
 
+router.get(
+  "/payments/:id",
+  authMiddleware,
+  roleMiddleware("doctor"),
+  doctorController.payments
+);
+
 export default router;

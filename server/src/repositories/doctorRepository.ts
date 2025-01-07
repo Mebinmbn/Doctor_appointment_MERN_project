@@ -9,6 +9,7 @@ import MedicalRecordModel, {
   IMedicalRecord,
 } from "../models/MedicalRecordsModel";
 import { IWallet } from "../models/WalletModel";
+import PaymentModel from "../models/paymentModel";
 
 const checkDoctorByEmail = async (email: string): Promise<IDoctor | null> => {
   console.log("check doctor");
@@ -138,6 +139,15 @@ const getDashboardData = async (doctorId: string) => {
   }
 };
 
+const getPayments = async (id: string) => {
+  try {
+    return await PaymentModel.find({ doctorId: id })
+      .sort({ createdAt: -1 })
+      .populate("userId", "firstName laseName");
+  } catch (error) {
+    throw new Error("Error in fetching payments");
+  }
+};
 export default {
   checkDoctorByEmail,
   createDoctor,
@@ -146,4 +156,5 @@ export default {
   updateTimeSlots,
   notifications,
   getDashboardData,
+  getPayments,
 };

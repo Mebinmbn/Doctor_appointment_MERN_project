@@ -10,6 +10,7 @@ import { AxiosError } from "axios";
 import { INotification } from "../../../../server/src/models/notificationModel";
 import api from "../../api/api";
 import { useSocket } from "../../contexts/SocketContexts";
+import { useChat } from "../../contexts/ChatContext";
 
 interface User {
   name: string;
@@ -21,6 +22,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const { openChat } = useChat();
   const user = useSelector(
     (state: RootState) => state.user.user
   ) as User | null;
@@ -87,6 +89,38 @@ const Navbar: React.FC = () => {
 
     setIsNotificationOpen(!isNotificationOpen);
   };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("chatNotification", (data) => {
+        console.log("Chat Notification:", data);
+
+        openChat(
+          data.room,
+          user?.name || "Patient",
+          data.senderId,
+          data.message.sender,
+          user?.id || ""
+        );
+
+        toast.info(`New message from ${data.message.sender}`, {
+          onClick: () => {
+            openChat(
+              data.room,
+              user?.name || "Patient",
+              data.senderId,
+              data.message.sender,
+              user?.id || ""
+            );
+          },
+        });
+      });
+
+      return () => {
+        socket.off("chatNotification");
+      };
+    }
+  }, [socket, openChat]);
 
   return (
     <nav className="bg-white shadow-lg">

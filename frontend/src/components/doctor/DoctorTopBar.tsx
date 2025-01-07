@@ -29,7 +29,7 @@ function DoctorTopBar() {
     return () => {
       socket.off("notification");
     };
-  }, [doctor?.id]);
+  }, [doctor?.id, socket]);
 
   useEffect(() => {
     if (socket) {

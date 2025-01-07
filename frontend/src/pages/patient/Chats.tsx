@@ -3,7 +3,7 @@ import api from "../../api/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useSocket } from "../../contexts/SocketContexts";
-import DoctorNav from "../../components/doctor/DoctorNav";
+import PatientSideBar from "../../components/patient/PatientSideBar";
 
 interface ChatRoom {
   _id: string;
@@ -23,17 +23,17 @@ interface Message {
   timeStamp: Date;
 }
 
-const DoctorChats: React.FC = () => {
+const Chats: React.FC = () => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
-  const doctor = useSelector((state: RootState) => state.doctor.doctor);
+  const user = useSelector((state: RootState) => state.user.user);
   const socket = useSocket();
 
   const fetchChatRooms = async () => {
     try {
-      const response = await api.get(`/chats/rooms/${doctor?.id}`, {
+      const response = await api.get(`/chats/rooms/${user?.id}`, {
         headers: { "User-Type": "doctor" },
       });
       const sortedRooms = response.data.rooms.sort(
@@ -50,7 +50,7 @@ const DoctorChats: React.FC = () => {
 
   useEffect(() => {
     fetchChatRooms();
-  }, [doctor?.id]);
+  }, [user?.id]);
 
   useEffect(() => {
     if (selectedRoom?.latestMessage.roomId) {
@@ -71,7 +71,7 @@ const DoctorChats: React.FC = () => {
         socket.emit("join", selectedRoom.latestMessage.roomId);
 
         const handleMessageReceive = (data: Message) => {
-          if (data.sender !== doctor?.name) {
+          if (data.sender !== user?.name) {
             setMessages((prev) => [...prev, data]);
             fetchChatRooms();
           }
@@ -85,12 +85,12 @@ const DoctorChats: React.FC = () => {
         };
       }
     }
-  }, [selectedRoom, socket, doctor?.name]);
+  }, [selectedRoom, socket, user?.name]);
 
   const handleSendMessage = () => {
-    if (socket && selectedRoom?.latestMessage.roomId && doctor?.name) {
+    if (socket && selectedRoom?.latestMessage.roomId && user?.name) {
       const message: Message = {
-        sender: doctor.name,
+        sender: user.name,
         text: inputMessage,
         timeStamp: new Date(),
       };
@@ -99,7 +99,7 @@ const DoctorChats: React.FC = () => {
         ...message,
         room: selectedRoom.latestMessage.roomId,
         recipientId: selectedRoom.latestMessage.senderId,
-        senderId: doctor.id,
+        senderId: user.id,
       });
 
       setMessages((prev) => [...prev, message]);
@@ -109,10 +109,10 @@ const DoctorChats: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#007E85]">
-      <DoctorNav />
+      <PatientSideBar />
 
       <div className="w-1/3 ml-5 bg-white shadow-md">
-        <h1 className="text-2xl font-bold p-4 border-b">Patient Chats</h1>
+        <h1 className="text-2xl font-bold p-4 border-b">Doctor Chats</h1>
         <ul>
           {chatRooms.length === 0 ? (
             <p className="p-4 text-gray-600">No chats available.</p>
@@ -158,7 +158,7 @@ const DoctorChats: React.FC = () => {
                 className="text-red-500"
                 onClick={() => setSelectedRoom(null)}
               >
-                Close
+                X
               </button>
             </div>
             <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-100">
@@ -169,14 +169,14 @@ const DoctorChats: React.FC = () => {
                   <div
                     key={index}
                     className={`flex ${
-                      msg.sender === doctor?.name
+                      msg.sender === user?.name
                         ? "justify-end"
                         : "justify-start"
                     }`}
                   >
                     <div
                       className={`p-3 rounded-lg shadow-md ${
-                        msg.sender === doctor?.name
+                        msg.sender === user?.name
                           ? "bg-blue-500 text-white"
                           : "bg-white text-gray-800"
                       }`}
@@ -218,4 +218,4 @@ const DoctorChats: React.FC = () => {
   );
 };
 
-export default DoctorChats;
+export default Chats;

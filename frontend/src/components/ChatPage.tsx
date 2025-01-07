@@ -6,7 +6,7 @@ import api from "../api/api";
 interface Message {
   sender: string;
   text: string;
-  timestamp: string;
+  timeStamp: string;
 }
 
 const ChatPage: React.FC = () => {
@@ -59,8 +59,9 @@ const ChatPage: React.FC = () => {
       const message: Message = {
         sender: userName,
         text: inputMessage,
-        timestamp: new Date().toISOString(),
+        timeStamp: new Date().toISOString(),
       };
+      console.log(message);
       socket.emit("sendMessage", {
         ...message,
         room: roomId,
@@ -107,7 +108,7 @@ const ChatPage: React.FC = () => {
                   <p className="font-bold">{msg.sender}</p>
                   <p>{msg.text}</p>
                   <span className="text-xs text-gray-500">
-                    {new Date(msg.timestamp).toLocaleTimeString()}
+                    {new Date(msg.timeStamp).toLocaleTimeString()}
                   </span>
                 </div>
               </div>

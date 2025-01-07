@@ -37,6 +37,9 @@ import DoctorMedicalRecord from "./pages/doctor/DoctorMedicalRecord";
 import Wallet from "./pages/patient/Wallet";
 import ChatPage from "./components/ChatPage";
 import DoctorChats from "./pages/doctor/DoctorChats";
+import Chats from "./pages/patient/Chats";
+import DoctorPayments from "./pages/doctor/DoctorPayments";
+import { AdminPayments } from "./pages/admin/AdminPayments";
 
 function App() {
   return (
@@ -137,6 +140,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/chats"
+            element={
+              <ProtectedRoute role="user">
+                <Chats />
+              </ProtectedRoute>
+            }
+          />
           {/* doctorRoutes */}
           <Route path="/doctor/signup" element={<DoctorRegister />} />
           <Route path="/doctor/login" element={<DoctorSignin />} />
@@ -220,6 +231,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="doctor/payments"
+            element={
+              <ProtectedRoute role="doctor">
+                <DoctorPayments />
+              </ProtectedRoute>
+            }
+          />
           {/* adminRoutes */}
           <Route path="/admin/login" element={<AdminSignin />} />
           <Route
@@ -268,6 +287,14 @@ function App() {
             element={
               <ProtectedRoute role="admin">
                 <LeaveRequests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/payments"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminPayments />
               </ProtectedRoute>
             }
           />

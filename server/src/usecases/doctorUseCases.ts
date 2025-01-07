@@ -191,3 +191,11 @@ export const getDashboardData = async (id: string) => {
     throw new Error("Error in fetching dashboard data");
   }
 };
+
+export const getPayments = async (id: string) => {
+  try {
+    return await doctorRepository.getPayments(id);
+  } catch (error) {
+    throw new Error("Error in fetching payments");
+  }
+};

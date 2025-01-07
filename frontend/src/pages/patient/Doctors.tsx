@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { setDoctorToConsult } from "../../app/featrue/userSlice";
+import Footer from "../../components/patient/Footer";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
@@ -220,6 +221,7 @@ const Doctors = () => {
           </div>
         </>
       )}
+      <Footer />
     </div>
   );
 };

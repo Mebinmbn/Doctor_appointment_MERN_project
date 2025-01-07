@@ -50,19 +50,20 @@ export const setupSocketIO = (server: any, app: Application) => {
 
     socket.on("sendMessage", async (data) => {
       console.log("message received", data.text);
-      const { room, sender, text, timestamp, recipientId, senderId } = data;
+      const { room, sender, text, timeStamp, recipientId, senderId } = data;
       const message = {
         sender,
         text,
-        timestamp,
+        timeStamp,
       };
+      console.log(message);
       const newMessage = {
         roomId: room,
         sender,
         senderId,
         recipientId,
         text,
-        timestamp,
+        timeStamp,
       };
       const newChat = new ChatModel(newMessage);
       await newChat.save();
