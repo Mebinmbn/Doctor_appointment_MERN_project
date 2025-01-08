@@ -155,7 +155,7 @@ const TimeSlotForm: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
       <DoctorNav />
-      <div className="bg-white h-[98vh] w-[88vw] text-center p-2 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-2 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <DoctorTopBar /> <div className="tab-bar bg-gray-100 h-5 w-full "></div>
         <div className="flex justify-center gap-10 w-full">
           <div className="py-6 px-10 w-96 bg-gray-200 rounded-lg shadow-md max-w-lg mt-5">

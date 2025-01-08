@@ -98,4 +98,11 @@ router.get(
   adminController.dashboard
 );
 
+router.get(
+  "/payments",
+  authMiddleware,
+  roleMiddleware("admin"),
+  adminController.payments
+);
+
 export default router;

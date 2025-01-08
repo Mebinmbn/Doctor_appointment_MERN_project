@@ -9,7 +9,8 @@ import EditPatientModal from "../../components/admin/EditPatientModal";
 import { User } from "../../types/user";
 import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
-import ConfirmationModal from "../../components/confirmationModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function AllPatients() {
   const [patients, setPatients] = useState<User[]>([]);
@@ -22,6 +23,7 @@ function AllPatients() {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
     () => () => {}
   );
@@ -44,6 +46,7 @@ function AllPatients() {
       );
 
       if (response.data.success) {
+        setIsLoading(false);
         setPatients(response.data.data);
         setTotalPages(response.data.meta.totalPages);
       }
@@ -54,6 +57,7 @@ function AllPatients() {
 
   useEffect(() => {
     fetchPatients();
+    setIsLoading(true);
   }, [fetchPatients, admin]);
 
   const clearFilter = () => {
@@ -115,101 +119,108 @@ function AllPatients() {
       <AdminNav />
       <div className="bg-white h-[98vh] w-[88vw] text-center px-4 py-2 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
-        <div className="flex justify-center items-center">
-          <div className="w-full max-w-6xl shadow-lg rounded-lg bg-[#007E85]">
-            <h2 className="text-2xl font-bold mb-1 text-white p-4 border-b">
-              Patients
-            </h2>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Find patient"
-            />
-            <button
-              onClick={clearFilter}
-              className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
-            >
-              Clear Search
-            </button>
-            <table className="min-w-full bg-[#007E85] border">
-              <thead>
-                <tr>
-                  <th className="py-2 px-4 text-white border-b">First Name</th>
-                  <th className="py-2 px-4 text-white border-b">Last Name</th>
-                  <th className="py-2 px-4 text-white border-b">Email</th>
-                  <th className="py-2 px-4 text-white border-b">Phone</th>
-                  <th className="py-2 px-4 text-white border-b">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patients.map((patient, index) => (
-                  <tr key={index}>
-                    <td className="py-2 px-4 text-white border-b">
-                      {patient.firstName}
-                    </td>
-                    <td className="py-2 px-4 text-white border-b">
-                      {patient.lastName}
-                    </td>
-                    <td className="py-2 px-4 text-white border-b">
-                      {patient.email}
-                    </td>
-                    <td className="py-2 px-4 text-white border-b">
-                      {patient.phone}
-                    </td>
-                    <td className="py-2 px-4 text-white border-b">
-                      <div>
-                        <button
-                          className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                          onClick={() => openModal(index)}
-                        >
-                          Edit
-                        </button>
-                        {patient.isBlocked ? (
-                          <button
-                            className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
-                            onClick={() =>
-                              handleUpdateStatus(patient._id, false)
-                            }
-                          >
-                            Unblock
-                          </button>
-                        ) : (
-                          <button
-                            className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                            onClick={() =>
-                              handleUpdateStatus(patient._id, true)
-                            }
-                          >
-                            Block
-                          </button>
-                        )}
-                      </div>
-                    </td>
+
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <div className="flex justify-center items-center">
+            <div className="w-full max-w-6xl shadow-lg rounded-lg bg-[#007E85]">
+              <h2 className="text-2xl font-bold mb-1 text-white p-4 border-b">
+                Patients
+              </h2>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Find patient"
+              />
+              <button
+                onClick={clearFilter}
+                className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+              >
+                Clear Search
+              </button>
+              <table className="min-w-full bg-[#007E85] border">
+                <thead>
+                  <tr>
+                    <th className="py-2 px-4 text-white border-b">
+                      First Name
+                    </th>
+                    <th className="py-2 px-4 text-white border-b">Last Name</th>
+                    <th className="py-2 px-4 text-white border-b">Email</th>
+                    <th className="py-2 px-4 text-white border-b">Phone</th>
+                    <th className="py-2 px-4 text-white border-b">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center mt-4">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-2 py-1 mb-1 ${
-                      currentPage === page
-                        ? "bg-blue-500 text-white rounded-full"
-                        : "text-black"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+                </thead>
+                <tbody>
+                  {patients.map((patient, index) => (
+                    <tr key={index}>
+                      <td className="py-2 px-4 text-white border-b">
+                        {patient.firstName}
+                      </td>
+                      <td className="py-2 px-4 text-white border-b">
+                        {patient.lastName}
+                      </td>
+                      <td className="py-2 px-4 text-white border-b">
+                        {patient.email}
+                      </td>
+                      <td className="py-2 px-4 text-white border-b">
+                        {patient.phone}
+                      </td>
+                      <td className="py-2 px-4 text-white border-b">
+                        <div>
+                          <button
+                            className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
+                            onClick={() => openModal(index)}
+                          >
+                            Edit
+                          </button>
+                          {patient.isBlocked ? (
+                            <button
+                              className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
+                              onClick={() =>
+                                handleUpdateStatus(patient._id, false)
+                              }
+                            >
+                              Unblock
+                            </button>
+                          ) : (
+                            <button
+                              className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                              onClick={() =>
+                                handleUpdateStatus(patient._id, true)
+                              }
+                            >
+                              Block
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="flex justify-center mt-4">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-2 py-1 mb-1 ${
+                        currentPage === page
+                          ? "bg-blue-500 text-white rounded-full"
+                          : "text-black"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
       {isEditModalOpen && (
         <EditPatientModal

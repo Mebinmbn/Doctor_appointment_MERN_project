@@ -251,6 +251,15 @@ const getDashboardData = async (id: string, period: string | undefined) => {
   }
 };
 
+const getPayments = async () => {
+  try {
+    return await PaymentModel.find()
+      .sort({ createdAt: -1 })
+      .populate("userId", "firstName");
+  } catch (error) {
+    throw new Error("Error in fetching payments");
+  }
+};
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,
@@ -265,4 +274,5 @@ export default {
   updateDoctor,
   fetchAppointments,
   getDashboardData,
+  getPayments,
 };

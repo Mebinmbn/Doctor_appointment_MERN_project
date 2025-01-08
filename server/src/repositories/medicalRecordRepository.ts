@@ -3,6 +3,7 @@ import MedicalRecordModel, {
   IMedicalRecord,
 } from "../models/MedicalRecordsModel";
 import prescriptionModel, { IPrescription } from "../models/prescriptionModel";
+import AppointmentModel from "../models/appointmentModel";
 
 const checkMedicalRecord = async (appointmentId: ObjectId) => {
   return await MedicalRecordModel.findOne({ appointmentId });
@@ -32,7 +33,12 @@ const getMedicalRecord = async (id: string) => {
     const prescriptions = await prescriptionModel.findOne({
       appointmentId: id,
     });
-    return { medicalRecord, prescriptions };
+
+    const appointment = await AppointmentModel.findOne({ _id: id })
+      .populate("doctorId", "firstName lastName specialization")
+      .populate("patientId", "firstName lastName");
+    console.log(appointment);
+    return { medicalRecord, prescriptions, appointment };
   } catch (error) {
     throw new Error("Error in feteching record");
   }

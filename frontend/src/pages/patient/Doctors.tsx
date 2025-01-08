@@ -161,7 +161,7 @@ const Doctors = () => {
               </div>
               <button
                 onClick={clearFilter}
-                className="bg-white m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+                className="bg-white m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-200 w-full lg:w-auto"
               >
                 Clear Filters
               </button>
@@ -195,7 +195,7 @@ const Doctors = () => {
                   </p>
                   <button
                     onClick={() => handleAppointment(doctor)}
-                    className="bg-[#007E85] rounded-lg px-2 py-1 m-3 text-white w-fit font-bold"
+                    className="bg-[#007E85] rounded-lg px-2 py-1 m-3 text-white w-fit font-bold hover:bg-blue-800 tansition duration-300"
                   >
                     Get An Appointment
                   </button>
@@ -207,14 +207,14 @@ const Doctors = () => {
             <button
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page <= 1}
-              className="px-4 py-2 bg-gray-300 rounded mx-2 cursor-pointer"
+              className="px-4 py-2 bg-gray-300 rounded mx-2 cursor-pointer hover:bg-gray-400"
             >
               Previous
             </button>
             <button
               onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={page >= totalPages}
-              className="px-8 py-2 bg-gray-300 rounded mx-2 cursor-pointer"
+              className="px-8 py-2 bg-gray-300 rounded mx-2 cursor-pointer hover:bg-gray-400"
             >
               Next
             </button>

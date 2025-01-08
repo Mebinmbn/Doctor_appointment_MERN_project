@@ -8,7 +8,7 @@ import { RootState } from "../../app/store";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
-import ConfirmationModal from "../../components/confirmationModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 function DoctorsList() {
   const [doctorApplications, setDoctorApplications] = useState([]);

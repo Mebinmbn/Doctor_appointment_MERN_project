@@ -100,6 +100,7 @@ const updateTimeSlots = async (
 const notifications = async (id: string, page: number, limit: number) => {
   try {
     const notifications = await NotificationModel.find({ recipientId: id })
+      .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
 

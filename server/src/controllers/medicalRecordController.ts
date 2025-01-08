@@ -4,10 +4,11 @@ import { getMedicalRecord } from "../usecases/medicalRecordUseCases";
 const getRecord = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { medicalRecord, prescriptions } = await getMedicalRecord(id);
+    const { medicalRecord, prescriptions, appointment } =
+      await getMedicalRecord(id);
     res.status(200).json({
       success: true,
-      data: { medicalRecord, prescriptions },
+      data: { medicalRecord, prescriptions, appointment },
       message: "Records fetched successfully",
     });
   } catch (error: any) {

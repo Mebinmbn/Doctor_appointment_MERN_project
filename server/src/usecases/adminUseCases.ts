@@ -145,3 +145,11 @@ export const getDashboardData = async (
     throw new Error("Error in fetching dashboard data");
   }
 };
+
+export const getpayments = async () => {
+  try {
+    return await adminRepository.getPayments();
+  } catch (error) {
+    throw new Error("Error in fetching payments");
+  }
+};
