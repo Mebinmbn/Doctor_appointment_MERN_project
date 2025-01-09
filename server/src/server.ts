@@ -1,7 +1,8 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import dbConnect from "./config/database";
 import cors from "cors";
+import logger from "./config/logger";
 import patientRoutes from "./routes/patientRoutes";
 import otpRoutes from "./routes/otpRoutes";
 import doctorRoutes from "./routes/doctorRoutes";
@@ -38,6 +39,11 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
+});
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/patients", patientRoutes);
@@ -49,6 +55,11 @@ app.use("/api/token", tokenRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/medicalRecord", medicalRecordRoute);
 app.use("/api/chats", chatRoutes);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  logger.error(`Error: ${err.message}`);
+  res.status(500).json({ message: "Internal Server Error" });
+});
 
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

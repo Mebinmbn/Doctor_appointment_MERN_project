@@ -1,4 +1,5 @@
 import AppointmentModel from "../models/appointmentModel";
+import PaymentModel from "../models/paymentModel";
 
 const getAppointmentById = async (id: string) => {
   try {
@@ -35,6 +36,11 @@ const cancel = async (id: string, reason: string) => {
       { new: true }
     );
     console.log(appointments);
+
+    await PaymentModel.findOneAndUpdate(
+      { appointmentId: id },
+      { $set: { paymentStatus: "refunded" } }
+    );
 
     return appointments;
   } catch (error) {

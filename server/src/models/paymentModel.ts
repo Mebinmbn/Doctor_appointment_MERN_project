@@ -31,7 +31,7 @@ const PaymentSchema: Schema = new Schema<IPayment>(
     },
     paymentStatus: {
       type: String,
-      enum: ["pending", "completed", "failed"],
+      enum: ["pending", "completed", "failed", "refunded"],
       default: "pending",
     },
     transactionId: { type: String, unique: true, required: true },

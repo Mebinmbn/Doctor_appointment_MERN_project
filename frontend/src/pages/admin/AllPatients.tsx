@@ -117,7 +117,7 @@ function AllPatients() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
       <AdminNav />
-      <div className="bg-white h-[98vh] w-[88vw] text-center px-4 py-2 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center px-4 py-5 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
 
         {isLoading ? (
@@ -137,7 +137,7 @@ function AllPatients() {
               />
               <button
                 onClick={clearFilter}
-                className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+                className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-32"
               >
                 Clear Search
               </button>

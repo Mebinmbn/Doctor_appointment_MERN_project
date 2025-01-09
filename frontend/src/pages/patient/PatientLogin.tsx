@@ -11,6 +11,7 @@ import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import api from "../../api/api";
 import axios from "axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import loginBackground from "../../assets/login_background.jpg";
 
 interface FormValues {
   firstName: string;
@@ -263,11 +264,14 @@ function PatientLogin() {
   return (
     <>
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+      <div
+        className={`flex items-center justify-center min-h-screen bg-cover bg-center `}
+        style={{ backgroundImage: `url('${loginBackground}')` }}
+      >
         {loading ? (
           <LoadingSpinner />
         ) : (
-          <div className="bg-gray-200 h-[35rem] w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
+          <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border border-white border-opacity-60 rounded-lg p-6 h-[35rem] w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
             <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
               {signState}
             </h1>
@@ -424,7 +428,7 @@ const SwitchForm = ({
           onClick={() => {
             setSignState("Sign In");
           }}
-          className="text-blue-400 text-sm cursor-pointer"
+          className="text-blue-800 text-sm cursor-pointer"
         >
           Sign In
         </span>
@@ -436,7 +440,7 @@ const SwitchForm = ({
           onClick={() => {
             setSignState("Sign Up");
           }}
-          className="text-blue-400 text-sm cursor-pointer"
+          className="text-blue-800 text-sm cursor-pointer"
         >
           Sign Up
         </span>

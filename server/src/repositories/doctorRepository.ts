@@ -149,6 +149,7 @@ const getPayments = async (id: string) => {
     throw new Error("Error in fetching payments");
   }
 };
+
 export default {
   checkDoctorByEmail,
   createDoctor,

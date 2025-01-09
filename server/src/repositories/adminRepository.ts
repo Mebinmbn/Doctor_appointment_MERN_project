@@ -180,6 +180,8 @@ const updateDoctor = async (doctorData: IDoctor) => {
   }
 };
 
+//////////////////////////////////////////////////////////////////
+
 const fetchAppointments = async () => {
   console.log("doctor repo");
   try {
@@ -255,7 +257,8 @@ const getPayments = async () => {
   try {
     return await PaymentModel.find()
       .sort({ createdAt: -1 })
-      .populate("userId", "firstName");
+      .populate("userId", "firstName")
+      .populate("doctorId", "firstName");
   } catch (error) {
     throw new Error("Error in fetching payments");
   }

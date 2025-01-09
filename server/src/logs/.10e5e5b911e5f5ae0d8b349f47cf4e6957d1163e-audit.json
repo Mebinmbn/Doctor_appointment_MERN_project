@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "D:\\Projects\\Doctor Appointment - Updated\\server\\src\\logs\\.10e5e5b911e5f5ae0d8b349f47cf4e6957d1163e-audit.json",
+    "files": [
+        {
+            "date": 1736399559309,
+            "name": "D:\\Projects\\Doctor Appointment - Updated\\server\\src\\logs\\error-2025-01-09.log",
+            "hash": "85f6bf9666d0f989d11c2bcbdc442078df7cd9bbaaa0b06661b496d080f1911b"
+        }
+    ],
+    "hashType": "sha256"
+}

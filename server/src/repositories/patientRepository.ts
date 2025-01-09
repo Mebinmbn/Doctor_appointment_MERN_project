@@ -7,6 +7,7 @@ import PatientDetailsModel, {
 import PatientModel, { IPatient } from "../models/patientModel";
 import TimeSlotsModel from "../models/timeSlotsModel";
 import LeaveModel from "../models/leaveModel";
+import PaymentModel from "../models/paymentModel";
 
 const createPatient = async (
   patientData: Partial<IPatient>
@@ -169,6 +170,11 @@ const cancel = async (id: string) => {
       { $set: { status: "cancelled" } },
       { new: true }
     );
+    await PaymentModel.findOneAndUpdate(
+      { appointmentId: id },
+      { $set: { paymentStatus: "refunded" } }
+    );
+
     console.log(appointments);
     return appointments;
   } catch (error) {

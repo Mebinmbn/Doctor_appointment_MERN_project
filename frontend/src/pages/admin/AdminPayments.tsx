@@ -26,6 +26,7 @@ export const AdminPayments: React.FC = () => {
         const fetchedPayments = response.data.payments.map((payment: any) => ({
           id: payment._id,
           name: payment.userId.firstName,
+          doctor: `Dr ${payment.doctorId.firstName}`,
           registered: payment.createdAt.toString().slice(0, 10),
           method: payment.paymentMethod,
           amount: payment.amount,
@@ -48,6 +49,7 @@ export const AdminPayments: React.FC = () => {
     () => [
       { Header: "Transaction ID", accessor: "id" },
       { Header: "Name", accessor: "name" },
+      { Header: "Doctor", accessor: "doctor" },
       { Header: "Registered Date", accessor: "registered" },
       { Header: "Payment Method", accessor: "method" },
       { Header: "Amount", accessor: "amount" },
@@ -80,7 +82,7 @@ export const AdminPayments: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
       <AdminNav />
-      <div className="bg-white h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
         <div className="flex items-center justify-center min-h-fit">
           <div className="shadow-lg rounded-lg p-4 w-full max-w-6xl text-center text-black">
@@ -93,7 +95,7 @@ export const AdminPayments: React.FC = () => {
                   {...getTableProps()}
                   className="table table-bordered table-hover w-full"
                 >
-                  <thead className="bg-[#007E85] text-white">
+                  <thead className="bg-gray-500 text-white">
                     {headerGroups.map((headerGroup) => (
                       <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map((column) => (
@@ -132,7 +134,7 @@ export const AdminPayments: React.FC = () => {
                     })}
                   </tbody>
                 </table>
-                <div className="pagination mt-4 bg-[#007E85] h-fit p-1 text-white">
+                <div className="pagination mt-4 bg-gray-500 h-fit p-1 text-white">
                   <button
                     onClick={() => previousPage()}
                     disabled={!canPreviousPage}
