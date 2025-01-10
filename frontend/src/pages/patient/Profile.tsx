@@ -145,8 +145,8 @@ function Profile() {
     if (Object.keys(errors).length === 0) {
       try {
         console.log(formData);
-        const response = await api.put("/admin/patients", formData, {
-          headers: { "User-Type": "admin" },
+        const response = await api.put("/patients/patient", formData, {
+          headers: { "User-Type": "patient" },
         });
         if (response.data.success) {
           toast.success("Patient's details updated successfully");

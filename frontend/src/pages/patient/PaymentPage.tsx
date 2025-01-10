@@ -213,7 +213,7 @@ function PaymentPage() {
       paymentObject.open();
     } catch (error) {
       console.log(error);
-      toast.error("An error occurred during payment. Please try again.");
+      // toast.error("An error occurred during payment. Please try again.");
     }
   };
 

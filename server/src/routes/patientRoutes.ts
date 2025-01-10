@@ -56,6 +56,13 @@ router.get(
   patientController.patient
 );
 
+router.put(
+  "/patient",
+  authMiddleware,
+  roleMiddleware("user"),
+  patientController.edit
+);
+
 router.post(
   "/appointments/patient",
   authMiddleware,

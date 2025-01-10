@@ -8,6 +8,7 @@ import api from "../../api/api";
 function ResetPassword() {
   const [password, setPassword] = useState("");
   const { email } = useAuth();
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {

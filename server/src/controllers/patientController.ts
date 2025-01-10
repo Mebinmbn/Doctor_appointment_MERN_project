@@ -4,6 +4,7 @@ import {
   cancelAppointment,
   conformTimeSlot,
   createPaymentOrder,
+  editPatient,
   getAppointments,
   getDoctors,
   getPatient,
@@ -180,6 +181,19 @@ const patientData = async (req: Request, res: Response) => {
   }
 };
 
+const edit = async (req: Request, res: Response) => {
+  try {
+    const data = req.body;
+    const patient = await editPatient(data);
+    if (patient) {
+      res.status(200).json({ success: true, message: "Patient updated" });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 const book = async (req: Request, res: Response) => {
   const appointmentData = req.body;
 
@@ -340,4 +354,5 @@ export default {
   createOrder,
   verify,
   wallet,
+  edit,
 };

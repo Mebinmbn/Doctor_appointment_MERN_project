@@ -85,6 +85,18 @@ export const getPatient = async (id: string) => {
   }
 };
 
+export const editPatient = async (patientData: IPatient) => {
+  try {
+    if (patientData.password) {
+      patientData.password = await hashPassword(patientData.password);
+    }
+
+    return await patientRepository.updatePatient(patientData);
+  } catch (error) {
+    throw new Error("Error in updation");
+  }
+};
+
 export const storePatientDetails = async (patientData: IPatientDetails) => {
   try {
     validation.validatePatientDetails(patientData);

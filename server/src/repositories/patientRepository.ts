@@ -201,6 +201,36 @@ const notifications = async (id: string, page: number, limit: number) => {
   }
 };
 
+///////////////////////////////////////////////////////////////////////////
+
+const updatePatient = async (patientData: IPatient) => {
+  console.log("updatePatient");
+  try {
+    const updateFields: Partial<IPatient> = {
+      firstName: patientData.firstName,
+      lastName: patientData.lastName,
+      email: patientData.email,
+      phone: patientData.phone,
+      gender: patientData.gender,
+      dob: patientData.dob,
+    };
+
+    if (patientData.password !== "") {
+      updateFields.password = patientData.password;
+    }
+
+    return await PatientModel.findOneAndUpdate(
+      { _id: patientData._id },
+      {
+        $set: updateFields,
+      },
+      { new: true }
+    );
+  } catch (error) {
+    throw new Error("Error in unblocking");
+  }
+};
+
 export default {
   createPatient,
   findPatientByEmail,
@@ -216,4 +246,5 @@ export default {
   fetchAppointments,
   cancel,
   notifications,
+  updatePatient,
 };

@@ -132,18 +132,22 @@ const blockPatient = async (id: string) => {
 const updatePatient = async (patientData: IPatient) => {
   console.log("updatePatient");
   try {
+    const updateFields: Partial<IPatient> = {
+      firstName: patientData.firstName,
+      lastName: patientData.lastName,
+      email: patientData.email,
+      phone: patientData.phone,
+      gender: patientData.gender,
+      dob: patientData.dob,
+    };
+
+    if (patientData.password !== "") {
+      updateFields.password = patientData.password;
+    }
     return await PatientModel.findOneAndUpdate(
       { _id: patientData._id },
       {
-        $set: {
-          firstName: patientData.firstName,
-          lastName: patientData.lastName,
-          email: patientData.email,
-          phone: patientData.phone,
-          gender: patientData.gender,
-          dob: patientData.dob,
-          password: patientData.password,
-        },
+        $set: updateFields,
       },
       { new: true }
     );
@@ -157,21 +161,25 @@ const updatePatient = async (patientData: IPatient) => {
 const updateDoctor = async (doctorData: IDoctor) => {
   console.log("updatePatient");
   try {
+    const updateField: Partial<IDoctor> = {
+      firstName: doctorData.firstName,
+      lastName: doctorData.lastName,
+      email: doctorData.email,
+      phone: doctorData.phone,
+      gender: doctorData.gender,
+      specialization: doctorData.specialization,
+      experience: doctorData.experience,
+      dob: doctorData.dob,
+      fees: doctorData.fees,
+    };
+
+    if (doctorData.password !== "") {
+      updateField.password = doctorData.password;
+    }
     return await DoctorModel.findOneAndUpdate(
       { _id: doctorData._id },
       {
-        $set: {
-          firstName: doctorData.firstName,
-          lastName: doctorData.lastName,
-          email: doctorData.email,
-          phone: doctorData.phone,
-          gender: doctorData.gender,
-          specialization: doctorData.specialization,
-          experience: doctorData.experience,
-          dob: doctorData.dob,
-          fees: doctorData.fees,
-          password: doctorData.password,
-        },
+        $set: updateField,
       },
       { new: true }
     );

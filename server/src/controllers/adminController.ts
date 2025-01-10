@@ -206,7 +206,7 @@ const edit = async (req: Request, res: Response) => {
     }
 
     if (response) {
-      res.status(200).json({ success: true, message: "Patient updated" });
+      res.status(200).json({ success: true, message: "Updated" });
     }
   } catch (error) {
     res.status(400).json({ success: false, error: error });
