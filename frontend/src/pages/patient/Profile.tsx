@@ -94,7 +94,7 @@ function Profile() {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     },
@@ -159,23 +159,23 @@ function Profile() {
     }
   };
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <PatientSideBar />
 
-      <div className="bg-gray-200 h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-gray-200 h-fit min-h-screen w-[85vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <PatientTopBar />
-        <div className="mt-10 mx-auto w-fit h-fit p-6 rounded-lg shadow-lg">
+        <div className="mt-10 mx-auto w-fit h-fit p-4 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
           <div className="flex  justify-center  bg-gray-200 mb-4">
             <form
               onSubmit={handleUpdate}
               className=" p-6 rounded-lg  w-full max-w-2xl"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="form-group">
                   <InputField
                     name="firstName"
-                    value={formData.firstName}
+                    value={formData.firstName || ""}
                     onChange={handleChange}
                     placeholder="First Name"
                   />
@@ -188,7 +188,7 @@ function Profile() {
                 <div className="form-group">
                   <InputField
                     name="lastName"
-                    value={formData.lastName}
+                    value={formData.lastName || ""}
                     onChange={handleChange}
                     placeholder="Last Name"
                   />
@@ -201,7 +201,7 @@ function Profile() {
                 <div className="form-group">
                   <InputField
                     name="email"
-                    value={formData.email}
+                    value={formData.email || ""}
                     onChange={handleChange}
                     placeholder="Email"
                   />
@@ -214,7 +214,7 @@ function Profile() {
                 <div className="form-group">
                   <InputField
                     name="phone"
-                    value={formData.phone}
+                    value={formData.phone || ""}
                     onChange={handleChange}
                     placeholder="Phone"
                   />
@@ -230,7 +230,7 @@ function Profile() {
                     name="gender"
                     value={formData.gender}
                     onChange={handleChange}
-                    className="w-72 px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-[19vw] px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
@@ -247,7 +247,7 @@ function Profile() {
                 <div className="form-group">
                   <InputField
                     name="dob"
-                    value={formData.dob}
+                    value={formData.dob || ""}
                     onChange={handleChange}
                     placeholder="dob(YYYY-MM-DD)"
                   />
@@ -260,7 +260,7 @@ function Profile() {
                 <div className="form-group">
                   <PassField
                     name="password"
-                    value={formData.password}
+                    value={formData.password || ""}
                     onChange={handleChange}
                     placeholder="Password"
                   />
@@ -303,7 +303,7 @@ const InputField = ({
     <input
       type="text"
       name={name}
-      className="border-[1px] border-[#007E85] rounded-lg h-10 w-72 mt-1 p-2 font-light focus:outline-none"
+      className="border-[1px] border-[#007E85] rounded-lg h-10 w-[19vw]  mt-1 p-2 font-light focus:outline-none"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
@@ -329,7 +329,7 @@ const PassField = ({
     <input
       type="password"
       name={name}
-      className="border-[1px] border-[#007E85] rounded-lg h-10 w-72  p-2 font-light focus:outline-none"
+      className="border-[1px] border-[#007E85] rounded-lg h-10 w-[19vw]  p-2 font-light focus:outline-none"
       value={value}
       onChange={onChange}
       placeholder={placeholder}

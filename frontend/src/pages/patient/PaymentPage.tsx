@@ -147,6 +147,7 @@ function PaymentPage() {
       );
       console.log(data.data);
       const razorpayKey = "rzp_test_xnsJNuDLxrH6xO";
+      console.log("RazorPay Id", razorpayKey);
       if (!razorpayKey) {
         throw new Error("Razorpay Key is missing in environment variables");
       }
@@ -269,7 +270,7 @@ function PaymentPage() {
               Pay ₹{totalAmount}
             </button>
           </div>
-          <div className="payment_details p-3 border-2 h-72 w-96 rounded-lg ml-auto mr-8 border-[#007E85]">
+          <div className="payment_details p-3 border-2 h-fit w-96 rounded-lg ml-auto mr-8 border-[#007E85]">
             <p className="font-bold text-center mb-5">Payment Details</p>
             <table>
               <tr>

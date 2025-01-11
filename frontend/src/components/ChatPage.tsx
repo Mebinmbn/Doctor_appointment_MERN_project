@@ -21,6 +21,7 @@ const ChatPage: React.FC = () => {
   } = useChat();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
+  const [recipientStatus, setRecipientStatus] = useState<string | null>(null);
   const socket = useSocket();
 
   const fetchChat = async () => {
@@ -34,7 +35,7 @@ const ChatPage: React.FC = () => {
 
   useEffect(() => {
     if (socket && roomId) {
-      socket.emit("join", roomId);
+      socket.emit("join", roomId, senderId);
       fetchChat();
 
       const handleMessageReceive = (data: Message) => {
@@ -44,7 +45,16 @@ const ChatPage: React.FC = () => {
         }
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleUserStatusChange = (users: any) => {
+        if (recipientId)
+          if (users[recipientId]?.status) {
+            setRecipientStatus(users[recipientId].status);
+          }
+      };
+
       socket.on("receiveMessage", handleMessageReceive);
+      socket.on("userStatusChange", handleUserStatusChange);
 
       return () => {
         socket.off("receiveMessage", handleMessageReceive);
@@ -81,7 +91,18 @@ const ChatPage: React.FC = () => {
       style={{ zIndex: 999 }}
     >
       <div className="bg-blue-600 text-white p-3 cursor-pointer flex justify-between items-center">
-        <h1 className="text-lg font-semibold">{recipientName}</h1>
+        <h1 className="text-lg font-semibold">
+          {recipientName}
+          {recipientStatus && (
+            <span
+              className={`ml-2 text-sm ${
+                recipientStatus === "online" ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              ({recipientStatus})
+            </span>
+          )}
+        </h1>
         <button onClick={closeChat} className="text-xl">
           ×
         </button>

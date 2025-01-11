@@ -71,7 +71,7 @@ function DoctorRegister() {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
       setFormData((prevData) => ({
         ...prevData,

@@ -3,6 +3,7 @@ import api from "../api/api";
 import LoadingSpinner from "./LoadingSpinner";
 import logo from "../assets/icon/logo.png";
 import MedicalRecordType from "../types/medicalRecord";
+import { Appointment } from "../types/appointment";
 
 interface Prescription {
   medicine: string;
@@ -16,7 +17,7 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
     null
   );
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
-  const [appointment, setAppointment] = useState([]);
+  const [appointment, setAppointment] = useState<Appointment>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -62,8 +63,8 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
 
             <p>
               <strong>Patient's Name:</strong>{" "}
-              {appointment.patientId?.firstName}{" "}
-              {appointment.patientId?.lastName}
+              {appointment?.patientId?.firstName}{" "}
+              {appointment?.patientId?.lastName}
             </p>
 
             <p>
@@ -139,8 +140,8 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
             )}
             <div className="ml-auto w-fit mt-4">
               <p>
-                Dr. {appointment.doctorId?.firstName}{" "}
-                {appointment.doctorId?.lastName}
+                Dr. {appointment?.doctorId?.firstName}{" "}
+                {appointment?.doctorId?.lastName}
               </p>
             </div>
           </>

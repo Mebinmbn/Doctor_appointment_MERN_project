@@ -11,6 +11,11 @@ interface SignalData {
   candidate?: RTCIceCandidate;
 }
 
+interface User {
+  socketId: string;
+  status: string;
+}
+
 export const setupSocketIO = (server: any, app: Application) => {
   const io = new Server(server, {
     cors: {
@@ -22,12 +27,16 @@ export const setupSocketIO = (server: any, app: Application) => {
 
   app.set("io", io);
 
+  const onlineUsers: { [key: string]: User } = {};
+
   io.on("connection", (socket) => {
     console.log("New client connected", socket.id);
 
-    socket.on("join", (room: string) => {
+    socket.on("join", (room: string, userId: string) => {
       try {
         socket.join(room);
+        onlineUsers[userId] = { socketId: socket.id, status: "online" };
+        io.emit("userStatusChange", onlineUsers);
         console.log(`Client ${socket.id} joined room: ${room}`);
         socket.to(room).emit("user-connected", socket.id);
       } catch (error) {
@@ -82,6 +91,13 @@ export const setupSocketIO = (server: any, app: Application) => {
     socket.on("disconnect", () => {
       console.log("Client disconnected", socket.id);
 
+      for (const [userId, user] of Object.entries(onlineUsers)) {
+        if (user.socketId === socket.id) {
+          delete onlineUsers[userId];
+          io.emit("userStatusChange", onlineUsers);
+          break;
+        }
+      }
       socket.rooms.forEach((room: string) => {
         socket.to(room).emit("user-disconnected", socket.id);
       });

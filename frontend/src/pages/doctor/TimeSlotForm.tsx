@@ -7,7 +7,7 @@ import api from "../../api/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { toast } from "react-toastify";
-import ConfirmationModal from "../../components/confirmationModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 interface IFormInput {
   startDate: string;
@@ -23,8 +23,8 @@ const generateTimeSlots = (
   startTime: string,
   endTime: string,
   interval: number
-) => {
-  const slots = [];
+): Date[] => {
+  const slots: Date[] = [];
   const days = [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA];
 
   days.forEach((day) => {
@@ -153,11 +153,11 @@ const TimeSlotForm: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <DoctorNav />
       <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-2 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <DoctorTopBar /> <div className="tab-bar bg-gray-100 h-5 w-full "></div>
-        <div className="flex justify-center gap-10 w-full">
+        <div className="flex justify-center gap-10 w-full flex-wrap">
           <div className="py-6 px-10 w-96 bg-gray-200 rounded-lg shadow-md max-w-lg mt-5">
             <h2 className="text-2xl font-bold mb-6 text-center">
               Create Time Slots

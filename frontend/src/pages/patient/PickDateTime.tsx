@@ -15,7 +15,7 @@ interface Times {
 }
 
 function PickDateTime() {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState<Times | null>(null);
   const [timeSlots, setTimeSlots] = useState<TimeSlots[]>([]);
   const [dates, setDates] = useState<Date[]>([]);
@@ -69,7 +69,7 @@ function PickDateTime() {
 
   console.log(dates);
 
-  const handleDateClick = (date) => {
+  const handleDateClick = (date: Date) => {
     setSelectedDate(date);
     if (date) {
       fetchDateAndTime();
@@ -136,11 +136,14 @@ function PickDateTime() {
     const localDate = new Date(
       date.getTime() - date.getTimezoneOffset() * 60000
     );
-    const options = { month: "long", day: "numeric", weekday: "long" };
+    const options: Intl.DateTimeFormatOptions = {
+      month: "long",
+      day: "numeric",
+      weekday: "long",
+    };
     return localDate.toLocaleDateString("en-US", options);
   };
 
-  //
   return (
     <div>
       <Navbar />

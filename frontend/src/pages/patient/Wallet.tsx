@@ -53,9 +53,9 @@ const Wallet = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <PatientSideBar />
-      <div className="bg-white h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-6 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <PatientTopBar />
         <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Wallet Balance</h2>

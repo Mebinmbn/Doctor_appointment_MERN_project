@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useTable, useSortBy, usePagination } from "react-table";
+import {
+  useTable,
+  useSortBy,
+  usePagination,
+  TableInstance,
+  Column,
+} from "react-table";
 import api from "../../api/api";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import AdminTopBar from "../../components/admin/AdminTopBar";
@@ -8,10 +14,22 @@ import AdminNav from "../../components/admin/AdminNav";
 interface Payment {
   id: string;
   name: string;
+  doctor: string;
   registered: string;
   method: string;
+  amount: number;
   status: string;
 }
+
+type TableInstanceWithExtensions<T extends object> = TableInstance<T> & {
+  page: T[];
+  canNextPage: boolean;
+  canPreviousPage: boolean;
+  nextPage: () => void;
+  previousPage: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prepareRow: (row: any) => void;
+};
 
 export const AdminPayments: React.FC = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -23,15 +41,18 @@ export const AdminPayments: React.FC = () => {
         headers: { "User-Type": "admin" },
       });
       if (response.data.success) {
-        const fetchedPayments = response.data.payments.map((payment: any) => ({
-          id: payment._id,
-          name: payment.userId.firstName,
-          doctor: `Dr ${payment.doctorId.firstName}`,
-          registered: payment.createdAt.toString().slice(0, 10),
-          method: payment.paymentMethod,
-          amount: payment.amount,
-          status: payment.paymentStatus,
-        }));
+        const fetchedPayments: Payment[] = response.data.payments.map(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (payment: any) => ({
+            id: payment._id,
+            name: payment.userId?.firstName || "N/A",
+            doctor: `Dr ${payment.doctorId?.firstName || "Unknown"}`,
+            registered: payment.createdAt.toString().slice(0, 10),
+            method: payment.paymentMethod,
+            amount: payment.amount,
+            status: payment.paymentStatus,
+          })
+        );
         setPayments(fetchedPayments);
       }
     } catch (error) {
@@ -46,7 +67,7 @@ export const AdminPayments: React.FC = () => {
   }, []);
 
   const columns = React.useMemo(
-    () => [
+    (): Column<Payment>[] => [
       { Header: "Transaction ID", accessor: "id" },
       { Header: "Name", accessor: "name" },
       { Header: "Doctor", accessor: "doctor" },
@@ -62,14 +83,14 @@ export const AdminPayments: React.FC = () => {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
     page,
     nextPage,
     previousPage,
     canNextPage,
     canPreviousPage,
-  } = useTable(
+    state: { pageIndex },
+  } = useTable<Payment>(
     {
       columns,
       data: payments,
@@ -77,12 +98,12 @@ export const AdminPayments: React.FC = () => {
     },
     useSortBy,
     usePagination
-  );
+  ) as TableInstanceWithExtensions<Payment>;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <AdminNav />
-      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-6 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
         <div className="flex items-center justify-center min-h-fit">
           <div className="shadow-lg rounded-lg p-4 w-full max-w-6xl text-center text-black">

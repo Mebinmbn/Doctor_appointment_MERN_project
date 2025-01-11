@@ -2,10 +2,10 @@ import React, { useState, useCallback } from "react";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Doctor } from "../../types/doctor";
+import { IDoctor } from "../../../../server/src/models/doctorModel";
 
 interface FormValues {
-  _id?: string;
+  _id?: string | unknown;
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -46,7 +46,7 @@ interface AxiosError {
 interface EditDoctorModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  doctor: Doctor | null;
+  doctor: IDoctor | null;
 }
 
 const EditDoctorModel: React.FC<EditDoctorModalProps> = ({
@@ -82,7 +82,7 @@ const EditDoctorModel: React.FC<EditDoctorModalProps> = ({
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
       setFormData((prevData) => ({
         ...prevData,

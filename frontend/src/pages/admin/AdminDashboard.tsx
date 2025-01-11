@@ -16,6 +16,11 @@ interface TotalCount {
   patientCount: number;
 }
 
+interface RevenueData {
+  _id: string;
+  totalRevenue: number;
+}
+
 function AdminDashboard() {
   const admin = useSelector((state: RootState) => state.admin.admin);
   const [totalCount, setTotalCount] = useState<TotalCount>({
@@ -24,7 +29,7 @@ function AdminDashboard() {
     patientCount: 0,
   });
   const [newPatients, setNewPatients] = useState<IPatient[]>([]);
-  const [revenueData, setRevenueData] = useState([]);
+  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [period, setPeriod] = useState("daily");
   const chartRef = useRef<Chart | null>(null);
@@ -57,29 +62,33 @@ function AdminDashboard() {
       if (chartRef.current) {
         chartRef.current.destroy();
       }
-      const ctx = document.getElementById("revenueChart")?.getContext("2d");
-      chartRef.current = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: revenueData.map((item) => item._id),
-          datasets: [
-            {
-              label: "Revenue",
-              data: revenueData.map((item) => item.totalRevenue),
-              backgroundColor: "rgba(44, 194, 28, 0.51)",
-              borderColor: "rgb(11, 75, 24)",
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
+      const ctx = (
+        document.getElementById("revenueChart") as HTMLCanvasElement
+      )?.getContext("2d");
+      if (ctx) {
+        chartRef.current = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: revenueData.map((item) => item._id),
+            datasets: [
+              {
+                label: "Revenue",
+                data: revenueData.map((item) => item.totalRevenue),
+                backgroundColor: "rgba(44, 194, 28, 0.51)",
+                borderColor: "rgb(11, 75, 24)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
             },
           },
-        },
-      });
+        });
+      }
     }
   }, [revenueData]);
 
@@ -92,7 +101,7 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <AdminNav />
       <div className="bg-gray-200 h-fit min-h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
@@ -112,7 +121,7 @@ function AdminDashboard() {
             <p className="font-bold text-5xl mt-5">{totalCount.patientCount}</p>
           </div>
         </div>
-        <div className="flex max-w-4xl mx-auto mt-10">
+        <div className="flex max-w-4xl mx-auto mt-10 flex-wrap gap-12">
           <div className=" w-[65%] bg-white rounded-lg border-gray-100 drop-shadow-lg h-96 p-2">
             <canvas id="revenueChart"></canvas>
             <div className="h-10 mt-4">
@@ -142,7 +151,7 @@ function AdminDashboard() {
               </button>
             </div>
           </div>
-          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-auto w-64 h-96 bg-white p-2 drop-shadow-lg">
+          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2  w-64 h-96 bg-white p-2 drop-shadow-lg">
             <ul>
               <strong className="ml-2 mb-2">New Patients</strong>
               {newPatients.length <= 0 && (

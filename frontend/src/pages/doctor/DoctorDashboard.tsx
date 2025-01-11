@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import DoctorTopBar from "../../components/doctor/DoctorTopBar";
 import api from "../../api/api";
-import { IAppointment } from "./../../../../server/src/models/appointmentModel";
+import { Appointment } from "../../types/appointment";
 
 function DoctorDashboard() {
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState("Good Morning");
-  const [appointments, setAppointments] = useState<IAppointment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -55,7 +55,7 @@ function DoctorDashboard() {
   }, []);
 
   return (
-    <div className="flex items-center p-2 justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center p-2 justify-center min-h-screen bg-[#007E85] gap-5">
       <DoctorNav />
 
       <div className="bg-gray-200 h-fit min-h-[98vh] w-[86vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">

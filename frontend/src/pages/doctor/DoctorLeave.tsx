@@ -4,9 +4,13 @@ import DoctorNav from "../../components/doctor/DoctorNav";
 import DoctorTopBar from "../../components/doctor/DoctorTopBar";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-import ConfirmationModal from "../../components/confirmationModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
-function DoctorLeave() {
+interface ErrorResponse {
+  error: string;
+}
+
+const DoctorLeave: React.FC = () => {
   const [leaveType, setLeaveType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -37,11 +41,7 @@ function DoctorLeave() {
         setEndDate("");
         setReason("");
       } catch (error) {
-        const axiosError = error as AxiosError;
-        console.log(
-          "Error in applying for leave:",
-          axiosError.response?.data.error
-        );
+        const axiosError = error as AxiosError<ErrorResponse>;
         toast.error(axiosError.response?.data.error);
       }
       setIsConfirmModalOpen(false);
@@ -55,9 +55,8 @@ function DoctorLeave() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <DoctorNav />
-
       <div className="bg-gray-200 h-fit min-h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <DoctorTopBar />
         <form
@@ -123,6 +122,6 @@ function DoctorLeave() {
       />
     </div>
   );
-}
+};
 
 export default DoctorLeave;

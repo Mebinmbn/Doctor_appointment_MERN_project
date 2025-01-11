@@ -2,14 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../../components/admin/AdminNav";
 import { toast } from "react-toastify";
 import { IDoctor } from "../../../../server/src/models/doctorModel";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import EditDoctorModel from "../../components/admin/EditDoctorModel";
 import { clearAdmin } from "../../app/featrue/adminSlice";
 import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
-import ConfirmationModal from "../../components/confirmationModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 const AllDoctors = () => {
@@ -102,9 +100,9 @@ const AllDoctors = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <Navbar />
-      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-6 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
         {isLoading ? (
           <LoadingSpinner />

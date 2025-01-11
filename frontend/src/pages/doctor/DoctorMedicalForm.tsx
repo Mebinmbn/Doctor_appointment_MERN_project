@@ -1,46 +1,70 @@
 import { useState } from "react";
 import DoctorNav from "../../components/doctor/DoctorNav";
 import api from "../../api/api";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
+interface ErrorResponse {
+  error: string;
+}
+
+interface Prescription {
+  medicine: string;
+  dosage: string;
+  frequency: string;
+  period: string;
+}
+
 const MedicalForm = () => {
-  const [symptoms, setSymptoms] = useState([""]);
-  const [diagnosis, setDiagnosis] = useState([""]);
-  const [tests, setTests] = useState([""]);
-  const [prescriptions, setPrescriptions] = useState([
+  const [symptoms, setSymptoms] = useState<string[]>([""]);
+  const [diagnosis, setDiagnosis] = useState<string[]>([""]);
+  const [tests, setTests] = useState<string[]>([""]);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([
     { medicine: "", dosage: "", frequency: "", period: "" },
   ]);
-  const [advice, setAdvice] = useState("");
+  const [advice, setAdvice] = useState<string>("");
   const location = useLocation();
-  const { roomId } = location.state || null;
+  const navigate = useNavigate();
+  const { roomId } = location.state || { roomId: null };
 
-  const addField = (setField, field) => {
+  const addField = (
+    setField: React.Dispatch<React.SetStateAction<string[]>>,
+    field: string[]
+  ) => {
     setField([...field, ""]);
   };
-
   const addPrescriptionField = () => {
     setPrescriptions([
       ...prescriptions,
       { medicine: "", dosage: "", frequency: "", period: "" },
     ]);
   };
-
-  const removeField = (setField, field, index) => {
+  const removeField = (
+    setField: React.Dispatch<React.SetStateAction<string[] | Prescription[]>>,
+    field: string[] | Prescription[],
+    index: number
+  ) => {
     const updatedField = [...field];
     updatedField.splice(index, 1);
     setField(updatedField);
   };
-
-  const handleFieldChange = (setField, field, index, value) => {
+  const handleFieldChange = (
+    setField: React.Dispatch<React.SetStateAction<string[]>>,
+    field: string[],
+    index: number,
+    value: string
+  ) => {
     const updatedField = [...field];
     updatedField[index] = value;
     setField(updatedField);
   };
-
-  const handlePrescriptionChange = (index, key, value) => {
+  const handlePrescriptionChange = (
+    index: number,
+    key: keyof Prescription,
+    value: string
+  ) => {
     const updatedPrescriptions = [...prescriptions];
     updatedPrescriptions[index][key] = value;
     setPrescriptions(updatedPrescriptions);
@@ -64,9 +88,10 @@ const MedicalForm = () => {
       );
       if (response.data.success) {
         toast.success("Medical Record Updated Successfully");
+        navigate("/doctor/appointments");
       }
     } catch (error) {
-      const axiosError = error as AxiosError;
+      const axiosError = error as AxiosError<ErrorResponse>;
       console.error("Error in signup request:", axiosError);
       toast.error(axiosError.response?.data.error);
     }
