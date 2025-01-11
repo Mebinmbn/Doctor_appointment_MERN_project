@@ -9,14 +9,14 @@ interface Transaction {
   id: number;
   description: string;
   amount: number;
-  date: string;
+  date: Date;
 }
 
 const Wallet = () => {
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const transactionsPerPage = 10;
+  const transactionsPerPage = 5;
   const user = useSelector((state: RootState) => state.user.user);
 
   const fetchWallet = async () => {
@@ -30,8 +30,7 @@ const Wallet = () => {
             date: new Date(transaction.date),
           })
         );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        transactions.sort((a: any, b: any) => b.date - a.date);
+        transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
         setTransactions(transactions);
       }
     } catch (error) {
@@ -62,7 +61,7 @@ const Wallet = () => {
           <div className="text-4xl font-bold mb-4">₹{balance.toFixed(2)}</div>
           <h3 className="text-xl font-bold mb-2">Transactions</h3>
           <ul>
-            {transactions.length <= 0 && (
+            {transactions.length === 0 && (
               <p className="text-red-500">No transactions found</p>
             )}
             {currentTransactions.map((transaction) => (
@@ -71,7 +70,7 @@ const Wallet = () => {
                   <div>
                     <p className="font-semibold">{transaction.description}</p>
                     <p className="text-sm text-gray-500">
-                      {transaction.date.toString().slice(0, 10)}
+                      {transaction.date.toISOString().slice(0, 10)}
                     </p>
                   </div>
                   <p
@@ -88,7 +87,7 @@ const Wallet = () => {
               </li>
             ))}
           </ul>
-          {transactions.length > 10 && (
+          {transactions.length > transactionsPerPage && (
             <Pagination
               transactionsPerPage={transactionsPerPage}
               totalTransactions={transactions.length}
