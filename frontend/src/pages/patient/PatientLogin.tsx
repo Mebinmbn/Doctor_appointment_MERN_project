@@ -137,7 +137,7 @@ function PatientLogin() {
         setLoading(true);
 
         await axios.post(
-          "http://localhost:8080/api/otp/send",
+          "https://befine.site/api/otp/send",
           {
             email: formData.email,
             userType: "patient",

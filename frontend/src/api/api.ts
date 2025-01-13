@@ -7,7 +7,7 @@ import {
 } from "../utility/apiUtility";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api/",
+  baseURL: "https://befine.site/api/",
   timeout: 1000,
   headers: {
     "Content-Type": "application/json",

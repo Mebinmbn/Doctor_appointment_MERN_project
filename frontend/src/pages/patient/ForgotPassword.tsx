@@ -19,7 +19,7 @@ function ForgotPassword() {
     setUserType("forgotPassword");
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/otp/send",
+        "https://befine.site/api/otp/send",
         {
           email: userEmail,
           userType: "forgotPass_patient",

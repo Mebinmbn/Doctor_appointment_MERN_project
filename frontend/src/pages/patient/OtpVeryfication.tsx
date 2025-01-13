@@ -80,7 +80,7 @@ const OTPVerification = () => {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "http://localhost:8080/api/otp/verify",
+        "https://bfine.site/api/otp/verify",
         {
           email,
           otp,
@@ -114,7 +114,7 @@ const OTPVerification = () => {
       const startTime = new Date().getTime();
 
       const response = await axios.post(
-        "http://localhost:8080/api/otp/send",
+        "https://befine.site/api/otp/send",
         { email },
         {
           headers: { "Content-Type": "application/json" },
