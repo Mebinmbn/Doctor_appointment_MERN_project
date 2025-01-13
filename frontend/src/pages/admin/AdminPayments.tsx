@@ -166,7 +166,7 @@ const AdminPayments: React.FC = () => {
                     ))}
                   </tbody>
                 </table>
-                <div className="flex justify-between items-center mt-4">
+                <div className="flex justify-center gap-2 items-center mt-4">
                   <button
                     onClick={() =>
                       setCurrentPage((prev) => Math.max(prev - 1, 1))
