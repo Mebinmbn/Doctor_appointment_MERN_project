@@ -143,7 +143,7 @@ function PatientDetails() {
   const pinRegex = /^[1-9][0-9]{5}$/;
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
       setFormData((prevData) => ({
         ...prevData,
@@ -264,20 +264,20 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="firstName"
-                  value={formData?.firstName}
+                  value={formData?.firstName || ""}
                   onChange={handleChange}
                   placeholder="First Name"
                 />
                 {formErrors.firstName && (
                   <p className="text-red-500 text-xs mt-1">
-                    {formErrors.firstName}
+                    {formErrors.firstName || ""}
                   </p>
                 )}
               </div>
               <div className="form-group">
                 <InputField
                   name="lastName"
-                  value={formData.lastName}
+                  value={formData.lastName || ""}
                   onChange={handleChange}
                   placeholder="Last Name"
                 />
@@ -290,7 +290,7 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="email"
-                  value={formData.email}
+                  value={formData.email || ""}
                   onChange={handleChange}
                   placeholder="Email"
                 />
@@ -303,7 +303,7 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="phone"
-                  value={formData.phone}
+                  value={formData.phone || ""}
                   onChange={handleChange}
                   placeholder="Phone"
                 />
@@ -336,7 +336,7 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="dob"
-                  value={formData.dob}
+                  value={formData.dob || ""}
                   onChange={handleChange}
                   placeholder="dob(YYYY-MM-DD)"
                 />
@@ -347,7 +347,7 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="houseNo"
-                  value={formData.houseNo}
+                  value={formData.houseNo || ""}
                   onChange={handleChange}
                   placeholder="House No/ House Name"
                 />
@@ -360,7 +360,7 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="street"
-                  value={formData.street}
+                  value={formData.street || ""}
                   onChange={handleChange}
                   placeholder="Street"
                 />
@@ -373,7 +373,7 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="city"
-                  value={formData.city}
+                  value={formData.city || ""}
                   onChange={handleChange}
                   placeholder="City"
                 />
@@ -384,7 +384,7 @@ function PatientDetails() {
               <div className="form-group">
                 <InputField
                   name="pin"
-                  value={formData.pin}
+                  value={formData.pin || ""}
                   onChange={handleChange}
                   placeholder="Pin"
                 />
@@ -431,31 +431,5 @@ const InputField = ({
       placeholder={placeholder}
     />
     <p className="font-thin text-red-500 text-xs p-0 m-0">{error}</p>
-  </>
-);
-
-const PassField = ({
-  name,
-  value,
-  error,
-  onChange,
-  placeholder,
-}: {
-  name: string;
-  value: string;
-  error?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string;
-}) => (
-  <>
-    <input
-      type="password"
-      name={name}
-      className="border-[1px] border-[#007E85] rounded-lg h-10 w-72  p-2 font-light focus:outline-none"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-    />
-    <p className="font-thin text-red-400 text-sm p-0 m-0">{error}</p>
   </>
 );

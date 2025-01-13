@@ -32,24 +32,25 @@ const MedicalForm = () => {
   const addField = (
     setField: React.Dispatch<React.SetStateAction<string[]>>,
     field: string[]
-  ) => {
-    setField([...field, ""]);
-  };
+  ) => setField([...field, ""]);
+
   const addPrescriptionField = () => {
     setPrescriptions([
       ...prescriptions,
       { medicine: "", dosage: "", frequency: "", period: "" },
     ]);
   };
-  const removeField = (
-    setField: React.Dispatch<React.SetStateAction<string[] | Prescription[]>>,
-    field: string[] | Prescription[],
+
+  const removeField = <T,>(
+    setField: React.Dispatch<React.SetStateAction<T[]>>,
+    field: T[],
     index: number
   ) => {
     const updatedField = [...field];
     updatedField.splice(index, 1);
     setField(updatedField);
   };
+
   const handleFieldChange = (
     setField: React.Dispatch<React.SetStateAction<string[]>>,
     field: string[],
@@ -60,17 +61,33 @@ const MedicalForm = () => {
     updatedField[index] = value;
     setField(updatedField);
   };
+
   const handlePrescriptionChange = (
     index: number,
     key: keyof Prescription,
     value: string
   ) => {
-    const updatedPrescriptions = [...prescriptions];
-    updatedPrescriptions[index][key] = value;
-    setPrescriptions(updatedPrescriptions);
+    setPrescriptions((prev) => {
+      const updated = [...prev];
+      updated[index][key] = value;
+      return updated;
+    });
+  };
+
+  const isValid = () => {
+    if (!symptoms.length || symptoms.includes("")) return false;
+    if (!diagnosis.length || diagnosis.includes("")) return false;
+    if (!tests.length || tests.includes("")) return false;
+    if (prescriptions.some((p) => Object.values(p).includes(""))) return false;
+    return true;
   };
 
   const handleUpdate = async () => {
+    if (!isValid()) {
+      toast.error("Please fill all fields before submitting.");
+      return;
+    }
+
     try {
       const response = await api.post(
         "/doctor/medicalRecord",
@@ -92,130 +109,65 @@ const MedicalForm = () => {
       }
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      console.error("Error in signup request:", axiosError);
-      toast.error(axiosError.response?.data.error);
+      toast.error(axiosError.response?.data.error || "Something went wrong.");
     }
+  };
+
+  const resetForm = () => {
+    setSymptoms([""]);
+    setDiagnosis([""]);
+    setTests([""]);
+    setPrescriptions([{ medicine: "", dosage: "", frequency: "", period: "" }]);
+    setAdvice("");
   };
 
   return (
     <div className="flex bg-[#007E85] min-h-screen">
       <DoctorNav />
-      <div className="max-w-4xl  my-10 mx-auto p-6 bg-white rounded-lg shadow-xl w-full">
+      <div className="max-w-4xl my-10 mx-auto p-6 bg-white rounded-lg shadow-xl w-full">
         <h1 className="text-3xl font-bold mb-8 text-center text-[#007E85] border-b-2 pb-4">
           Medical Form
         </h1>
 
-        <div className="form-group mb-8">
-          <h2 className="text-xl font-semibold text-[#007E85] underline mb-4">
-            Symptoms
-          </h2>
-          {symptoms.map((symptom, index) => (
-            <div
-              key={index}
-              className="field-group mb-4 flex items-center gap-4"
-            >
-              <input
-                type="text"
-                value={symptom}
-                onChange={(e) =>
-                  handleFieldChange(
-                    setSymptoms,
-                    symptoms,
-                    index,
-                    e.target.value
-                  )
-                }
-                className="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
-                placeholder={`Symptom ${index + 1}`}
-              />
-              <button
-                onClick={() => removeField(setSymptoms, symptoms, index)}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+        {[
+          { title: "Symptoms", state: symptoms, setState: setSymptoms },
+          { title: "Diagnosis", state: diagnosis, setState: setDiagnosis },
+          { title: "Tests", state: tests, setState: setTests },
+        ].map(({ title, state, setState }, i) => (
+          <div key={i} className="form-group mb-8">
+            <h2 className="text-xl font-semibold text-[#007E85] underline mb-4">
+              {title}
+            </h2>
+            {state.map((value, index) => (
+              <div
+                key={index}
+                className="field-group mb-4 flex items-center gap-4"
               >
-                <FaTrash />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={() => addField(setSymptoms, symptoms)}
-            className="mt-2 px-4 py-2 bg-[#007E85] text-white rounded-lg shadow hover:bg-[#005F63] flex items-center justify-center gap-2"
-          >
-            <FaPlus /> Add More
-          </button>
-        </div>
-
-        <div className="form-group mb-8">
-          <h2 className="text-xl font-semibold text-[#007E85] underline mb-4">
-            Diagnosis
-          </h2>
-          {diagnosis.map((diag, index) => (
-            <div
-              key={index}
-              className="field-group mb-4 flex items-center gap-4"
+                <input
+                  type="text"
+                  value={value}
+                  onChange={(e) =>
+                    handleFieldChange(setState, state, index, e.target.value)
+                  }
+                  className="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
+                  placeholder={`${title} ${index + 1}`}
+                />
+                <button
+                  onClick={() => removeField(setState, state, index)}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() => addField(setState, state)}
+              className="mt-2 px-4 py-2 bg-[#007E85] text-white rounded-lg shadow hover:bg-[#005F63] flex items-center justify-center gap-2"
             >
-              <input
-                type="text"
-                value={diag}
-                onChange={(e) =>
-                  handleFieldChange(
-                    setDiagnosis,
-                    diagnosis,
-                    index,
-                    e.target.value
-                  )
-                }
-                className="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
-                placeholder={`Diagnosis ${index + 1}`}
-              />
-              <button
-                onClick={() => removeField(setDiagnosis, diagnosis, index)}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
-              >
-                <FaTrash />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={() => addField(setDiagnosis, diagnosis)}
-            className="mt-2 px-4 py-2 bg-[#007E85] text-white rounded-lg shadow hover:bg-[#005F63] flex items-center justify-center gap-2"
-          >
-            <FaPlus /> Add More
-          </button>
-        </div>
-
-        <div className="form-group mb-8">
-          <h2 className="text-xl font-semibold text-[#007E85] underline mb-4">
-            Tests
-          </h2>
-          {tests.map((test, index) => (
-            <div
-              key={index}
-              className="field-group mb-4 flex items-center gap-4"
-            >
-              <input
-                type="text"
-                value={test}
-                onChange={(e) =>
-                  handleFieldChange(setTests, tests, index, e.target.value)
-                }
-                className="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
-                placeholder={`Test ${index + 1}`}
-              />
-              <button
-                onClick={() => removeField(setTests, tests, index)}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
-              >
-                <FaTrash />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={() => addField(setTests, tests)}
-            className="mt-2 px-4 py-2 bg-[#007E85] text-white rounded-lg shadow hover:bg-[#005F63] flex items-center justify-center gap-2"
-          >
-            <FaPlus /> Add More
-          </button>
-        </div>
+              <FaPlus /> Add More
+            </button>
+          </div>
+        ))}
 
         <div className="form-group mb-8">
           <h2 className="text-xl font-semibold text-[#007E85] underline mb-4">
@@ -226,45 +178,25 @@ const MedicalForm = () => {
               key={index}
               className="field-group mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4"
             >
-              <input
-                type="text"
-                value={prescription.medicine}
-                onChange={(e) =>
-                  handlePrescriptionChange(index, "medicine", e.target.value)
-                }
-                className="px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
-                placeholder="Medicine"
-              />
-              <input
-                type="text"
-                value={prescription.dosage}
-                onChange={(e) =>
-                  handlePrescriptionChange(index, "dosage", e.target.value)
-                }
-                className="px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
-                placeholder="Dosage"
-              />
-              <input
-                type="text"
-                value={prescription.frequency}
-                onChange={(e) =>
-                  handlePrescriptionChange(index, "frequency", e.target.value)
-                }
-                className="px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
-                placeholder="Frequency"
-              />
-              <input
-                type="text"
-                value={prescription.period}
-                onChange={(e) =>
-                  handlePrescriptionChange(index, "period", e.target.value)
-                }
-                className="px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
-                placeholder="Period"
-              />
+              {Object.keys(prescription).map((key) => (
+                <input
+                  key={key}
+                  type="text"
+                  value={prescription[key as keyof Prescription]}
+                  onChange={(e) =>
+                    handlePrescriptionChange(
+                      index,
+                      key as keyof Prescription,
+                      e.target.value
+                    )
+                  }
+                  className="px-4 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-[#007E85]"
+                  placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+                />
+              ))}
             </div>
           ))}
-          <div className="flex items-center gap-4 ">
+          <div className="flex items-center gap-4">
             <button
               onClick={() =>
                 removeField(
@@ -279,7 +211,7 @@ const MedicalForm = () => {
             </button>
             <button
               onClick={addPrescriptionField}
-              className=" px-4 py-2 bg-[#007E85] text-white rounded-lg shadow hover:bg-[#005F63] flex items-center justify-center gap-2"
+              className="px-4 py-2 bg-[#007E85] text-white rounded-lg shadow hover:bg-[#005F63] flex items-center justify-center gap-2"
             >
               <FaPlus /> Add More
             </button>
@@ -298,7 +230,13 @@ const MedicalForm = () => {
           ></textarea>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-4">
+          <button
+            className="px-6 py-3 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600"
+            onClick={resetForm}
+          >
+            Reset
+          </button>
           <button
             className="px-6 py-3 bg-[#007E85] text-white rounded-lg shadow hover:bg-[#005F63]"
             onClick={handleUpdate}

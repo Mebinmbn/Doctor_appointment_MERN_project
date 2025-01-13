@@ -39,7 +39,7 @@ import ChatPage from "./components/ChatPage";
 import DoctorChats from "./pages/doctor/DoctorChats";
 import Chats from "./pages/patient/Chats";
 import DoctorPayments from "./pages/doctor/DoctorPayments";
-import { AdminPayments } from "./pages/admin/AdminPayments";
+import AdminPayments from "./pages/admin/AdminPayments";
 
 function App() {
   return (

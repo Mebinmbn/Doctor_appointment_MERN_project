@@ -1,11 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  useTable,
-  useSortBy,
-  usePagination,
-  TableInstance,
-  Column,
-} from "react-table";
 import api from "../../api/api";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import AdminTopBar from "../../components/admin/AdminTopBar";
@@ -21,19 +14,16 @@ interface Payment {
   status: string;
 }
 
-type TableInstanceWithExtensions<T extends object> = TableInstance<T> & {
-  page: T[];
-  canNextPage: boolean;
-  canPreviousPage: boolean;
-  nextPage: () => void;
-  previousPage: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  prepareRow: (row: any) => void;
-};
-
-export const AdminPayments: React.FC = () => {
+const AdminPayments: React.FC = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Payment;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  const itemsPerPage = 8;
 
   const fetchPayments = async () => {
     try {
@@ -41,18 +31,16 @@ export const AdminPayments: React.FC = () => {
         headers: { "User-Type": "admin" },
       });
       if (response.data.success) {
-        const fetchedPayments: Payment[] = response.data.payments.map(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (payment: any) => ({
-            id: payment._id,
-            name: payment.userId?.firstName || "N/A",
-            doctor: `Dr ${payment.doctorId?.firstName || "Unknown"}`,
-            registered: payment.createdAt.toString().slice(0, 10),
-            method: payment.paymentMethod,
-            amount: payment.amount,
-            status: payment.paymentStatus,
-          })
-        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const fetchedPayments = response.data.payments.map((payment: any) => ({
+          id: payment._id,
+          name: payment.userId?.firstName || "N/A",
+          doctor: `Dr ${payment.doctorId?.firstName || "Unknown"}`,
+          registered: payment.createdAt.toString().slice(0, 10),
+          method: payment.paymentMethod,
+          amount: parseFloat(payment.amount) || 0,
+          status: payment.paymentStatus,
+        }));
         setPayments(fetchedPayments);
       }
     } catch (error) {
@@ -66,107 +54,137 @@ export const AdminPayments: React.FC = () => {
     fetchPayments();
   }, []);
 
-  const columns = React.useMemo(
-    (): Column<Payment>[] => [
-      { Header: "Transaction ID", accessor: "id" },
-      { Header: "Name", accessor: "name" },
-      { Header: "Doctor", accessor: "doctor" },
-      { Header: "Registered Date", accessor: "registered" },
-      { Header: "Payment Method", accessor: "method" },
-      { Header: "Amount", accessor: "amount" },
-      { Header: "Status", accessor: "status" },
-    ],
-    []
-  );
+  const handleSort = (key: keyof Payment) => {
+    let direction: "asc" | "desc" = "asc";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "asc"
+    ) {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page,
-    nextPage,
-    previousPage,
-    canNextPage,
-    canPreviousPage,
-    state: { pageIndex },
-  } = useTable<Payment>(
-    {
-      columns,
-      data: payments,
-      initialState: { pageIndex: 0, pageSize: 8 },
-    },
-    useSortBy,
-    usePagination
-  ) as TableInstanceWithExtensions<Payment>;
+    const sortedPayments = [...payments].sort((a, b) => {
+      if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
+      if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+    setPayments(sortedPayments);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentPayments = payments.slice(startIndex, startIndex + itemsPerPage);
+
+  const totalPages = Math.ceil(payments.length / itemsPerPage);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <AdminNav />
-      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-6 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-6 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <AdminTopBar />
         <div className="flex items-center justify-center min-h-fit">
-          <div className="shadow-lg rounded-lg p-4 w-full max-w-6xl text-center text-black">
+          <div className="shadow-lg rounded-lg p-4 w-full max-w-6xl text-black">
             <h2 className="text-2xl font-bold mb-4 text-[#007E85]">Payments</h2>
             {loading ? (
               <LoadingSpinner />
             ) : (
-              <div className="table-responsive">
-                <table
-                  {...getTableProps()}
-                  className="table table-bordered table-hover w-full"
-                >
+              <div className="overflow-x-auto">
+                <table className="table-auto w-full border border-gray-300">
                   <thead className="bg-gray-500 text-white">
-                    {headerGroups.map((headerGroup) => (
-                      <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map((column) => (
-                          <th
-                            {...column.getHeaderProps(
-                              column.getSortByToggleProps()
-                            )}
-                            className="p-3"
-                            style={{ width: `${100 / columns.length}%` }}
-                          >
-                            {column.render("Header")}
-                            <span>
-                              {column.isSorted
-                                ? column.isSortedDesc
-                                  ? " 🔽"
-                                  : " 🔼"
-                                : ""}
-                            </span>
-                          </th>
-                        ))}
+                    <tr>
+                      <th
+                        className="p-3 cursor-pointer"
+                        onClick={() => handleSort("id")}
+                      >
+                        Transaction ID{" "}
+                        {sortConfig?.key === "id"
+                          ? sortConfig.direction === "asc"
+                            ? "🔼"
+                            : "🔽"
+                          : ""}
+                      </th>
+                      <th
+                        className="p-3 cursor-pointer"
+                        onClick={() => handleSort("name")}
+                      >
+                        Name{" "}
+                        {sortConfig?.key === "name"
+                          ? sortConfig.direction === "asc"
+                            ? "🔼"
+                            : "🔽"
+                          : ""}
+                      </th>
+                      <th
+                        className="p-3 cursor-pointer"
+                        onClick={() => handleSort("doctor")}
+                      >
+                        Doctor{" "}
+                        {sortConfig?.key === "doctor"
+                          ? sortConfig.direction === "asc"
+                            ? "🔼"
+                            : "🔽"
+                          : ""}
+                      </th>
+                      <th
+                        className="p-3 cursor-pointer"
+                        onClick={() => handleSort("registered")}
+                      >
+                        Registered Date{" "}
+                        {sortConfig?.key === "registered"
+                          ? sortConfig.direction === "asc"
+                            ? "🔼"
+                            : "🔽"
+                          : ""}
+                      </th>
+                      <th className="p-3">Payment Method</th>
+                      <th
+                        className="p-3 cursor-pointer"
+                        onClick={() => handleSort("amount")}
+                      >
+                        Amount{" "}
+                        {sortConfig?.key === "amount"
+                          ? sortConfig.direction === "asc"
+                            ? "🔼"
+                            : "🔽"
+                          : ""}
+                      </th>
+                      <th className="p-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentPayments.map((payment) => (
+                      <tr key={payment.id} className="border-b">
+                        <td className="p-3">{payment.id}</td>
+                        <td className="p-3">{payment.name}</td>
+                        <td className="p-3">{payment.doctor}</td>
+                        <td className="p-3">{payment.registered}</td>
+                        <td className="p-3">{payment.method}</td>
+                        <td className="p-3">₹{payment.amount.toFixed(2)}</td>
+                        <td className="p-3">{payment.status}</td>
                       </tr>
                     ))}
-                  </thead>
-                  <tbody {...getTableBodyProps()}>
-                    {page.map((row) => {
-                      prepareRow(row);
-                      return (
-                        <tr {...row.getRowProps()}>
-                          {row.cells.map((cell) => (
-                            <td {...cell.getCellProps()} className="p-3">
-                              {cell.render("Cell")}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    })}
                   </tbody>
                 </table>
-                <div className="pagination mt-4 bg-gray-500 h-fit p-1 text-white">
+                <div className="flex justify-between items-center mt-4">
                   <button
-                    onClick={() => previousPage()}
-                    disabled={!canPreviousPage}
-                    className="btn btn-secondary me-2 border-2 rounded-lg p-1"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 bg-gray-500 text-white rounded disabled:opacity-50"
                   >
                     Previous
                   </button>
+                  <span>
+                    Page {currentPage} of {totalPages}
+                  </span>
                   <button
-                    onClick={() => nextPage()}
-                    disabled={!canNextPage}
-                    className="btn btn-secondary me-2 border-2 rounded-lg px-4 py-1"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 bg-gray-500 text-white rounded disabled:opacity-50"
                   >
                     Next
                   </button>
@@ -179,3 +197,5 @@ export const AdminPayments: React.FC = () => {
     </div>
   );
 };
+
+export default AdminPayments;

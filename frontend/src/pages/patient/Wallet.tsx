@@ -30,7 +30,10 @@ const Wallet = () => {
             date: new Date(transaction.date),
           })
         );
-        transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
+        transactions.sort(
+          (a: Transaction, b: Transaction) =>
+            b.date.getTime() - a.date.getTime()
+        );
         setTransactions(transactions);
       }
     } catch (error) {

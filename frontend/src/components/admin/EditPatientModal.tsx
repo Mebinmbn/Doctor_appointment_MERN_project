@@ -68,7 +68,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
       setFormData((prevData) => ({
         ...prevData,
@@ -190,7 +190,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
               <div className="form-group">
                 <InputField
                   name="firstName"
-                  value={formData.firstName}
+                  value={formData.firstName || ""}
                   onChange={handleChange}
                   placeholder="First Name"
                 />
@@ -203,7 +203,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
               <div className="form-group">
                 <InputField
                   name="lastName"
-                  value={formData.lastName}
+                  value={formData.lastName || ""}
                   onChange={handleChange}
                   placeholder="Last Name"
                 />
@@ -216,7 +216,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
               <div className="form-group">
                 <InputField
                   name="email"
-                  value={formData.email}
+                  value={formData.email || ""}
                   onChange={handleChange}
                   placeholder="Email"
                 />
@@ -229,7 +229,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
               <div className="form-group">
                 <InputField
                   name="phone"
-                  value={formData.phone}
+                  value={formData.phone || ""}
                   onChange={handleChange}
                   placeholder="Phone"
                 />
@@ -262,7 +262,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
               <div className="form-group">
                 <InputField
                   name="dob"
-                  value={formData.dob}
+                  value={formData.dob || ""}
                   onChange={handleChange}
                   placeholder="dob(YYYY-MM-DD)"
                 />
@@ -273,7 +273,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
               <div className="form-group">
                 <PassField
                   name="password"
-                  value={formData.password}
+                  value={formData.password || ""}
                   onChange={handleChange}
                   placeholder="Password"
                 />

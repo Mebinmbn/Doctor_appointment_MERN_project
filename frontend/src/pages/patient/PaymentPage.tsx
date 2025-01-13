@@ -146,7 +146,7 @@ function PaymentPage() {
         { headers: { "User-Type": "patient" } }
       );
       console.log(data.data);
-      const razorpayKey = "rzp_test_xnsJNuDLxrH6xO";
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
       console.log("RazorPay Id", razorpayKey);
       if (!razorpayKey) {
         throw new Error("Razorpay Key is missing in environment variables");

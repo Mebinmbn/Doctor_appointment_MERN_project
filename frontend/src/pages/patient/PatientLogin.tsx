@@ -62,6 +62,7 @@ function PatientLogin() {
     if (user) {
       navigate("/");
     }
+    console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
   }, [user, navigate]);
 
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/;
@@ -346,7 +347,9 @@ function PatientLogin() {
               </form>
             )}
             <div className="w-100 flex justify-center my-2 ">
-              <GoogleOAuthProvider clientId="169581545565-89ueco0qk9b1ino9hfckstb0v5ehkn65.apps.googleusercontent.com">
+              <GoogleOAuthProvider
+                clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+              >
                 <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
               </GoogleOAuthProvider>
             </div>
