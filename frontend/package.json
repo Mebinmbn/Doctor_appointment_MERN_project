@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "vite": "^6.0.1",
     "@coreui/react-pro": "^5.11.0",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.4.0",
