@@ -19,7 +19,7 @@ interface User {
 export const setupSocketIO = (server: any, app: Application) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: "https://doctor-appointment-mern-project-t13k.vercel.app/",
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "User-Type"],
     },
