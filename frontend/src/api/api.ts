@@ -7,7 +7,7 @@ import {
 } from "../utility/apiUtility";
 
 const api = axios.create({
-  baseURL: "https://befine.site/api/",
+  baseURL: "http://localhost:8000/api/",
   timeout: 1000,
   headers: {
     "Content-Type": "application/json",
@@ -47,7 +47,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          "https://befine.site/api/token",
+          "http://localhost:8000/api/token",
           {},
           { withCredentials: true }
         );
