@@ -139,7 +139,7 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
         console.log(formData);
 
         const response = await axios.put(
-          "http://localhost:8080/api/admin/patients",
+          "https://befine.site/api/admin/patients",
           formData,
           {
             headers: {

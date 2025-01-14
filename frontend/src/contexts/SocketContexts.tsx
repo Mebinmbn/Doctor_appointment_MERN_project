@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_SERVER_URL = "http://localhost:8080";
+const SOCKET_SERVER_URL = "https://befine.site";
 
 const SocketContext = createContext<Socket | null>(null);
 

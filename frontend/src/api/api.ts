@@ -47,7 +47,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          "http://localhost:8080/api/token",
+          "https://befine.site/api/token",
           {},
           { withCredentials: true }
         );

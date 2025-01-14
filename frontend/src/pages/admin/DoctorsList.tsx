@@ -158,14 +158,14 @@ function DoctorsList() {
                       </td>
                       <td className="py-2 px-4 text-white border-b">
                         <img
-                          src={`http://localhost:8080/uploads/license/${doctor.licenseImage.path
+                          src={`https://befine.site/uploads/license/${doctor.licenseImage.path
                             .split("\\")
                             .pop()}`}
                           alt={doctor.licenseImage.path.split("\\").pop()}
                           className="h-16 w-16 object-cover rounded"
                           onClick={() =>
                             openModal(
-                              `http://localhost:8080/uploads/license/${doctor.licenseImage.path
+                              `https://befine.site/uploads/license/${doctor.licenseImage.path
                                 .split("\\")
                                 .pop()}`
                             )
