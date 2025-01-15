@@ -31,7 +31,7 @@ dbConnect();
 app.use(
   cors({
     credentials: true,
-    origin: "https://doctor-appointment-mern-project-opal.vercel.app",
+    origin: "https://doctor-appointment-mern-project-opal.vercel.app/",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "User-Type"],
   })
