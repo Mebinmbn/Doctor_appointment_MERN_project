@@ -19,7 +19,7 @@ interface User {
 export const setupSocketIO = (server: any, app: Application) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://doctor-appointment-mern-project-opal.vercel.app/",
+      origin: "https://doctor-appointment-mern-project-opal.vercel.app",
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "User-Type"],
     },
