@@ -80,7 +80,7 @@ const OTPVerification = () => {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "https://bfine.site/api/otp/verify",
+        "https://befine.site/api/otp/verify",
         {
           email,
           otp,
