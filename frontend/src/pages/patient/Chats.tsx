@@ -34,7 +34,7 @@ const Chats: React.FC = () => {
   const fetchChatRooms = async () => {
     try {
       const response = await api.get(`/chats/rooms/${user?.id}`, {
-        headers: { "User-Type": "doctor" },
+        headers: { "User-Type": "patient" },
       });
       const sortedRooms = response.data.rooms.sort(
         (a: ChatRoom, b: ChatRoom) =>
