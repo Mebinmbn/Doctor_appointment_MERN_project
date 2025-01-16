@@ -68,7 +68,7 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
   };
 
   return (
-    <div className="w-[80vw] border-2 mx-auto mt-10 p-5">
+    <div className="w-full md:w-[80vw] border-2 mx-auto mt-10 p-5">
       {isVideoCall ? (
         <VideoCall
           roomId={appointmentId as string}
