@@ -64,7 +64,7 @@ function DoctorDashboard() {
           <div className="w-full max-w-4xl">
             <h1 className="text-lg md:text-3xl text-left font-bold text-gray-800">
               {greeting}
-              <span className="text-xl md:text-teal-600 text-5xl">
+              <span className="text-teal-600 text-xl md:text-5xl">
                 {" "}
                 Dr. {doctor?.name}
               </span>
