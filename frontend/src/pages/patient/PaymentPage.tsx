@@ -224,7 +224,7 @@ function PaymentPage() {
   return (
     <div>
       <Navbar />
-      <div className="payment_page_continer w-[80vw] bg-gray-200 p-5 mt-5 h-screen mx-auto">
+      <div className="payment_page_continer w-full md:w-[80vw] bg-gray-200 p-5 mt-5 h-screen mx-auto">
         <p className="font-extrabold text-3xl text-[#007E85] ">Payment</p>
         <div className="flex mt-5 w-full flex-wrap ">
           <div className="w-full mr-5 border-2 p-3 rounded-lg border-[#007E85] text-right">
