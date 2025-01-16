@@ -55,10 +55,10 @@ function DoctorDashboard() {
   }, []);
 
   return (
-    <div className="flex items-center p-2 justify-center min-h-screen bg-[#007E85] gap-5">
+    <div className="md:flex items-center p-2 justify-center min-h-screen bg-[#007E85] gap-5">
       <DoctorNav />
 
-      <div className="bg-gray-200 h-fit min-h-[98vh] w-[86vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-gray-200 h-fit min-h-[98vh] w-full md:w-[86vw] text-center p-4 md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
         <DoctorTopBar />
         <div className="p-5  min-h-fit flex flex-col items-center">
           <div className="w-full max-w-4xl">
