@@ -227,7 +227,7 @@ function PaymentPage() {
       <div className="payment_page_continer w-full md:w-[80vw] bg-gray-200 p-5 mt-5 h-screen mx-auto">
         <p className="font-extrabold text-3xl text-[#007E85] ">Payment</p>
         <div className="flex mt-5 w-full flex-wrap ">
-          <div className="payment_details p-3 border-2 h-fit w-full md:w-96 rounded-lg ml-auto mr-8 border-[#007E85]">
+          <div className="payment_details p-3 border-2 h-fit w-full md:w-96 rounded-lg ml-auto md:mr-8  border-[#007E85] mb-5">
             <p className="font-bold text-center mb-5">Payment Details</p>
             <table>
               <tr>
