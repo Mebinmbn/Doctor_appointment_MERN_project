@@ -128,19 +128,21 @@ function AllPatients() {
               <h2 className="text-2xl font-bold mb-1 text-white p-4 border-b">
                 Patients
               </h2>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Find patient"
-              />
-              <button
-                onClick={clearFilter}
-                className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-32"
-              >
-                Clear Search
-              </button>
+              <div className="hidden md:block">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Find patient"
+                />
+                <button
+                  onClick={clearFilter}
+                  className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-32"
+                >
+                  Clear Search
+                </button>
+              </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full bg-[#007E85] border border-collapse">
                   <thead>

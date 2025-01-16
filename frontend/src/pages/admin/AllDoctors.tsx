@@ -102,7 +102,7 @@ const AllDoctors = () => {
   return (
     <div className="md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <Navbar />
-      <div className="bg-white h-fit min-h-[98vh] w-full md:w-[88vw] text-center p-6 text-white md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-full md:w-[88vw] text-center md:p-6 text-white md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
         <AdminTopBar />
         {isLoading ? (
           <LoadingSpinner />
@@ -112,61 +112,63 @@ const AllDoctors = () => {
               <h2 className="text-2xl font-bold mb-1 text-white p-4 text-white border-b text-white">
                 Doctors
               </h2>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Find doctor"
-              />
-              <select
-                id="specialization"
-                name="specialization"
-                value={specialization}
-                onChange={(e) => setSpecialization(e.target.value)}
-                className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
-              >
-                <option value="">Specialization</option>
-                <option value="cardiologist">Cardiologist</option>
-                <option value="dermatologist">Dermatologist</option>
-                <option value="dentist">Dentist</option>
-                <option value="gynecologist">Gynecologist</option>
-                <option value="pediatrician">Pediatrician</option>
-                <option value="psychiatrist">Psychiatrist</option>
-                <option value="oncologist">Oncologist</option>
-                <option value="neurologist">Neurologist</option>
-              </select>
-              <select
-                id="gender"
-                name="gender"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
-              >
-                <option value="">Gender</option>{" "}
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-              <select
-                id="experience"
-                name="experience"
-                value={experience}
-                onChange={(e) => setExperience(e.target.value)}
-                className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
-              >
-                <option value="">Experience</option>
-                <option value="5">5+ years</option>
-                <option value="10">10+ years</option>
-                <option value="15">15+ years</option>
-                <option value="20">20+ years</option>
-              </select>
-              <button
-                onClick={clearFilter}
-                className="bg-white text-gray-500 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
-              >
-                Clear Filters
-              </button>
+              <div className="hidden md:block">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Find doctor"
+                />
+                <select
+                  id="specialization"
+                  name="specialization"
+                  value={specialization}
+                  onChange={(e) => setSpecialization(e.target.value)}
+                  className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+                >
+                  <option value="">Specialization</option>
+                  <option value="cardiologist">Cardiologist</option>
+                  <option value="dermatologist">Dermatologist</option>
+                  <option value="dentist">Dentist</option>
+                  <option value="gynecologist">Gynecologist</option>
+                  <option value="pediatrician">Pediatrician</option>
+                  <option value="psychiatrist">Psychiatrist</option>
+                  <option value="oncologist">Oncologist</option>
+                  <option value="neurologist">Neurologist</option>
+                </select>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+                >
+                  <option value="">Gender</option>{" "}
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+                <select
+                  id="experience"
+                  name="experience"
+                  value={experience}
+                  onChange={(e) => setExperience(e.target.value)}
+                  className="bg-white text-gray-800 m-2 px-3 py-2 border border-[#007E85] font-light rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+                >
+                  <option value="">Experience</option>
+                  <option value="5">5+ years</option>
+                  <option value="10">10+ years</option>
+                  <option value="15">15+ years</option>
+                  <option value="20">20+ years</option>
+                </select>
+                <button
+                  onClick={clearFilter}
+                  className="bg-white text-gray-500 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
+                >
+                  Clear Filters
+                </button>
+              </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full bg-[#007E85] border border-collapse">
                   <thead>

@@ -60,9 +60,9 @@ function AdminAppointments() {
   };
   return (
     <div>
-      <div className="flex items-center justify-center min-h-screen bg-[#007E85]">
+      <div className="md:flex items-center justify-center min-h-screen bg-[#007E85]">
         <AdminNav />
-        <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center p-4 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+        <div className="bg-white h-fit min-h-[98vh] w-full md:w-[88vw] text-center md:p-4 text-white md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
           <AdminTopBar />
           {isLoading ? (
             <LoadingSpinner />
@@ -72,55 +72,63 @@ function AdminAppointments() {
                 <h2 className="text-2xl font-bold mb-4 text-white p-4 text-white border-b text-white">
                   Appointments
                 </h2>
-                <table className="min-w-full bg-[#007E85] border">
-                  <thead>
-                    <tr>
-                      <th className="py-2 px-4 text-white border-b">Patient</th>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full bg-[#007E85] border border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="py-2 px-4 text-white border-b">
+                          Patient
+                        </th>
 
-                      <th className="py-2 px-4 text-white border-b">Date</th>
-                      <th className="py-2 px-4 text-white border-b">Timet</th>
-                      <th className="py-2 px-4 text-white border-b">Payment</th>
-                      <th className="py-2 px-4 text-white border-b">Reson</th>
-                      <th className="py-2 px-4 text-white border-b">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentAppointments.length ? (
-                      <>
-                        {currentAppointments?.map(
-                          (appointment: Appointment) => (
-                            <tr key={appointment._id}>
-                              <td className="py-2 px-4 text-white border-b">
-                                {appointment.patientId?.firstName}
-                              </td>
-
-                              <td className="py-2 px-4 text-white border-b">
-                                {appointment.date.toString().slice(0, 10)}
-                              </td>
-
-                              <td className="py-2 px-4 text-white border-b">
-                                {appointment.time}
-                              </td>
-                              <td className="py-2 px-4 text-white border-b">
-                                {appointment.payment}
-                              </td>
-                              <td className="py-2 px-4 text-white border-b">
-                                {appointment.reason}
-                              </td>
-                              <td className="py-2 px-4 text-white border-b">
-                                {appointment.status}
-                              </td>
-                            </tr>
-                          )
-                        )}
-                      </>
-                    ) : (
-                      <tr className="text-center">
-                        <p className="text-center">No appointments found </p>
+                        <th className="py-2 px-4 text-white border-b">Date</th>
+                        <th className="py-2 px-4 text-white border-b">Timet</th>
+                        <th className="py-2 px-4 text-white border-b">
+                          Payment
+                        </th>
+                        <th className="py-2 px-4 text-white border-b">Reson</th>
+                        <th className="py-2 px-4 text-white border-b">
+                          Status
+                        </th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {currentAppointments.length ? (
+                        <>
+                          {currentAppointments?.map(
+                            (appointment: Appointment) => (
+                              <tr key={appointment._id}>
+                                <td className="py-2 px-4 text-white border-b">
+                                  {appointment.patientId?.firstName}
+                                </td>
+
+                                <td className="py-2 px-4 text-white border-b">
+                                  {appointment.date.toString().slice(0, 10)}
+                                </td>
+
+                                <td className="py-2 px-4 text-white border-b">
+                                  {appointment.time}
+                                </td>
+                                <td className="py-2 px-4 text-white border-b">
+                                  {appointment.payment}
+                                </td>
+                                <td className="py-2 px-4 text-white border-b">
+                                  {appointment.reason}
+                                </td>
+                                <td className="py-2 px-4 text-white border-b">
+                                  {appointment.status}
+                                </td>
+                              </tr>
+                            )
+                          )}
+                        </>
+                      ) : (
+                        <tr className="text-center">
+                          <p className="text-center">No appointments found </p>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
                 <div className="flex justify-center mt-4 ">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (page) => (
