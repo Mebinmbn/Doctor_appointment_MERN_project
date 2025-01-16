@@ -101,9 +101,9 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
+    <div className="md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <AdminNav />
-      <div className="bg-gray-200 h-fit min-h-[98vh] w-[88vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-gray-200 h-fit min-h-[98vh] w-full md:w-[88vw] text-center p-4 md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
         <AdminTopBar />
         <div className="counts flex justify-between max-w-4xl flex-wrap mx-auto gap-12">
           <div className="w-64 h-48 text-white bg-gradient-to-t from-green-300 rounded-lg to-[#007E85] drop-shadow-xl py-10">

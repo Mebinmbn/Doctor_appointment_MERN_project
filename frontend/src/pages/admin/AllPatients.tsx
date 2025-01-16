@@ -115,9 +115,9 @@ function AllPatients() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
+    <div className="md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <AdminNav />
-      <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center px-6 py-5 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-white h-fit min-h-[98vh] w-full md:w-[88vw] text-center md:px-6 py-5 text-white md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
         <AdminTopBar />
 
         {isLoading ? (
@@ -141,66 +141,70 @@ function AllPatients() {
               >
                 Clear Search
               </button>
-              <table className="min-w-full bg-[#007E85] border">
-                <thead>
-                  <tr>
-                    <th className="py-2 px-4 text-white border-b">
-                      First Name
-                    </th>
-                    <th className="py-2 px-4 text-white border-b">Last Name</th>
-                    <th className="py-2 px-4 text-white border-b">Email</th>
-                    <th className="py-2 px-4 text-white border-b">Phone</th>
-                    <th className="py-2 px-4 text-white border-b">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {patients.map((patient, index) => (
-                    <tr key={index}>
-                      <td className="py-2 px-4 text-white border-b">
-                        {patient.firstName}
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        {patient.lastName}
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        {patient.email}
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        {patient.phone}
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        <div>
-                          <button
-                            className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                            onClick={() => openModal(index)}
-                          >
-                            Edit
-                          </button>
-                          {patient.isBlocked ? (
-                            <button
-                              className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
-                              onClick={() =>
-                                handleUpdateStatus(patient._id, false)
-                              }
-                            >
-                              Unblock
-                            </button>
-                          ) : (
-                            <button
-                              className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                              onClick={() =>
-                                handleUpdateStatus(patient._id, true)
-                              }
-                            >
-                              Block
-                            </button>
-                          )}
-                        </div>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-[#007E85] border border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="py-2 px-4 text-white border-b">
+                        First Name
+                      </th>
+                      <th className="py-2 px-4 text-white border-b">
+                        Last Name
+                      </th>
+                      <th className="py-2 px-4 text-white border-b">Email</th>
+                      <th className="py-2 px-4 text-white border-b">Phone</th>
+                      <th className="py-2 px-4 text-white border-b">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {patients.map((patient, index) => (
+                      <tr key={index}>
+                        <td className="py-2 px-4 text-white border-b">
+                          {patient.firstName}
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          {patient.lastName}
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          {patient.email}
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          {patient.phone}
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          <div>
+                            <button
+                              className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
+                              onClick={() => openModal(index)}
+                            >
+                              Edit
+                            </button>
+                            {patient.isBlocked ? (
+                              <button
+                                className="bg-red-500 w-18 rounded-xl p-1 border-[1px]"
+                                onClick={() =>
+                                  handleUpdateStatus(patient._id, false)
+                                }
+                              >
+                                Unblock
+                              </button>
+                            ) : (
+                              <button
+                                className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                                onClick={() =>
+                                  handleUpdateStatus(patient._id, true)
+                                }
+                              >
+                                Block
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <div className="flex justify-center mt-4">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (

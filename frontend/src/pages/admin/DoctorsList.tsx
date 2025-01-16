@@ -109,93 +109,97 @@ function DoctorsList() {
 
   return (
     <div>
-      <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
+      <div className="md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
         <AdminNav />
-        <div className="bg-white h-fit min-h-[98vh] w-[88vw] text-center px-6 py-5 text-white rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+        <div className="bg-white h-fit min-h-[98vh] w-full md:w-[88vw] text-center md:px-6 py-5 text-white md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
           <AdminTopBar />
           <div className="flex justify-center  items-center ">
             <div className="w-full max-w-6xl mt-5  shadow-lg rounded-lg bg-[#007E85]">
               <h2 className="text-2xl font-bold mb-4 text-white p-4 text-white border-b text-white">
                 Applications
               </h2>
-              <table className="min-w-full bg-[#007E85] border">
-                <thead>
-                  <tr>
-                    <th className="py-2 px-4 text-white border-b">Name</th>
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-[#007E85] border border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="py-2 px-4 text-white border-b">Name</th>
 
-                    <th className="py-2 px-4 text-white border-b">Email</th>
+                      <th className="py-2 px-4 text-white border-b">Email</th>
 
-                    <th className="py-2 px-4 text-white border-b">
-                      Specialization
-                    </th>
-                    <th className="py-2 px-4 text-white border-b">
-                      Experience
-                    </th>
-                    <th className="py-2 px-4 text-white border-b">Location</th>
-                    <th className="py-2 px-4 text-white border-b">License</th>
-                    <th className="py-2 px-4 text-white border-b">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentDoctorApplications?.map((doctor: Doctor) => (
-                    <tr key={doctor._id}>
-                      <td className="py-2 px-4 text-white border-b">
-                        {doctor.firstName} {doctor.lastName}
-                      </td>
-
-                      <td className="py-2 px-4 text-white border-b">
-                        {doctor.email}
-                      </td>
-
-                      <td className="py-2 px-4 text-white border-b">
-                        {doctor.specialization}
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        {doctor.experience} years
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        {doctor.location}
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        <img
-                          src={`https://befine.site/uploads/license/${doctor.licenseImage.path
-                            .split("\\")
-                            .pop()}`}
-                          alt={doctor.licenseImage.path.split("\\").pop()}
-                          className="h-16 w-16 object-cover rounded"
-                          onClick={() =>
-                            openModal(
-                              `https://befine.site/uploads/license/${doctor.licenseImage.path
-                                .split("\\")
-                                .pop()}`
-                            )
-                          }
-                        />
-                      </td>
-                      <td className="py-2 px-4 text-white border-b">
-                        <div>
-                          <button
-                            className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                            onClick={() => {
-                              handleApprove(doctor.email);
-                            }}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                            onClick={() => {
-                              handleReject(doctor.email);
-                            }}
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      </td>
+                      <th className="py-2 px-4 text-white border-b">
+                        Specialization
+                      </th>
+                      <th className="py-2 px-4 text-white border-b">
+                        Experience
+                      </th>
+                      <th className="py-2 px-4 text-white border-b">
+                        Location
+                      </th>
+                      <th className="py-2 px-4 text-white border-b">License</th>
+                      <th className="py-2 px-4 text-white border-b">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {currentDoctorApplications?.map((doctor: Doctor) => (
+                      <tr key={doctor._id}>
+                        <td className="py-2 px-4 text-white border-b">
+                          {doctor.firstName} {doctor.lastName}
+                        </td>
+
+                        <td className="py-2 px-4 text-white border-b">
+                          {doctor.email}
+                        </td>
+
+                        <td className="py-2 px-4 text-white border-b">
+                          {doctor.specialization}
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          {doctor.experience} years
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          {doctor.location}
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          <img
+                            src={`https://befine.site/uploads/license/${doctor.licenseImage.path
+                              .split("\\")
+                              .pop()}`}
+                            alt={doctor.licenseImage.path.split("\\").pop()}
+                            className="h-16 w-16 object-cover rounded"
+                            onClick={() =>
+                              openModal(
+                                `https://befine.site/uploads/license/${doctor.licenseImage.path
+                                  .split("\\")
+                                  .pop()}`
+                              )
+                            }
+                          />
+                        </td>
+                        <td className="py-2 px-4 text-white border-b">
+                          <div>
+                            <button
+                              className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
+                              onClick={() => {
+                                handleApprove(doctor.email);
+                              }}
+                            >
+                              Approve
+                            </button>
+                            <button
+                              className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                              onClick={() => {
+                                handleReject(doctor.email);
+                              }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <div className="flex justify-center mt-4 ">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (
