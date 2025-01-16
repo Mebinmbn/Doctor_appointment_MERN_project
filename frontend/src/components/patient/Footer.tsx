@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#007E85] text-white py-10">
       <div className="container mx-auto flex flex-wrap md:justify-evenly">
-        <div className="w-full md:w-auto mb-6 md:mb-0 mx-auto">
+        <div className="w-full md:w-auto mb-6 md:mb-0">
           <img src={logo} alt="" className="w-48" />
           <p>
             &copy; 2024 HelthCare
