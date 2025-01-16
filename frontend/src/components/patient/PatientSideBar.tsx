@@ -20,7 +20,7 @@ function PatientSideBar() {
   };
   return (
     <div className="flex content-center justify-center h-full md:h-screen w-full md:w-40 ml-1">
-      <div className="flex flex-row md:flex-col content-center md:items-start w-full md:w-32 md:h-full">
+      <div className="flex flex-row md:flex-col md:justify-center items-center md:items-start w-full md:w-32 md:h-full">
         <div className="h-9 border-[1px] w-full md:w-32 text-center p-1 m-2 md:m-4 rounded-lg bg-white text-[#007E85] font-bold text-lg">
           <NavLink to="/profile">
             <FaUser className="inline-block md:hidden" />
