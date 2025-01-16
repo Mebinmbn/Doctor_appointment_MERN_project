@@ -159,7 +159,7 @@ function Profile() {
     }
   };
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
+    <div className="  md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <PatientSideBar />
 
       <div className="bg-gray-200 h-fit min-h-screen w-[85vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
