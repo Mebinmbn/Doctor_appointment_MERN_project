@@ -174,7 +174,6 @@ function DoctorsList() {
                               )
                             }
                           />
-                          {doctor.licenseImage.path.split("\\").pop()}
                         </td>
                         <td className="py-2 px-4 text-white border-b">
                           <div>
