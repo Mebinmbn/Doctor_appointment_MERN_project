@@ -258,7 +258,7 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <Link
-              to="/about"
+              to="/"
               className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
             >
               About
@@ -266,20 +266,36 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <Link
-              to="/contact"
+              to="/"
               className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
             >
               Contact Us
             </Link>
           </li>
-          <li>
-            <Link
-              to="/login"
-              className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
-            >
-              Login
-            </Link>
-          </li>
+          <Link to="/profile">
+            <h1 className="text-[#007E85] font-bold">
+              {user?.name.toUpperCase()}
+            </h1>
+          </Link>
+          {user ? (
+            <li>
+              <button
+                className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </li>
+          ) : (
+            <li>
+              <Link
+                to="/login"
+                className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
+              >
+                Login
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
