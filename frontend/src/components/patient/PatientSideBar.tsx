@@ -20,45 +20,45 @@ function PatientSideBar() {
   };
   return (
     <div className="flex content-center justify-center h-screen w-40 ml-1">
-      <div className="h-fit my-auto w-32">
-        <div className="h-9 border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold text-2xl">
+      <div className="h-fit my-auto w-fit md:w-32">
+        <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-bold text-xl">
           <NavLink to="/profile">
             <FaUser className="inline-block md:hidden" />
             <span className="hidden md:inline-block">Profile</span>
           </NavLink>
         </div>
-        <div className="h-9 border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold text-2xl">
+        <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-bold text-xl">
           <NavLink to="/">
             <FaHome className="inline-block md:hidden" />
             <span className="hidden md:inline-block">Home</span>
           </NavLink>
         </div>
-        <div className="h-9 border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold text-2xl">
+        <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-bold text-xl">
           <NavLink to="/appointments">
             <FaCalendarAlt className="inline-block md:hidden" />
             <span className="hidden md:inline-block">Appointments</span>
           </NavLink>
         </div>
-        <div className="h-9 border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold text-2xl">
+        <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-bold text-xl">
           <NavLink to="/notifications">
             <FaBell className="inline-block md:hidden" />
             <span className="hidden md:inline-block">Notifications</span>
           </NavLink>
         </div>
-        <div className="h-9 border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold text-2xl">
+        <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-bold text-xl">
           <NavLink to="/wallet">
             <FaWallet className="inline-block md:hidden" />
             <span className="hidden md:inline-block">Wallet</span>
           </NavLink>
         </div>
-        <div className="h-9 border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold text-2xl">
+        <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-bold text-xl">
           <NavLink to="/chats">
             <FaComments className="inline-block md:hidden" />
             <span className="hidden md:inline-block">Messages</span>
           </NavLink>
         </div>
         <div
-          className="h-9 border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold text-2xl cursor-pointer"
+          className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-bold text-xl cursor-pointer"
           onClick={handleLogout}
         >
           <FaSignOutAlt className="inline-block md:hidden" />
