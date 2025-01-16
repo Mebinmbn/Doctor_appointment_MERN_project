@@ -3,8 +3,8 @@ import logo from "../../assets/icon/logo.png";
 const Footer = () => {
   return (
     <footer className="bg-[#007E85] text-white py-10">
-      <div className="container mx-auto flex flex-wrap md:justify-evenly justify-center">
-        <div className="w-full md:w-auto mb-6 md:mb-0">
+      <div className="container mx-auto flex flex-wrap md:justify-evenly">
+        <div className="w-full md:w-auto mb-6 md:mb-0 mx-auto">
           <img src={logo} alt="" className="w-48" />
           <p>
             &copy; 2024 HelthCare
