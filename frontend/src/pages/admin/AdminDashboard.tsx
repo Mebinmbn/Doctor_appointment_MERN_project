@@ -122,7 +122,7 @@ function AdminDashboard() {
           </div>
         </div>
         <div className="flex max-w-4xl mx-auto mt-10 flex-wrap gap-12">
-          <div className=" w-[65%] bg-white rounded-lg border-gray-100 drop-shadow-lg h-96 p-2">
+          <div className="w-full md:w-[65%] bg-white rounded-lg border-gray-100 drop-shadow-lg h-96 p-2">
             <canvas id="revenueChart"></canvas>
             <div className="h-10 mt-4">
               <button
@@ -151,7 +151,7 @@ function AdminDashboard() {
               </button>
             </div>
           </div>
-          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2  w-64 h-96 bg-white p-2 drop-shadow-lg">
+          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg">
             <ul>
               <strong className="ml-2 mb-2">New Patients</strong>
               {newPatients.length <= 0 && (
