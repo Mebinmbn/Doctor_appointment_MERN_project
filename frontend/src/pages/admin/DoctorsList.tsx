@@ -162,9 +162,9 @@ function DoctorsList() {
                         <td className="py-2 px-4 text-white border-b">
                           <img
                             src={`https://befine.site/uploads/license/${doctor.licenseImage.path
-                              .split("\\")
+                              .split("/")
                               .pop()}`}
-                            alt={doctor.licenseImage.path.split("\\").pop()}
+                            alt={doctor.licenseImage.path.split("/").pop()}
                             className="h-16 w-16 object-cover rounded"
                             onClick={() =>
                               openModal(
