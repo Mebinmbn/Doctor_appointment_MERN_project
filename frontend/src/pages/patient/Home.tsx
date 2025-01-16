@@ -34,7 +34,7 @@ function Home() {
           <img
             src={doctor_img}
             alt=""
-            className="w-full md:w-72 my-5 md:my-0"
+            className="w-full  my-5 hidden md:block"
           />
           <div className="w-full md:w-3/5 mx-auto text-left p-4 md:p-10 mt-10 md:mt-0 flex flex-col md:flex-row justify-evenly">
             <p className="text-xl font-bold">Would you like to work with us?</p>
