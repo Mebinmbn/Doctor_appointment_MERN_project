@@ -124,7 +124,7 @@ function DoctorSignin() {
           axiosError.response?.data.error === "Error: Email is not verified"
         ) {
           const response = await axios.post(
-            "http://localhost:8080/api/otp/send",
+            "https://befine.site/api/otp/send",
             { email: formData.email },
             {
               headers: { "Content-Type": "application/json" },
