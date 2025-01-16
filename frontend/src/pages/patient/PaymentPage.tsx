@@ -227,6 +227,44 @@ function PaymentPage() {
       <div className="payment_page_continer w-full md:w-[80vw] bg-gray-200 p-5 mt-5 h-screen mx-auto">
         <p className="font-extrabold text-3xl text-[#007E85] ">Payment</p>
         <div className="flex mt-5 w-full flex-wrap ">
+          <div className="payment_details p-3 border-2 h-fit w-full md:w-96 rounded-lg ml-auto mr-8 border-[#007E85]">
+            <p className="font-bold text-center mb-5">Payment Details</p>
+            <table>
+              <tr>
+                <td>Doctor</td>
+                <td>:</td>
+                <td>
+                  {doctor.firstName} {doctor.lastName}
+                </td>
+              </tr>
+              <tr>
+                <td>Consultation Date</td>
+                <td>:</td>
+                <td>{selectedDate.toString().slice(0, 10)}</td>
+              </tr>
+              <tr>
+                <td>Consultation Time</td>
+                <td>:</td>
+                <td>{selectedTime.time}</td>
+              </tr>
+              <tr>
+                <td>Consultation Fees</td>
+                <td>:</td>
+                <td>₹ {doctor.fees}</td>
+              </tr>
+              <tr>
+                <td>Booking charge</td>
+                <td>:</td>
+                <td>₹ {Math.ceil((doctor.fees * 10) / 100)}</td>
+              </tr>
+              <tr className="font-bold">
+                <td>Total Amount</td>
+                <td>:</td>
+                <td>₹ {totalAmount}</td>
+              </tr>
+            </table>
+          </div>
+
           <div className="w-full md:w-[60%] mr-5 border-2 p-3 rounded-lg border-[#007E85] text-right mb-5">
             <div className="flex gap-10 items-center mt-5 border-2 border-green-800 rounded-lg p-5">
               <div>
@@ -269,43 +307,6 @@ function PaymentPage() {
             >
               Pay ₹{totalAmount}
             </button>
-          </div>
-          <div className="payment_details p-3 border-2 h-fit w-full md:w-96 rounded-lg ml-auto mr-8 border-[#007E85]">
-            <p className="font-bold text-center mb-5">Payment Details</p>
-            <table>
-              <tr>
-                <td>Doctor</td>
-                <td>:</td>
-                <td>
-                  {doctor.firstName} {doctor.lastName}
-                </td>
-              </tr>
-              <tr>
-                <td>Consultation Date</td>
-                <td>:</td>
-                <td>{selectedDate.toString().slice(0, 10)}</td>
-              </tr>
-              <tr>
-                <td>Consultation Time</td>
-                <td>:</td>
-                <td>{selectedTime.time}</td>
-              </tr>
-              <tr>
-                <td>Consultation Fees</td>
-                <td>:</td>
-                <td>₹ {doctor.fees}</td>
-              </tr>
-              <tr>
-                <td>Booking charge</td>
-                <td>:</td>
-                <td>₹ {Math.ceil((doctor.fees * 10) / 100)}</td>
-              </tr>
-              <tr className="font-bold">
-                <td>Total Amount</td>
-                <td>:</td>
-                <td>₹ {totalAmount}</td>
-              </tr>
-            </table>
           </div>
         </div>
       </div>
