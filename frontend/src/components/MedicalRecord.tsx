@@ -99,16 +99,16 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
               <table className="w-full border-collapse border border-gray-300">
                 <thead>
                   <tr className="bg-gray-200">
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-2 py-2 text-left">
                       Medicine
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-2 py-2 text-left">
                       Dosage
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-2 py-2 text-left">
                       Frequency
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">
+                    <th className="border border-gray-300 px-2 py-2 text-left">
                       Period
                     </th>
                   </tr>
@@ -119,16 +119,16 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
                       key={index}
                       className="even:bg-gray-100 hover:bg-gray-200"
                     >
-                      <td className="border border-gray-300 px-4 py-2">
+                      <td className="border border-gray-300 px-2 py-2">
                         {prescription?.medicine}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2">
+                      <td className="border border-gray-300 px-2 py-2">
                         {prescription?.dosage}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2">
+                      <td className="border border-gray-300 px-2 py-2">
                         {prescription?.frequency}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2">
+                      <td className="border border-gray-300 px-2 py-2">
                         {prescription?.period}
                       </td>
                     </tr>
@@ -150,7 +150,7 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
       <div className="w-fit ml-auto">
         <button
           onClick={() => window.print()}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ml-auto"
+          className="mt-6 px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 ml-auto"
         >
           Print
         </button>
