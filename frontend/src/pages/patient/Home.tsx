@@ -23,21 +23,23 @@ function Home() {
             make us a leader in the healthcare industry
           </p>
         </div>
-        <div className="ml-auto ">
+        <div className="ml-auto hidden md:block">
           <img src={heroImage} alt="img" />
         </div>
       </div>
 
-      <div className="bg-[#007E85] text-white px-10 pt-5 text-center my-5">
-        <p className="text-3xl  font-extrabold">Are You A Doctor?</p>
-        <div className="flex justify-between text-center flex-wrap ">
-          <img src={doctor_img} alt="" className="w-72" />
-          <div className="w-3/5  mx-auto text-left p-10 mt-10 flex justify-evenly">
-            <p className="text-xl  font-bold">
-              Would you like to work with us?
-            </p>
+      <div className="bg-[#007E85] text-white px-4 pt-5 text-center my-5">
+        <p className="text-3xl font-extrabold">Are You A Doctor?</p>
+        <div className="flex flex-col md:flex-row justify-between text-center flex-wrap">
+          <img
+            src={doctor_img}
+            alt=""
+            className="w-full md:w-72 my-5 md:my-0"
+          />
+          <div className="w-full md:w-3/5 mx-auto text-left p-4 md:p-10 mt-10 md:mt-0 flex flex-col md:flex-row justify-evenly">
+            <p className="text-xl font-bold">Would you like to work with us?</p>
             <Link to="/doctor/signup" className="text-blue-500">
-              <button className="bg-blue-400 rounded-lg p-2  text-white w-[100%] h-10 font-bold hover:bg-green-700 transition duration-300">
+              <button className="bg-blue-400 rounded-lg p-2 text-white w-full md:w-[100%] h-10 font-bold hover:bg-green-700 transition duration-300">
                 Register
               </button>
             </Link>
