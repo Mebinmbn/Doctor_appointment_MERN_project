@@ -30,7 +30,7 @@ function Home() {
 
       <div className="bg-[#007E85] text-white px-10 pt-5 text-center my-5">
         <p className="text-3xl  font-extrabold">Are You A Doctor?</p>
-        <div className="flex justify-between text-center ">
+        <div className="flex justify-between text-center flex-wrap ">
           <img src={doctor_img} alt="" className="w-72" />
           <div className="w-3/5  mx-auto text-left p-10 mt-10 flex justify-evenly">
             <p className="text-xl  font-bold">
