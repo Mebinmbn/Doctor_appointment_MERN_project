@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useDispatch } from "react-redux";
 import { clearUser } from "../../app/featrue/userSlice";
-
+import { FaUserCircle } from "react-icons/fa";
 function PatientSideBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -14,7 +14,9 @@ function PatientSideBar() {
     <div className="flex content-center justify-center h-screen w-40   ml-1">
       <div className=" h-fit my-auto w-32">
         <div className="h-9  border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
-          <NavLink to="/profile">Profile</NavLink>
+          <NavLink to="/profile">
+            <FaUserCircle />
+          </NavLink>
         </div>
         <div className="h-9  border-[1px] w-32 text-center p-1 m-4 rounded-lg bg-white text-[#007E85] font-extrabold font-2xl">
           <NavLink to="/">Home</NavLink>
