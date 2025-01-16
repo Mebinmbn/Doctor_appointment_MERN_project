@@ -265,7 +265,7 @@ function PaymentPage() {
             </table>
           </div>
 
-          <div className="w-full md:w-[60%] mr-5 border-2 p-3 rounded-lg border-[#007E85] text-right mb-5">
+          <div className="w-full md:w-[60%] md:mr-5 border-2 p-3 rounded-lg border-[#007E85] text-right mb-5">
             <div className="flex gap-10 items-center mt-5 border-2 border-green-800 rounded-lg p-5">
               <div>
                 <input
