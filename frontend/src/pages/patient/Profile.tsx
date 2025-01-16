@@ -303,7 +303,7 @@ const InputField = ({
     <input
       type="text"
       name={name}
-      className="border-[1px] border-[#007E85] rounded-lg h-10 w-[19vw]  mt-1 p-2 font-light focus:outline-none"
+      className="border-[1px] border-[#007E85] rounded-lg h-10 w-full md:w-[19vw]  mt-1 p-2 font-light focus:outline-none"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
@@ -329,7 +329,7 @@ const PassField = ({
     <input
       type="password"
       name={name}
-      className="border-[1px] border-[#007E85] rounded-lg h-10 w-[19vw]  p-2 font-light focus:outline-none"
+      className="border-[1px] border-[#007E85] rounded-lg h-10 w-full md:w-[19vw]  p-2 font-light focus:outline-none"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
