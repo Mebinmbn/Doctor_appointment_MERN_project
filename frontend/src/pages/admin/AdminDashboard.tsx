@@ -106,23 +106,23 @@ function AdminDashboard() {
       <div className="bg-gray-200 h-fit min-h-[98vh] w-full md:w-[88vw] text-center p-4 md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
         <AdminTopBar />
         <div className="counts flex justify-between max-w-4xl flex-wrap mx-auto gap-12">
-          <div className="w-64 h-48 text-white bg-gradient-to-t from-green-300 rounded-lg to-[#007E85] drop-shadow-xl py-10">
+          <div className="w-56 md:w-64 h-40 md:h-48 text-white bg-gradient-to-t from-green-300 rounded-lg to-[#007E85] drop-shadow-xl py-5 md:py-10">
             <strong className="text-2xl">All Appointments</strong>
             <p className="font-bold text-5xl mt-5">
               {totalCount.appointmentCount}
             </p>
           </div>
-          <div className="w-64 h-48 text-white bg-gradient-to-t from-green-300 rounded-lg to-[#007E85] drop-shadow-xl py-10">
+          <div className="w-56 md:w-64 h-40 md:h-48 text-white bg-gradient-to-t from-green-300 rounded-lg to-[#007E85] drop-shadow-xl py-5 md:py-10">
             <strong className="text-2xl">All Doctors</strong>
             <p className="font-bold text-5xl mt-5">{totalCount.doctorCount}</p>
           </div>
-          <div className="w-64 h-48 text-white bg-gradient-to-t from-green-300 rounded-lg to-[#007E85] drop-shadow-xl py-10">
+          <div className="w-56 md:w-64 h-40 md:h-48 text-white bg-gradient-to-t from-green-300 rounded-lg to-[#007E85] drop-shadow-xl py-5 md:py-10">
             <strong className="text-2xl">All Patients</strong>
             <p className="font-bold text-5xl mt-5">{totalCount.patientCount}</p>
           </div>
         </div>
         <div className="flex max-w-4xl mx-auto mt-10 flex-wrap gap-12">
-          <div className="w-full md:w-[65%] bg-white rounded-lg border-gray-100 drop-shadow-lg h-96 p-2">
+          <div className="w-full md:w-[65%] bg-white rounded-lg border-gray-100 drop-shadow-lg h-fit md:h-96 p-2">
             <canvas id="revenueChart"></canvas>
             <div className="h-10 mt-4">
               <button
