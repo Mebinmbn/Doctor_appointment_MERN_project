@@ -148,11 +148,11 @@ function PickDateTime() {
     <div>
       <Navbar />
       <div className="border-2 h-fit w-9/12 mx-auto border-[#007E85] rounded-lg my-10">
-        <div className="border-b-2 h-60 w-full p-5 mx-auto  border-[#007E85] flex gap-4 flex-wrap ">
+        <div className="border-b-2 h-60 w-full p-5 mx-auto  border-[#007E85] flex gap-4  ">
           <img
             src={doctor_img}
             alt=""
-            className="border-1 rounded-full w-48 h-48"
+            className="border-1 rounded-full w-48 h-48 hidden md:block"
           />
           <div className=" h-auto w-full mt-5">
             <p className="text-xl font-extrabold text-[#007E85]">
@@ -175,7 +175,7 @@ function PickDateTime() {
               {dates.map((date, index) => (
                 <div
                   key={index}
-                  className={`date w-24 md:w-32 text-center font-extrabold px-4 md:px-2 py-2 border-4 text-[#6EAB36] border-[#6EAB36] m-2 cursor-pointer rounded-lg ${
+                  className={`date w-32 text-center font-extrabold px-4 py-2 border-4 text-[#6EAB36] border-[#6EAB36] m-2 cursor-pointer rounded-lg ${
                     selectedDate === date ? "bg-[#6EAB36] text-white" : ""
                   }`}
                   onClick={() => handleDateClick(date)}
