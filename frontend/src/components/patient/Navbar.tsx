@@ -272,11 +272,13 @@ const Navbar: React.FC = () => {
               Contact Us
             </Link>
           </li>
-          <Link to="/profile">
-            <h1 className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">
-              My profile
-            </h1>
-          </Link>
+          {user && (
+            <Link to="/profile">
+              <h1 className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">
+                My profile
+              </h1>
+            </Link>
+          )}
           {user ? (
             <li>
               <button
