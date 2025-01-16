@@ -162,7 +162,7 @@ function Profile() {
     <div className="  md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <PatientSideBar />
 
-      <div className="bg-gray-200 h-fit min-h-screen w-[85vw] text-center p-4 rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
+      <div className="bg-gray-200 h-fit min-h-screen md:w-[85vw] text-center p-4 md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto me-2">
         <PatientTopBar />
         <div className="mt-10 mx-auto w-fit h-fit p-4 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
