@@ -47,7 +47,7 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto my-10 p-10 bg-white shadow-lg rounded-lg border border-gray-200">
+    <div className="max-w-4xl mx-auto my-10 p-3 md:p-10 bg-white shadow-lg rounded-lg border border-gray-200">
       <div className="print-area">
         {medicalRecord && (
           <>
