@@ -253,7 +253,7 @@ function PatientDetails() {
   return (
     <div className="bg-[#007E85] h-screen">
       <Navbar />
-      <div className="bg-white  mx-auto w-10/12  p-6 rounded-lg mt-5 shadow-lg">
+      <div className="bg-white  mx-auto w-10/12 md:w-fit p-6 rounded-lg mt-5 shadow-lg">
         <h2 className="text-2xl font-bold mb-4">Patient Details</h2>
         <div className="flex  justify-center  bg-gray-200 mb-4">
           <form
