@@ -108,7 +108,7 @@ const Chats: React.FC = () => {
   };
 
   return (
-    <div className="md:flex h-screen bg-[#007E85]">
+    <div className="md:flex bg-[#007E85]">
       <PatientSideBar />
 
       <div className="w-1/3 ml-5 bg-white shadow-md">
