@@ -108,7 +108,7 @@ const DoctorChats: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#007E85]">
+    <div className="md:flex h-screen bg-[#007E85]">
       <DoctorNav />
 
       <div className="w-1/3 ml-5 bg-white shadow-md">
