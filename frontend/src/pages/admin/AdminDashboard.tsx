@@ -153,7 +153,9 @@ function AdminDashboard() {
           </div>
           <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg overflow-y-auto overflow-x-hidden hide-scrollbar">
             <ul>
-              <strong className="ml-2 mb-2">New Patients</strong>
+              <strong className="ml-2 mb-2 fixed top-0 left-0 right-0">
+                New Patients
+              </strong>
               {newPatients.length <= 0 && (
                 <p>No new registrations for this week</p>
               )}
