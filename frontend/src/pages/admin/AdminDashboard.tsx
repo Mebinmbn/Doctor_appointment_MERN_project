@@ -47,7 +47,6 @@ function AdminDashboard() {
       setTotalCount(totalCount);
       setNewPatients(newPatients);
       setRevenueData(revenueData);
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -55,6 +54,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     fetchData();
+    if (admin) setIsLoading(false);
   }, [period]);
 
   useEffect(() => {
