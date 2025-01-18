@@ -147,10 +147,10 @@ const Chats: React.FC = () => {
         </ul>
       </div>
 
-      <div className="flex-1 flex flex-col bg-white shadow-md">
+      <div className="flex-1 flex flex-col bg-white shadow-md min-h-screen">
         {selectedRoom ? (
           <>
-            <div className="p-4 border-b bg-gray-50 flex justify-between items-center min-h-screen">
+            <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
               <h2 className="text-xl font-semibold">
                 Chat with {selectedRoom.latestMessage.sender}
               </h2>
