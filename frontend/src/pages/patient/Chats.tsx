@@ -150,7 +150,7 @@ const Chats: React.FC = () => {
       <div className="flex-1 flex flex-col bg-white shadow-md">
         {selectedRoom ? (
           <>
-            <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+            <div className="p-4 border-b bg-gray-50 flex justify-between items-center min-h-screen">
               <h2 className="text-xl font-semibold">
                 Chat with {selectedRoom.latestMessage.sender}
               </h2>
