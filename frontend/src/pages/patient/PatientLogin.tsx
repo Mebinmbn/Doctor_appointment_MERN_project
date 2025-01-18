@@ -69,7 +69,7 @@ function PatientLogin() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
   const phoneRegex = /^[6-9]\d{9}$/;
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&]{8,}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
   // Handle input changes
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
