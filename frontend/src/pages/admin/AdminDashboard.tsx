@@ -151,7 +151,7 @@ function AdminDashboard() {
               </button>
             </div>
           </div>
-          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg overflow-y-auto overflow-x-hidden">
+          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg overflow-y-auto overflow-x-hidden hide-scrollbar">
             <ul>
               <strong className="ml-2 mb-2">New Patients</strong>
               {newPatients.length <= 0 && (
@@ -160,7 +160,7 @@ function AdminDashboard() {
               {newPatients.map((patient, index) => (
                 <li
                   key={index}
-                  className="border-b-2 p-2 border-gray-100 mt-1 drop-shadow-sm flex"
+                  className="border-b-2 p-2 border-gray-100 mt-1 drop-shadow-sm flex overflow-hidden"
                 >
                   <div className="w-7 h-7 bg-pink-300 rounded-full flex items-center justify-center text-white font-bold">
                     {patient.firstName[0].toUpperCase()}
