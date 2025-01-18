@@ -15,7 +15,7 @@ function ForgotPassword() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setEmail(userEmail);
-    setIsLoading(true);
+
     setUserType("forgotPassword");
     try {
       const response = await axios.post(
