@@ -162,7 +162,7 @@ function AdminDashboard() {
                   key={index}
                   className="border-b-2 p-2 border-gray-100 mt-1 drop-shadow-sm flex overflow-hidden"
                 >
-                  <div className="w-7 h-7 bg-pink-300 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-7 h-7 min-w-7 min-h-7 bg-pink-300 rounded-full flex items-center justify-center text-white font-bold">
                     {patient.firstName[0].toUpperCase()}
                   </div>
                   <div className="ml-2">
