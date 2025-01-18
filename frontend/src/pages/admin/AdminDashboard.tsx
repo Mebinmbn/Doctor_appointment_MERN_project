@@ -151,7 +151,7 @@ function AdminDashboard() {
               </button>
             </div>
           </div>
-          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg">
+          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg overflow-y-auto">
             <ul>
               <strong className="ml-2 mb-2">New Patients</strong>
               {newPatients.length <= 0 && (
