@@ -151,9 +151,9 @@ function AdminDashboard() {
               </button>
             </div>
           </div>
-          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg overflow-y-auto overflow-x-hidden hide-scrollbar">
+          <div className="border-2 border-gray-100 text-left rounded-lg max-w-xl ml-2 w-full md:w-64 h-96 bg-white p-2 drop-shadow-lg overflow-y-auto overflow-x-hidden hide-scrollbar relative">
             <ul>
-              <div className="fixed top-0 left-0 right-0 border-b-2 p-2 border-gray-100 mt-1 drop-shadow-sm">
+              <div className="fixed top-0 left-0 right-0 border-b-2 p-2 border-gray-100 mt-1 drop-shadow-sm z-10">
                 <strong className="ml-2 mb-2 ">New Patients</strong>
               </div>
 
