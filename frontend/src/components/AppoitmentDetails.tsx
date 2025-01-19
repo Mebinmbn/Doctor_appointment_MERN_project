@@ -136,7 +136,7 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
                 className="p-2 h-10 bg-[#007E85] rounded-lg text-white"
                 onClick={handleOpenChat}
               >
-                Chat with doctor
+                Start chatting
               </button>
               <button
                 className="p-2 h-10 bg-[#007E85] rounded-lg text-white"
