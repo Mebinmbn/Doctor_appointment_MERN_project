@@ -77,8 +77,8 @@ const MedicalForm = () => {
   const isValid = () => {
     if (!symptoms.length || symptoms.includes("")) return false;
     if (!diagnosis.length || diagnosis.includes("")) return false;
-    if (!tests.length || tests.includes("")) return false;
-    if (prescriptions.some((p) => Object.values(p).includes(""))) return false;
+    // if (!tests.length || tests.includes("")) return false;
+    // if (prescriptions.some((p) => Object.values(p).includes(""))) return false;
     return true;
   };
 
