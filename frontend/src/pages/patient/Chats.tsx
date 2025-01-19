@@ -111,7 +111,7 @@ const Chats: React.FC = () => {
     <div className="md:flex bg-[#007E85]">
       <PatientSideBar />
 
-      <div className="w-full md:w-1/3 md:ml-5 bg-white shadow-md h-screen min-h-screen">
+      <div className="w-full md:w-1/3 md:ml-5 bg-white shadow-md h-screen min-h-screen overflow-auto">
         <h1 className="text-2xl font-bold p-4 border-b">Doctor Chats</h1>
         <ul>
           {chatRooms.length === 0 ? (
