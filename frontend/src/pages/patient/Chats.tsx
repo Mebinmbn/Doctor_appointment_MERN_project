@@ -166,7 +166,7 @@ const Chats: React.FC = () => {
       <div
         className={`${
           selectedRoom ? "hidden" : "block"
-        } w-full md:w-[90%] bg-white shadow-md h-screen overflow-auto p-5`}
+        } w-full md:w-[80%] bg-white shadow-md h-screen overflow-auto p-5`}
       >
         <h1 className="text-2xl font-bold p-4 border-b">Doctor Chats</h1>
         <ul>
