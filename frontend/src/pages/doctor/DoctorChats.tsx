@@ -161,7 +161,7 @@ const Chats: React.FC = () => {
     ));
 
   return (
-    <div className="md:flex bg-[#007E85] justify-between gap-5">
+    <div className="md:flex bg-[#007E85] justify-between gap-5 ml-auto">
       <DoctorNav />
       <div
         className={`${
