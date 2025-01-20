@@ -12,11 +12,19 @@ const getChat = async (id: string) => {
 const getRooms = async (id: string) => {
   try {
     const rooms = await ChatModel.aggregate([
-      { $match: { recipientId: id } },
+      {
+        $match: {
+          $or: [{ recipientId: id }, { senderId: id }],
+        },
+      },
       { $sort: { createdAt: -1 } },
       {
         $group: {
-          _id: "$roomId",
+          _id: {
+            senderId: {
+              $cond: [{ $eq: ["$senderId", id] }, "$recipientId", "$senderId"],
+            },
+          },
           latestMessage: { $first: "$$ROOT" },
         },
       },
