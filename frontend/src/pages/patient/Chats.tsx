@@ -50,7 +50,7 @@ const Chats: React.FC = () => {
 
   useEffect(() => {
     fetchChatRooms();
-  }, [user?.id, messages, chatRooms, selectedRoom]);
+  }, [user?.id, messages]);
 
   useEffect(() => {
     if (selectedRoom?.latestMessage.roomId) {
