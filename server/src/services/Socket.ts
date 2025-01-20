@@ -1,6 +1,8 @@
 import { Server } from "socket.io";
 import { Application } from "express";
 import ChatModel from "../models/chatModel";
+import PatientModel from "../models/patientModel";
+import DoctorModel from "../models/doctorModel";
 
 interface SignalData {
   type: string;
@@ -66,9 +68,14 @@ export const setupSocketIO = (server: any, app: Application) => {
         timeStamp,
       };
       console.log(message);
+      let receiver;
+      receiver = await PatientModel.findOne({ _id: recipientId });
+      receiver = await DoctorModel.findOne({ _id: recipientId });
+      console.log("receiver", receiver);
       const newMessage = {
         roomId: room,
         sender,
+        receiver: receiver?.firstName,
         senderId,
         recipientId,
         text,
