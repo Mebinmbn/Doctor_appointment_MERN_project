@@ -166,7 +166,7 @@ const Chats: React.FC = () => {
       <div
         className={`${
           selectedRoom ? "hidden" : "block"
-        } w-full md:w-[80%] bg-white shadow-md h-screen overflow-auto p-5`}
+        } w-full  bg-white shadow-md h-screen overflow-auto p-5`}
       >
         <h1 className="text-2xl font-bold p-4 border-b">Doctor Chats</h1>
         <ul>
@@ -178,7 +178,7 @@ const Chats: React.FC = () => {
         </ul>
       </div>
       <div className="flex-1 flex flex-col bg-white shadow-md h-screen">
-        {selectedRoom ? (
+        {selectedRoom && (
           <>
             <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
               <h2 className="text-xl font-semibold">
@@ -188,7 +188,7 @@ const Chats: React.FC = () => {
                   : selectedRoom.latestMessage.sender}
               </h2>
               <button
-                className="text-red-500"
+                className="text-gray-500"
                 onClick={() => setSelectedRoom(null)}
               >
                 X
@@ -218,8 +218,6 @@ const Chats: React.FC = () => {
               </button>
             </div>
           </>
-        ) : (
-          <></>
         )}
       </div>
     </div>
