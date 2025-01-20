@@ -219,10 +219,7 @@ const Chats: React.FC = () => {
             </div>
           </>
         ) : (
-          // <div className="flex items-center justify-center flex-1">
-          //   <p>Select a chat to start messaging</p>
-          // </div>
-          ""
+          <></>
         )}
       </div>
     </div>
