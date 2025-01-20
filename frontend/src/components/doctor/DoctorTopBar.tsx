@@ -61,7 +61,7 @@ function DoctorTopBar() {
         socket.off("chatNotification");
       };
     }
-  }, [socket, openChat]);
+  }, [socket, openChat, doctor?.name, doctor?.id]);
 
   const fetchNotifications = async () => {
     try {

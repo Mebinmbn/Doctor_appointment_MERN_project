@@ -15,6 +15,7 @@ import {
   signInPatient,
   signUpPatient,
   storePatientDetails,
+  verifyCurrentPassword,
   verifyPayment,
 } from "../usecases/patientUseCases";
 
@@ -75,6 +76,24 @@ const reset = async (req: Request, res: Response) => {
     }
   } catch (error) {
     res.status(400).json({ success: false, error });
+  }
+};
+
+const verfiyPassword = async (req: Request, res: Response) => {
+  try {
+    const { currentPassword, email } = req.body;
+    console.log(currentPassword, email);
+    const isPasswordValid = await verifyCurrentPassword(currentPassword, email);
+    if (isPasswordValid) {
+      res.status(200).json({ success: true, message: "Password verified" });
+    } else {
+      res
+        .status(400)
+        .json({ success: false, message: "Incorrect current password" });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
   }
 };
 
@@ -343,6 +362,7 @@ export default {
   signIn,
   doctors,
   reset,
+  verfiyPassword,
   timeSlots,
   patient,
   patientData,

@@ -13,6 +13,13 @@ router.post("/google", googleSignInController);
 
 router.post("/reset", patientController.reset);
 
+router.post(
+  "/verifyPassword",
+  authMiddleware,
+  roleMiddleware("user"),
+  patientController.verfiyPassword
+);
+
 router.get(
   "/doctors",
   authMiddleware,

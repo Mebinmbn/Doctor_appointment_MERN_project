@@ -26,6 +26,7 @@ interface FormErrors {
   phone?: string;
   gender?: string;
   dob?: string;
+  currentpass?: string;
   password?: string;
 }
 
@@ -40,6 +41,7 @@ interface AxiosError {
 function Profile() {
   const [patient, setPatient] = useState<User | null>(null);
   const [formData, setFormData] = useState<FormValues>({});
+  const [currentPassword, setCurrentPassword] = useState("");
   const user = useSelector((state: RootState) => state.user.user);
   const navigate = useNavigate();
   useEffect(() => {
@@ -86,6 +88,29 @@ function Profile() {
       setFormData(initialValues);
     }
   }, [patient]);
+
+  const verifyCurrentPassword = async () => {
+    try {
+      const response = await api.post(
+        "/patients/verifyPassword",
+        {
+          currentPassword,
+          email: patient?.email,
+        },
+        {
+          headers: { "User-Type": "patient" },
+        }
+      );
+      if (response.data.success) {
+        console.log(response.data.success);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
@@ -130,7 +155,16 @@ function Profile() {
     } else if (!dobRegex.test(values.dob)) {
       errors.dob = "Not a valid dob";
     }
+
+    if (currentPassword) {
+      if (!values.password) {
+        errors.password = "Enter the new password";
+      }
+    }
     if (values.password) {
+      if (!currentPassword) {
+        errors.currentpass = "Enter current password";
+      }
       if (!passwordRegex.test(values.password)) {
         errors.password =
           "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.";
@@ -142,6 +176,18 @@ function Profile() {
     e.preventDefault();
     const errors = validate(formData);
     setFormErrors(errors);
+
+    if (currentPassword) {
+      const isValidPassword = await verifyCurrentPassword();
+      if (!isValidPassword) {
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          currentpass: "Incorrect current password.",
+        }));
+        return;
+      }
+    }
+
     if (Object.keys(errors).length === 0) {
       try {
         console.log(formData);
@@ -150,6 +196,8 @@ function Profile() {
         });
         if (response.data.success) {
           toast.success("Patient's details updated successfully");
+          setCurrentPassword("");
+          formData.password = "";
         }
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -158,6 +206,10 @@ function Profile() {
       }
     }
   };
+
+  useEffect(() => {
+    setCurrentPassword("");
+  }, []);
   return (
     <div className="  md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
       <PatientSideBar />
@@ -257,19 +309,34 @@ function Profile() {
                     </p>
                   )}
                 </div>
-                <div className="form-group">
-                  <PassField
-                    name="password"
-                    value={formData.password || ""}
-                    onChange={handleChange}
-                    placeholder="Password"
-                  />
-                  {formErrors.password && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {formErrors.password}
-                    </p>
-                  )}
-                </div>
+              </div>
+              <div className="border-b border-2 w-full border-gray-100 mt-5 b-2"></div>
+              <p className="mb-2">Change Password</p>
+              <div className="my-2">
+                <PassField
+                  name="currentPassword"
+                  value={currentPassword || ""}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Current Password"
+                />
+                {formErrors.currentpass && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {formErrors.currentpass}
+                  </p>
+                )}
+              </div>
+              <div className="form-group w-full">
+                <PassField
+                  name="password"
+                  value={formData.password || ""}
+                  onChange={handleChange}
+                  placeholder="New Password"
+                />
+                {formErrors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {formErrors.password}
+                  </p>
+                )}
               </div>
 
               <div className="mt-6 flex justify-center">

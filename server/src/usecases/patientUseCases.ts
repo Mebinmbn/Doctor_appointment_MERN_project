@@ -61,6 +61,28 @@ export const ResetPassword = async (password: string, email: string) => {
   }
 };
 
+export const verifyCurrentPassword = async (
+  currentPassword: string,
+  email: string
+) => {
+  try {
+    const patient = await patientRepository.findPatientByEmail(email);
+    if (!patient) {
+      throw new Error("User not found");
+    }
+    const isPasswordValid = await comparePassword(
+      currentPassword,
+      patient?.password
+    );
+    console.log("About password verification", isPasswordValid, email);
+    if (isPasswordValid) {
+      return true;
+    }
+  } catch (error) {
+    throw new Error("Error in password verification");
+  }
+};
+
 export const getDoctors = async (page: number, limit: number, query: {}) => {
   try {
     return await patientRepository.findAllDoctors(page, limit, query);
