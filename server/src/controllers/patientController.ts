@@ -44,7 +44,7 @@ const signIn = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: false,
+      sameSite: "none",
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
     res.status(200).json({
