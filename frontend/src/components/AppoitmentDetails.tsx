@@ -29,12 +29,12 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
   if (userType === "doctor") {
     userName = doctor?.name || "Doctor";
     recipientId = appointment?.userId || "";
-    recipientName = "Patient";
+    recipientName = appointment?.patientId.firstName || "Patient";
     senderId = appointment?.doctorId._id;
   } else {
     userName = user?.name || "User";
     recipientId = appointment?.doctorId._id || "";
-    recipientName = doctor?.name || "Doctor";
+    recipientName = appointment?.doctorId.firstName || "";
     senderId = appointment?.userId;
   }
 
