@@ -9,6 +9,7 @@ interface ChatRoom {
   _id: string;
   latestMessage: {
     sender: string;
+    receiver: string;
     senderId: string;
     recipientId: string;
     text: string;
@@ -121,7 +122,7 @@ const Chats: React.FC = () => {
           <div>
             <h2 className="font-semibold text-lg">
               {room.latestMessage.sender === user?.name
-                ? "Doctor"
+                ? room.latestMessage.receiver
                 : room.latestMessage.sender}
             </h2>
             <p className="text-gray-600 text-sm truncate">
@@ -183,7 +184,7 @@ const Chats: React.FC = () => {
               <h2 className="text-xl font-semibold">
                 Chat with{" "}
                 {selectedRoom.latestMessage.sender === user?.name
-                  ? "Doctor"
+                  ? selectedRoom.latestMessage.receiver
                   : selectedRoom.latestMessage.sender}
               </h2>
               <button
