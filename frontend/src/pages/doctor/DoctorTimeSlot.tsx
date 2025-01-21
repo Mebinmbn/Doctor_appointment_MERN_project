@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { toast } from "react-toastify";
 import LeaveConfirmation from "../../components/doctor/LeaveConfirmation";
+import DoctorNav from "../../components/doctor/DoctorNav";
+import DoctorTopBar from "../../components/doctor/DoctorTopBar";
 
 const localizer = momentLocalizer(moment);
 
@@ -264,33 +266,39 @@ const DoctorCalendar = () => {
   };
 
   return (
-    <div style={{ height: "700px" }}>
-      <h2>Doctor's Calendar</h2>
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-        selectable
-        onSelectSlot={handleSelectSlot}
-        eventPropGetter={(event) => ({
-          className: event.title.includes("Pending")
-            ? "bg-yellow-500"
-            : "bg-green-500",
-          style: { color: "white" },
-        })}
-      />
-      <LeaveConfirmation
-        showModal={isLeaveModalOpen}
-        startDate={startDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        reason={reason}
-        setReason={setReason}
-        onClose={() => setIsLeaveModalOpen(false)}
-        onConfirm={applyLeave}
-      />
+    <div className="md:flex items-center justify-center min-h-screen bg-[#007E85] gap-5">
+      <DoctorNav />
+      <div className="bg-white h-fit min-h-[98vh] w-full md:w-[88vw] text-center md:p-4 md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
+        <DoctorTopBar />
+        <div style={{ height: "700px" }}>
+          <h2>Doctor's Calendar</h2>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 500 }}
+            selectable
+            onSelectSlot={handleSelectSlot}
+            eventPropGetter={(event) => ({
+              className: event.title.includes("Pending")
+                ? "bg-yellow-500"
+                : "bg-green-500",
+              style: { color: "white" },
+            })}
+          />
+          <LeaveConfirmation
+            showModal={isLeaveModalOpen}
+            startDate={startDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            reason={reason}
+            setReason={setReason}
+            onClose={() => setIsLeaveModalOpen(false)}
+            onConfirm={applyLeave}
+          />
+        </div>
+      </div>
     </div>
   );
 };

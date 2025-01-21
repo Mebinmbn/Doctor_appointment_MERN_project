@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { RRule, RRuleSet } from "rrule";
 import DoctorNav from "../../components/doctor/DoctorNav";
@@ -7,7 +7,7 @@ import api from "../../api/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { toast } from "react-toastify";
-import ConfirmationModal from "../../components/ConfirmationModal";
+// import ConfirmationModal from "../../components/ConfirmationModal";
 
 interface IFormInput {
   startDate: string;
@@ -66,40 +66,40 @@ const generateTimeSlots = (
 const TimeSlotForm: React.FC = () => {
   const { register, handleSubmit, reset } = useForm<IFormInput>();
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
-  const [date, setDate] = useState<string>("");
-  const [timeSlotsToRemove, setTimeSlotsToRemove] = useState<string[]>([]);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
-    () => () => {}
-  );
-  const handleRemoveTimeSlots = async () => {
-    showConfirmationModal(
-      "Do you want to remove the selected time slots?",
-      async () => {
-        try {
-          const response = await api.put(
-            `/doctor/timeSlots/${doctor?.id}/${date}`,
-            { timeSlotsToRemove },
-            { headers: { "User-Type": "doctor" } }
-          );
-          if (response.data.success) {
-            toast.success("Time slots removed successfully");
-          }
-        } catch (error) {
-          console.error("Error removing time slots:", error);
-          toast.error("Error in removing time slots");
-        }
-        setIsConfirmModalOpen(false);
-      }
-    );
-  };
+  // const [date, setDate] = useState<string>("");
+  // const [timeSlotsToRemove, setTimeSlotsToRemove] = useState<string[]>([]);
+  // const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  // const [message, setMessage] = useState("");
+  // const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
+  //   () => () => {}
+  // );
+  // const handleRemoveTimeSlots = async () => {
+  //   showConfirmationModal(
+  //     "Do you want to remove the selected time slots?",
+  //     async () => {
+  //       try {
+  //         const response = await api.put(
+  //           `/doctor/timeSlots/${doctor?.id}/${date}`,
+  //           { timeSlotsToRemove },
+  //           { headers: { "User-Type": "doctor" } }
+  //         );
+  //         if (response.data.success) {
+  //           toast.success("Time slots removed successfully");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error removing time slots:", error);
+  //         toast.error("Error in removing time slots");
+  //       }
+  //       setIsConfirmModalOpen(false);
+  //     }
+  //   );
+  // };
 
-  const showConfirmationModal = (message: string, onConfirm: () => void) => {
-    setMessage(message);
-    setIsConfirmModalOpen(true);
-    setConfirmationCallback(() => onConfirm);
-  };
+  // const showConfirmationModal = (message: string, onConfirm: () => void) => {
+  //   setMessage(message);
+  //   setIsConfirmModalOpen(true);
+  //   setConfirmationCallback(() => onConfirm);
+  // };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const startDate = new Date(data.startDate);
@@ -224,7 +224,7 @@ const TimeSlotForm: React.FC = () => {
               </button>
             </form>
           </div>
-          <div className="p-6 w-96 bg-gray-200 rounded-lg shadow-md max-w-lg mt-5">
+          {/* <div className="p-6 w-96 bg-gray-200 rounded-lg shadow-md max-w-lg mt-5">
             <h2 className="text-2xl font-bold mb-6 text-center">
               Remove Time Slots
             </h2>
@@ -258,10 +258,10 @@ const TimeSlotForm: React.FC = () => {
             >
               Remove Time Slots
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
-      <ConfirmationModal
+      {/* <ConfirmationModal
         showModal={isConfirmModalOpen}
         message={message}
         onClose={() => setIsConfirmModalOpen(false)}
@@ -269,7 +269,7 @@ const TimeSlotForm: React.FC = () => {
           if (confirmationCallback) confirmationCallback();
           setIsConfirmModalOpen(false);
         }}
-      />
+      /> */}
     </div>
   );
 };
