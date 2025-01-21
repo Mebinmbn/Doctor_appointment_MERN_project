@@ -56,7 +56,7 @@ const signin = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: true,
+      sameSite: "none",
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
