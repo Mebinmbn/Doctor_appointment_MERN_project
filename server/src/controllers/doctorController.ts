@@ -6,6 +6,7 @@ import {
   createMedicalRecord,
   getAppointments,
   getDashboardData,
+  getDoctorLeaves,
   getDoctorNotifications,
   getPayments,
   registerDoctor,
@@ -210,6 +211,23 @@ const leave = async (req: Request, res: Response) => {
   }
 };
 
+const getleaves = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const leaves = await getDoctorLeaves(id);
+    if (leaves) {
+      res.status(200).json({
+        success: true,
+        leaveApplications: leaves,
+        message: "Leaves feteched successfully",
+      });
+    }
+  } catch (error: any) {
+    const errorMessage = error.message || "An unexpected error occurred";
+    res.status(400).json({ success: false, error: errorMessage });
+  }
+};
+
 const medicalRecord = async (req: Request, res: Response) => {
   try {
     const { appointmentId, symptoms, diagnosis, tests, prescriptions, advice } =
@@ -286,6 +304,7 @@ export default {
   createTimeSlots,
   notifications,
   leave,
+  getleaves,
   medicalRecord,
   dashboard,
   payments,

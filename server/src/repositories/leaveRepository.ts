@@ -50,9 +50,20 @@ const updateLeaveStatus = async (id: string, status: string) => {
   }
 };
 
+const findDoctorLeaves = async (id: string) => {
+  try {
+    const leaves = await LeaveModel.find({ doctorId: id });
+    console.log("leaves in leav repo", leaves);
+    return leaves;
+  } catch (error) {
+    throw new Error("Error in fetching leaves");
+  }
+};
+
 export default {
   leaveApplication,
   checkExistingLeaveApplication,
   findAllRequests,
   updateLeaveStatus,
+  findDoctorLeaves,
 };

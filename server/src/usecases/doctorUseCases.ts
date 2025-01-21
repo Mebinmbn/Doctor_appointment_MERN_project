@@ -164,6 +164,14 @@ export const applyLeave = async (leaveData: ILeave, app: Application) => {
   }
 };
 
+export const getDoctorLeaves = async (id: string) => {
+  try {
+    return await leaveRepository.findDoctorLeaves(id);
+  } catch (error) {
+    throw new Error("Error in fetching leaves");
+  }
+};
+
 export const createMedicalRecord = async (
   medicalRecordData: IMedicalRecord,
   prescriptionData: any

@@ -64,6 +64,13 @@ router.post(
   doctorController.leave
 );
 
+router.get(
+  "/leaves/:id",
+  authMiddleware,
+  roleMiddleware("doctor"),
+  doctorController.getleaves
+);
+
 router.post(
   "/medicalRecord",
   authMiddleware,
