@@ -148,7 +148,7 @@ const TimeSlotForm: React.FC = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Error in time slot creation");
+      toast.error("Time slots already exist for one or more dates.");
     }
   };
 
