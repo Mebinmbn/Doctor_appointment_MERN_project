@@ -209,7 +209,7 @@ function App() {
               }
             />
             <Route
-              path="/doctor/timeSlot"
+              path="/doctor/timeSlots"
               element={
                 <ProtectedRoute role="doctor">
                   <DoctorTimeSlot />
