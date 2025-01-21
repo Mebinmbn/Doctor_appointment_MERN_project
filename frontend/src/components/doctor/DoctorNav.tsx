@@ -46,9 +46,9 @@ function DoctorNav() {
           </NavLink>
         </div>
         <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-2 md:m-4 rounded-lg bg-white text-[#007E85] font-bold text-lg">
-          <NavLink to="/doctor/leave">
+          <NavLink to="/doctor/timeSlots">
             <FaTachometerAlt className="inline-block md:hidden" />
-            <span className="hidden md:inline-block">Apply Leave</span>
+            <span className="hidden md:inline-block">Time Slots</span>
           </NavLink>
         </div>
         <div className="h-9 border-[1px] w-fit md:w-32 text-center p-1 m-2 md:m-4 rounded-lg bg-white text-[#007E85] font-bold text-lg">

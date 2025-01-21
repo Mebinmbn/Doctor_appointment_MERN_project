@@ -229,11 +229,17 @@ const DoctorCalendar = () => {
     const formattedEndDate = moment(endDate).toISOString();
 
     try {
-      const response = await api.post("doctor/leave/apply", {
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        reason,
-      });
+      const response = await api.post(
+        "doctor/leave/apply",
+        {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          reason,
+        },
+        {
+          headers: { "User-Type": "doctor" },
+        }
+      );
 
       toast.success(response.data.message);
 
