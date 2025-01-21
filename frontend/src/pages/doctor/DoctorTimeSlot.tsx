@@ -1,174 +1,292 @@
-import { useCallback, useEffect, useState } from "react";
-import DoctorNav from "../../components/doctor/DoctorNav";
-import { toast } from "react-toastify";
-import { TimeSlots } from "../../types/timeSlots";
-import { RootState } from "../../app/store";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import DoctorTopBar from "../../components/doctor/DoctorTopBar";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState, useCallback } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import api from "../../api/api";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+import { toast } from "react-toastify";
+import LeaveConfirmation from "../../components/doctor/LeaveConfirmation";
 
-interface Times {
-  time: string;
-  isBooked: boolean;
+const localizer = momentLocalizer(moment);
+
+interface TimeSlots {
+  date: string;
+  timeSlots: {
+    time: string;
+    isBooked: boolean;
+  }[];
 }
 
-function DoctorTimeSlot() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string[]>([]);
-  const [timeSlots, setTimeSlots] = useState<TimeSlots[]>([]);
-  const [dates, setDates] = useState<Date[]>([]);
-  const [times, setTimes] = useState<Times[]>([]);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const doctor = useSelector((state: RootState) => state.doctor.doctor);
+const DoctorCalendar = () => {
+  const [events, setEvents] = useState<
+    { title: string; start: Date; end: Date; allDay: boolean }[]
+  >([]);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [reason, setReason] = useState("");
 
-  useEffect(() => {
-    const toastId = "loginToContinue";
-    if (!doctor) {
-      navigate("/doctor/login");
-      if (!toast.isActive(toastId)) {
-        toast.warn("Login to continue", { toastId });
-      }
-    }
-  }, [doctor, navigate]);
+  const doctor = useSelector((state: RootState) => state.doctor.doctor);
+  const id = doctor?.id;
 
   const fetchDateAndTime = useCallback(async () => {
-    const id = doctor?.id;
     try {
       const response = await api.get(`/doctor/timeSlots/${id}`, {
         headers: {
           "User-Type": "doctor",
         },
       });
-      if (response.data.success) {
-        const fetchedDateTime = response.data.timeSlots;
-        setTimeSlots(fetchedDateTime);
-        const newDates: Date[] = fetchedDateTime.map((data: TimeSlots) => {
-          const date = new Date(data.date);
 
-          return date;
+      if (response.data.success) {
+        const fetchedTimeSlots: TimeSlots[] = response.data.timeSlots;
+        const calendarEvents: {
+          title: string;
+          start: Date;
+          end: Date;
+          allDay: boolean;
+        }[] = [];
+
+        const leaveResponse = await api.get(`/doctor/leaves/${id}`, {
+          headers: {
+            "User-Type": "doctor",
+          },
         });
-        setDates(newDates);
+
+        const leaveApplications = leaveResponse.data.leaveApplications;
+
+        const approvedLeaveDates = leaveApplications
+          .filter((leave: any) => leave.status === "Approved")
+          .map((leave: any) => ({
+            start: new Date(leave.startDate),
+            end: new Date(leave.endDate),
+          }));
+
+        fetchedTimeSlots.forEach((slot) => {
+          const allottedDate = new Date(slot.date);
+
+          const isLeaveApproved = approvedLeaveDates.some((leave: any) =>
+            moment(allottedDate).isBetween(leave.start, leave.end, "day", "[]")
+          );
+
+          if (!isLeaveApproved) {
+            calendarEvents.push({
+              title: "Allotted",
+              start: allottedDate,
+              end: allottedDate,
+              allDay: true,
+            });
+          }
+
+          slot.timeSlots.forEach((timeSlot) => {
+            if (timeSlot.isBooked) {
+              const formattedDate = moment(slot.date).format("YYYY-MM-DD");
+              const dateTimeString = `${formattedDate} ${timeSlot.time}`;
+              const start = moment(
+                dateTimeString,
+                "YYYY-MM-DD h:mm A"
+              ).toDate();
+
+              if (!isNaN(start.getTime())) {
+                const end = new Date(start.getTime() + 30 * 60 * 1000);
+                calendarEvents.push({
+                  title: "Booked",
+                  start,
+                  end,
+                  allDay: false,
+                });
+              }
+            }
+          });
+        });
+
+        leaveApplications.forEach((leave: any) => {
+          calendarEvents.push({
+            title: `Applied for Leave - ${leave.status}`,
+            start: new Date(leave.startDate),
+            end: new Date(leave.endDate),
+            allDay: true,
+          });
+        });
+
+        setEvents(calendarEvents);
       }
     } catch (error) {
-      console.error("Error fetching time slots:", error);
+      console.error("Error fetching time slots and leave applications:", error);
     }
-  }, [doctor]);
+  }, [id]);
 
   useEffect(() => {
-    if (doctor) {
-      fetchDateAndTime();
-    }
-  }, [doctor, fetchDateAndTime]);
+    fetchDateAndTime();
+  }, [fetchDateAndTime]);
 
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
-    setSelectedTime([]);
-    if (date) {
-      const dateData = timeSlots.find(
-        (data) => new Date(data.date).getTime() === date.getTime()
-      );
-      if (dateData) {
-        const availableTimes = dateData.timeSlots.filter(
-          (time) => !time.isBooked
-        );
-        setTimes(availableTimes);
-      }
-    }
-  };
+  useEffect(() => {
+    console.log(events);
+  }, [events]);
 
-  const handleNextStep = async () => {
-    if (!selectedDate || selectedTime.length === 0) {
-      setError("Date and Time are required");
+  const handleSelectSlot = (slotInfo: { start: Date; end: Date }) => {
+    const selectedStartDate = slotInfo.start;
+    const selectedEndDate = slotInfo.end;
+
+    const isAnyDayBooked = checkBookedSlots(selectedStartDate, selectedEndDate);
+
+    if (isAnyDayBooked) {
+      toast.error("You cannot apply for leave on days with booked slots.");
       return;
     }
-    try {
-      const response = await api.put(
-        "/doctor/TimeSlots",
-        { doctorId: doctor?.id, date: selectedDate, time: selectedTime },
-        {
-          headers: {
-            "User-content": "doctor",
-          },
-        }
+
+    setStartDate(selectedStartDate);
+    setEndDate(null);
+    setIsLeaveModalOpen(true);
+  };
+
+  const checkBookedSlots = (startDate: Date, endDate: Date) => {
+    const start = moment(startDate).startOf("day");
+    const end = moment(endDate).endOf("day");
+
+    for (let day = moment(start); day.isBefore(end); day.add(1, "days")) {
+      const date = day.format("YYYY-MM-DD");
+
+      const isBooked = events.some(
+        (event) =>
+          moment(event.start).format("YYYY-MM-DD") === date &&
+          event.title === "Booked"
       );
-      if (response.data.success) {
-        toast.success("Time Slots updated Sucessfully");
-        setSelectedTime([]);
-        setSelectedDate(null);
-        fetchDateAndTime();
+
+      if (isBooked) {
+        return true;
       }
+    }
+
+    return false;
+  };
+
+  const checkAlreadyAppliedLeave = (startDate: Date, endDate: Date) => {
+    const start = moment(startDate).startOf("day");
+    const end = moment(endDate).endOf("day");
+
+    console.log(
+      "Checking leave for dates:",
+      start.format(),
+      "to",
+      end.format()
+    );
+
+    for (
+      let day = moment(start);
+      day.isBefore(end) || day.isSame(end, "day");
+      day.add(1, "days")
+    ) {
+      const date = day.format("YYYY-MM-DD");
+      console.log("Checking date:", date);
+
+      const isLeaveAlreadyApplied = events.some((event) => {
+        console.log("Event Title:", event.title);
+
+        return (
+          moment(event.start).format("YYYY-MM-DD") === date &&
+          event.title.includes("Applied for Leave")
+        );
+      });
+
+      if (isLeaveAlreadyApplied) {
+        console.log("Leave already applied for date:", date);
+        return true;
+      }
+    }
+
+    console.log("No leave applied for the selected range");
+    return false;
+  };
+
+  const applyLeave = async () => {
+    if (!startDate || !endDate) {
+      toast.error("Please select both start and end dates.");
+      return;
+    }
+
+    if (endDate < startDate) {
+      toast.error("End date cannot be earlier than start date.");
+      return;
+    }
+
+    const isAnyDayBooked = checkBookedSlots(startDate, endDate);
+
+    if (isAnyDayBooked) {
+      toast.error("You cannot apply for leave on days with booked slots.");
+      return;
+    }
+
+    const isLeaveAlreadyApplied = checkAlreadyAppliedLeave(startDate, endDate);
+
+    if (isLeaveAlreadyApplied) {
+      toast.error("Leave has already been applied for the selected dates.");
+      return;
+    }
+
+    const formattedStartDate = moment(startDate).toISOString();
+    const formattedEndDate = moment(endDate).toISOString();
+
+    try {
+      const response = await api.post("doctor/leave/apply", {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        reason,
+      });
+
+      toast.success(response.data.message);
+
+      setEvents((prevEvents) => [
+        ...prevEvents,
+        {
+          title: "Applied for leave",
+          start: startDate,
+          end: endDate,
+          allDay: true,
+        },
+      ]);
+
+      setIsLeaveModalOpen(false);
+      setStartDate(null);
+      setEndDate(null);
+      setReason("");
     } catch (error) {
-      console.error("Error locking time slot:", error);
-      toast.error("An error occurred. Please try again.");
+      console.log(error);
+      toast.error("Failed to apply leave. Please try again.");
     }
   };
 
   return (
-    <div className="md:flex items-center justify-center min-h-screen bg-[#007E85]">
-      <DoctorNav />
-      <div className="bg-white h-fit min-h-[98vh] w-full md:w-[88vw] text-center p-2 md:rounded-l-[4rem] drop-shadow-xl border-[1px] border-[#007E85] ml-auto md:me-2">
-        <DoctorTopBar />
-        <div className="">
-          <form className="text-center">
-            <select
-              className="border-[2px] border-[#007E85] w-2/5 rounded-lg pt-1 pX-5"
-              onChange={(e) => handleDateChange(new Date(e.target.value))}
-            >
-              <option value="">Select Date</option>
-              {dates.map((date) => (
-                <option key={date.toString()} value={date.toISOString()}>
-                  {date.toString().slice(0, 10)}
-                </option>
-              ))}
-            </select>
-
-            <div className="border-[2px] border-[#007E85] w-2/5 h-fit mt-5 rounded-lg  mx-auto">
-              <p className="text-[#007E85] text-lg font-bold">
-                Select time to remove
-              </p>
-              <div className="flex px-10 gap-10">
-                <div>
-                  {times.map((time) => (
-                    <div key={time.time} className="w-fit">
-                      <input
-                        type="checkbox"
-                        value={time.time}
-                        className="m-2"
-                        onChange={(e) => {
-                          const { checked, value } = e.target;
-                          setSelectedTime((prev) =>
-                            checked
-                              ? [...prev, value]
-                              : prev.filter((t) => t !== value)
-                          );
-                        }}
-                      />
-                      <label>{time.time}</label>
-                    </div>
-                  ))}
-                </div>
-                <div className="ml-auto text-gray-500">
-                  {selectedTime?.map((sTime) => (
-                    <p>{sTime}</p>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {error && <div className="text-red-500 mt-2">{error}</div>}
-            <button
-              type="button"
-              className="mt-4 bg-[#007E85] text-white p-2 rounded"
-              onClick={handleNextStep}
-            >
-              Remove Time Slots
-            </button>
-          </form>
-        </div>
-      </div>
+    <div style={{ height: "700px" }}>
+      <h2>Doctor's Calendar</h2>
+      <Calendar
+        localizer={localizer}
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        style={{ height: 500 }}
+        selectable
+        onSelectSlot={handleSelectSlot}
+        eventPropGetter={(event) => ({
+          className: event.title.includes("Pending")
+            ? "bg-yellow-500"
+            : "bg-green-500",
+          style: { color: "white" },
+        })}
+      />
+      <LeaveConfirmation
+        showModal={isLeaveModalOpen}
+        startDate={startDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        reason={reason}
+        setReason={setReason}
+        onClose={() => setIsLeaveModalOpen(false)}
+        onConfirm={applyLeave}
+      />
     </div>
   );
-}
+};
 
-export default DoctorTimeSlot;
+export default DoctorCalendar;
