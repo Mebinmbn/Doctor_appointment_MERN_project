@@ -1,8 +1,11 @@
+import mongoose from "mongoose";
 import AdminModel, { IAdmin } from "../models/adminModel";
 import AppointmentModel from "../models/appointmentModel";
 import DoctorModel, { IDoctor } from "../models/doctorModel";
+import { ILeave } from "../models/leaveModel";
 import PatientModel, { IPatient } from "../models/patientModel";
 import PaymentModel from "../models/paymentModel";
+import TimeSlotsModel from "../models/timeSlotsModel";
 
 const findAdminByEmail = async (email: string): Promise<IAdmin | null> => {
   console.log("Find email by id");
@@ -260,7 +263,7 @@ const getDashboardData = async (id: string, period: string | undefined) => {
     throw new Error("Error in fetching dashboard data");
   }
 };
-
+// /////////////////////////////////////////////////////////
 const getPayments = async () => {
   try {
     return await PaymentModel.find()
@@ -271,6 +274,29 @@ const getPayments = async () => {
     throw new Error("Error in fetching payments");
   }
 };
+
+//////////////////////////////////////////////////////////////
+
+const deleteTimeSlots = async (leave: ILeave) => {
+  try {
+    const doctorId = leave.doctorId;
+    const start = new Date(leave.startDate);
+    const end = new Date(leave.endDate);
+
+    const result = await TimeSlotsModel.deleteMany({
+      doctor: doctorId,
+      date: {
+        $gte: start,
+        $lte: end,
+      },
+    });
+
+    return result;
+  } catch (error) {
+    throw new Error("Error in releasing timeSlots");
+  }
+};
+
 export default {
   findAdminByEmail,
   findUnapprovedDoctors,
@@ -286,4 +312,5 @@ export default {
   fetchAppointments,
   getDashboardData,
   getPayments,
+  deleteTimeSlots,
 };

@@ -21,7 +21,7 @@ const leaveApplication = async (leaveData: {}) => {
 };
 
 const findAllRequests = async (page: number, limit: number) => {
-  const requests = await LeaveModel.find()
+  const requests = await LeaveModel.find({ status: "Pending" })
     .skip((page - 1) * limit)
     .limit(limit)
     .populate("doctorId")

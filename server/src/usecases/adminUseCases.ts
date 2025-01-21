@@ -129,7 +129,12 @@ export const leaveApplications = async (page: number, limit: number) => {
 
 export const updateLeaveRequest = async (id: string, status: string) => {
   try {
-    return await leaveRepository.updateLeaveStatus(id, status);
+    const leave = await leaveRepository.updateLeaveStatus(id, status);
+    if (status === "Approved") {
+      const result = await adminRepository.deleteTimeSlots(leave);
+    }
+
+    return leave;
   } catch (error) {
     throw new Error("Error in updating  leave request");
   }
