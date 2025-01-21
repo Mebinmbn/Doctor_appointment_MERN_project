@@ -58,7 +58,10 @@ const Chats: React.FC = () => {
     const fetchMessages = async () => {
       try {
         const response = await api.get(
-          `/chats/${selectedRoom.latestMessage.roomId}`
+          `/chats/${selectedRoom.latestMessage.roomId}`,
+          {
+            headers: { "User-Type": "patient" },
+          }
         );
         setMessages(response.data.chat);
       } catch (error) {

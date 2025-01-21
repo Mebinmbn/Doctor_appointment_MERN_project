@@ -36,7 +36,7 @@ const Chats: React.FC = () => {
     const fetchChatRooms = async () => {
       try {
         const response = await api.get(`/chats/rooms/${user?.id}`, {
-          headers: { "User-Type": "patient" },
+          headers: { "User-Type": "doctor" },
         });
         const sortedRooms = response.data.rooms.sort(
           (a: ChatRoom, b: ChatRoom) =>
@@ -58,7 +58,10 @@ const Chats: React.FC = () => {
     const fetchMessages = async () => {
       try {
         const response = await api.get(
-          `/chats/${selectedRoom.latestMessage.roomId}`
+          `/chats/${selectedRoom.latestMessage.roomId}`,
+          {
+            headers: { "User-Type": "doctor" },
+          }
         );
         setMessages(response.data.chat);
       } catch (error) {
