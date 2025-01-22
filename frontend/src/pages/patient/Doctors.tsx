@@ -144,7 +144,7 @@ const Doctors = () => {
                   <option value="other">Other</option>
                 </select>
               </div>
-              <div className="form-group flex-1 lg:flex-none">
+              {/* <div className="form-group flex-1 lg:flex-none">
                 <select
                   id="experience"
                   name="experience"
@@ -158,7 +158,7 @@ const Doctors = () => {
                   <option value="15">15+ years</option>
                   <option value="20">20+ years</option>
                 </select>
-              </div>
+              </div> */}
               <button
                 onClick={clearFilter}
                 className="bg-white m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 hover:bg-gray-200 w-full lg:w-auto"
