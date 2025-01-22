@@ -18,7 +18,7 @@ function DoctorDashboard() {
     []
   );
   const [earnings, setEarnings] = useState(0);
-  let totalPayments = 0;
+
   useEffect(() => {
     const currentHour = new Date().getHours();
 
@@ -76,6 +76,7 @@ function DoctorDashboard() {
         headers: { "User-Type": "doctor" },
       });
       if (response.data.success) {
+        let totalPayments = 0;
         for (const payment of response.data.payments) {
           totalPayments += parseInt(payment.amount);
         }
