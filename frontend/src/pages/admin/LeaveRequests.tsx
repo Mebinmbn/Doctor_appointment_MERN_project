@@ -156,23 +156,25 @@ const LeaveRequests: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="flex justify-center mt-4">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-2 py-1 mb-1 ${
-                        currentPage === page
-                          ? "bg-blue-500 text-white rounded-full"
-                          : "text-black"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
-              </div>
+              {leaveRequests.length && (
+                <div className="flex justify-center mt-4">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-2 py-1 mb-1 ${
+                          currentPage === page
+                            ? "bg-blue-500 text-white rounded-full"
+                            : "text-black"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
