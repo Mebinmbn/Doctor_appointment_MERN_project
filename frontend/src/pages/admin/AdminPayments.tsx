@@ -23,6 +23,9 @@ const AdminPayments: React.FC = () => {
     direction: "asc" | "desc";
   } | null>(null);
 
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [totalCharge, setTotalCharge] = useState(0);
+
   const itemsPerPage = 8;
 
   const fetchPayments = async () => {
@@ -38,10 +41,17 @@ const AdminPayments: React.FC = () => {
           doctor: `Dr ${payment.doctorId?.firstName || "Unknown"}`,
           registered: payment.createdAt.toString().slice(0, 10),
           method: payment.paymentMethod,
-          amount: parseFloat(payment.amount) || 0,
+          amount: parseFloat(payment.amount) - 100 || 0,
+          charge: 100,
           status: payment.paymentStatus,
         }));
         setPayments(fetchedPayments);
+        let totalPayments = 0;
+        for (const payment of response.data.payments) {
+          totalPayments += parseInt(payment.amount) - 100;
+        }
+        setTotalPayment(totalPayments);
+        setTotalCharge(response.data.payments.length * 100);
       }
     } catch (error) {
       console.error("Error fetching payments:", error);
@@ -130,19 +140,30 @@ const AdminPayments: React.FC = () => {
                         className="p-3 cursor-pointer"
                         onClick={() => handleSort("registered")}
                       >
-                        Registered Date{" "}
+                        Date{" "}
                         {sortConfig?.key === "registered"
                           ? sortConfig.direction === "asc"
                             ? "🔼"
                             : "🔽"
                           : ""}
                       </th>
-                      <th className="p-3">Payment Method</th>
+                      <th className="p-3">Method</th>
                       <th
                         className="p-3 cursor-pointer"
                         onClick={() => handleSort("amount")}
                       >
                         Amount{" "}
+                        {sortConfig?.key === "amount"
+                          ? sortConfig.direction === "asc"
+                            ? "🔼"
+                            : "🔽"
+                          : ""}
+                      </th>
+                      <th
+                        className="p-3 cursor-pointer"
+                        onClick={() => handleSort("amount")}
+                      >
+                        Charges
                         {sortConfig?.key === "amount"
                           ? sortConfig.direction === "asc"
                             ? "🔼"
@@ -161,9 +182,19 @@ const AdminPayments: React.FC = () => {
                         <td className="p-3">{payment.registered}</td>
                         <td className="p-3">{payment.method}</td>
                         <td className="p-3">₹{payment.amount.toFixed(2)}</td>
+                        <td className="p-3">₹ 100</td>
                         <td className="p-3">{payment.status}</td>
                       </tr>
                     ))}
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td className="font-bold">Total</td>
+                      <td className="font-bold">₹{totalPayment}</td>
+                      <td className="font-bold">₹{totalCharge}</td>
+                    </tr>
                   </tbody>
                 </table>
                 <div className="flex justify-center gap-2 items-center mt-4">
