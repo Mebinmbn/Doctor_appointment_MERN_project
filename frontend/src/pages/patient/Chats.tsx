@@ -29,6 +29,7 @@ const Chats: React.FC = () => {
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
+  const [recipientStatus, setRecipientStatus] = useState<string | null>(null);
   const user = useSelector((state: RootState) => state.user.user);
   const socket = useSocket();
 
@@ -81,7 +82,21 @@ const Chats: React.FC = () => {
         }
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleUserStatusChange = (users: any) => {
+        if (
+          selectedRoom.latestMessage.senderId ||
+          selectedRoom.latestMessage.recipientId
+        )
+          if (users[selectedRoom.latestMessage.senderId]?.status) {
+            setRecipientStatus(
+              users[selectedRoom.latestMessage.senderId].status
+            );
+          }
+      };
+
       socket.on("receiveMessage", handleMessageReceive);
+      socket.on("userStatusChange", handleUserStatusChange);
 
       return () => {
         socket.off("receiveMessage", handleMessageReceive);
@@ -189,6 +204,17 @@ const Chats: React.FC = () => {
                 {selectedRoom.latestMessage.sender === user?.name
                   ? selectedRoom.latestMessage.receiver
                   : selectedRoom.latestMessage.sender}
+                {recipientStatus && (
+                  <span
+                    className={`ml-2 text-sm ${
+                      recipientStatus === "online"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    ({recipientStatus})
+                  </span>
+                )}
               </h2>
               <button
                 className="text-gray-500"
