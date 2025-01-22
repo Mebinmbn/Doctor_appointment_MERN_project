@@ -100,45 +100,59 @@ const LeaveRequests: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {leaveRequests.map((leave) => (
-                      <tr key={leave._id}>
-                        <td className="py-2 px-4 text-white border-b">
-                          {leave.doctorId.firstName} {leave.doctorId.lastName}
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          {new Date(leave.startDate).toLocaleDateString()}
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          {new Date(leave.endDate).toLocaleDateString()}
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          {leave.reason}
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          {leave.status}
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          <div>
-                            <button
-                              className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                              onClick={() =>
-                                updateLeaveStatus(leave._id, "Approved")
-                              }
-                            >
-                              Approve
-                            </button>
-                            <button
-                              className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                              onClick={() =>
-                                updateLeaveStatus(leave._id, "Rejected")
-                              }
-                            >
-                              Reject
-                            </button>
-                          </div>
+                    {leaveRequests.length ? (
+                      <>
+                        {leaveRequests.map((leave) => (
+                          <tr key={leave._id}>
+                            <td className="py-2 px-4 text-white border-b">
+                              {leave.doctorId.firstName}{" "}
+                              {leave.doctorId.lastName}
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              {new Date(leave.startDate).toLocaleDateString()}
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              {new Date(leave.endDate).toLocaleDateString()}
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              {leave.reason}
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              {leave.status}
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              <div>
+                                <button
+                                  className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
+                                  onClick={() =>
+                                    updateLeaveStatus(leave._id, "Approved")
+                                  }
+                                >
+                                  Approve
+                                </button>
+                                <button
+                                  className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                                  onClick={() =>
+                                    updateLeaveStatus(leave._id, "Rejected")
+                                  }
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </>
+                    ) : (
+                      <tr>
+                        <td
+                          className="py-2 px-4 text-white border-b"
+                          colSpan={6}
+                        >
+                          No requests found
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
