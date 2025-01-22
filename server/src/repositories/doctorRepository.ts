@@ -126,7 +126,7 @@ const getDashboardData = async (doctorId: string) => {
 
     const appointments = await AppointmentModel.find({
       doctorId,
-      date: { $gte: today, $lte: tomorrow },
+      // date: { $gte: today, $lte: tomorrow },
     }).populate("patientId", "firstName lastName");
 
     console.log(`Appointments Found:`, appointments);
