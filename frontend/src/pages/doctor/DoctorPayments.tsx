@@ -91,7 +91,7 @@ const DoctorPayments: React.FC = () => {
                           {payment.paymentMethod}
                         </td>
                         <td className="py-2 px-4 text-white border-b">
-                          ₹ {Math.ceil(payment.amount - (payment.amount - 100))}
+                          ₹ {Math.ceil(payment.amount - 100)}
                         </td>
                         <td className="py-2 px-4 text-white border-b">
                           {payment.paymentStatus}

@@ -78,7 +78,7 @@ function DoctorDashboard() {
       if (response.data.success) {
         let totalPayments = 0;
         for (const payment of response.data.payments) {
-          totalPayments += parseInt(payment.amount);
+          totalPayments += parseInt(payment.amount) - 100;
         }
         setEarnings(totalPayments);
       }
