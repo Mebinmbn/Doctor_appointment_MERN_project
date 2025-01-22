@@ -139,64 +139,78 @@ function DoctorsList() {
                       <th className="py-2 px-4 text-white border-b">Action</th>
                     </tr>
                   </thead>
+
                   <tbody>
-                    {currentDoctorApplications?.map((doctor: Doctor) => (
-                      <tr key={doctor._id}>
-                        <td className="py-2 px-4 text-white border-b">
-                          {doctor.firstName} {doctor.lastName}
-                        </td>
+                    {currentDoctorApplications.length ? (
+                      <>
+                        {currentDoctorApplications?.map((doctor: Doctor) => (
+                          <tr key={doctor._id}>
+                            <td className="py-2 px-4 text-white border-b">
+                              {doctor.firstName} {doctor.lastName}
+                            </td>
 
-                        <td className="py-2 px-4 text-white border-b">
-                          {doctor.email}
-                        </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              {doctor.email}
+                            </td>
 
-                        <td className="py-2 px-4 text-white border-b">
-                          {doctor.specialization}
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          {doctor.experience} years
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          {doctor.location}
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          <img
-                            src={`https://befine.site/uploads/license/${doctor.licenseImage.path
-                              .split("/")
-                              .pop()}`}
-                            alt={doctor.licenseImage.path.split("/").pop()}
-                            className="h-16 w-16 object-cover rounded"
-                            onClick={() =>
-                              openModal(
-                                `https://befine.site/uploads/license/${doctor.licenseImage.path
+                            <td className="py-2 px-4 text-white border-b">
+                              {doctor.specialization}
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              {doctor.experience} years
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              {doctor.location}
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              <img
+                                src={`https://befine.site/uploads/license/${doctor.licenseImage.path
                                   .split("/")
-                                  .pop()}`
-                              )
-                            }
-                          />
-                        </td>
-                        <td className="py-2 px-4 text-white border-b">
-                          <div>
-                            <button
-                              className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
-                              onClick={() => {
-                                handleApprove(doctor.email);
-                              }}
-                            >
-                              Approve
-                            </button>
-                            <button
-                              className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
-                              onClick={() => {
-                                handleReject(doctor.email);
-                              }}
-                            >
-                              Reject
-                            </button>
-                          </div>
+                                  .pop()}`}
+                                alt={doctor.licenseImage.path.split("/").pop()}
+                                className="h-16 w-16 object-cover rounded"
+                                onClick={() =>
+                                  openModal(
+                                    `https://befine.site/uploads/license/${doctor.licenseImage.path
+                                      .split("/")
+                                      .pop()}`
+                                  )
+                                }
+                              />
+                            </td>
+                            <td className="py-2 px-4 text-white border-b">
+                              <div>
+                                <button
+                                  className="bg-green-500 rounded-xl p-1 border-[1px] mr-2"
+                                  onClick={() => {
+                                    handleApprove(doctor.email);
+                                  }}
+                                >
+                                  Approve
+                                </button>
+                                <button
+                                  className="bg-red-500 w-16 rounded-xl p-1 border-[1px]"
+                                  onClick={() => {
+                                    handleReject(doctor.email);
+                                  }}
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </>
+                    ) : (
+                      <tr>
+                        <td
+                          className="py-2 px-4 text-white border-b"
+                          colSpan={6}
+                        >
+                          No requests found
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
