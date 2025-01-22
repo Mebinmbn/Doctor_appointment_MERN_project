@@ -68,6 +68,7 @@ export const setupSocketIO = (server: any, app: Application) => {
         timeStamp,
       };
       console.log(message);
+      console.log("receipient Id", recipientId);
       let receiver;
       receiver = await PatientModel.findOne({ _id: recipientId });
       receiver = await DoctorModel.findOne({ _id: recipientId });
