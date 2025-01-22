@@ -71,12 +71,15 @@ export const setupSocketIO = (server: any, app: Application) => {
       console.log("receipient Id", recipientId);
       let receiver;
       receiver = await PatientModel.findOne({ _id: recipientId });
-      receiver = await DoctorModel.findOne({ _id: recipientId });
+      if (receiver === null) {
+        receiver = await DoctorModel.findOne({ _id: recipientId });
+      }
+
       console.log("receiver", receiver);
       const newMessage = {
         roomId: room,
         sender,
-        receiver: receiver?.firstName,
+        receiver: receiver?.firstName || "",
         senderId,
         recipientId,
         text,
