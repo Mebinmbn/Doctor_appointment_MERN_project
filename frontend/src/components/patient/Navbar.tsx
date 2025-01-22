@@ -11,7 +11,6 @@ import { INotification } from "../../../../server/src/models/notificationModel";
 import api from "../../api/api";
 import { useSocket } from "../../contexts/SocketContexts";
 import { useChat } from "../../contexts/ChatContext";
-import sound from "../../assets/sound/chime_ding.mp3";
 
 interface User {
   name: string;
@@ -44,10 +43,6 @@ const Navbar: React.FC = () => {
       fetchNotifications();
     }
   }, [dispatch, token]);
-
-  const play = () => {
-    new Audio(sound).play();
-  };
 
   useEffect(() => {
     if (!socket) return;
@@ -119,7 +114,6 @@ const Navbar: React.FC = () => {
             );
           },
         });
-        play();
       });
 
       return () => {
