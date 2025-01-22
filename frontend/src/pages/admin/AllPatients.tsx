@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AdminNav from "../../components/admin/AdminNav";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -11,6 +11,7 @@ import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { debounce } from "lodash";
 
 function AllPatients() {
   const [patients, setPatients] = useState<User[]>([]);
@@ -27,6 +28,7 @@ function AllPatients() {
   const [confirmationCallback, setConfirmationCallback] = useState<() => void>(
     () => () => {}
   );
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!admin) {
@@ -55,10 +57,27 @@ function AllPatients() {
     }
   }, [currentPage, searchQuery]);
 
+  // useEffect(() => {
+  //   fetchPatients();
+  //   setIsLoading(true);
+  // }, [fetchPatients, admin]);
+
+  const debouncedFetchPatients = useMemo(
+    () => debounce(fetchPatients, 700),
+    [fetchPatients]
+  );
+
   useEffect(() => {
-    fetchPatients();
-    setIsLoading(true);
-  }, [fetchPatients, admin]);
+    if (inputRef.current) inputRef.current.focus();
+  });
+
+  useEffect(() => {
+    debouncedFetchPatients();
+
+    return () => {
+      debouncedFetchPatients.cancel();
+    };
+  }, [searchQuery, debouncedFetchPatients]);
 
   const clearFilter = () => {
     setSearchQuery("");
@@ -131,10 +150,11 @@ function AllPatients() {
               <div className="hidden md:block">
                 <input
                   type="text"
+                  ref={inputRef}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Find patient"
+                  className="bg-gray-100 m-2 h-10 text-black rounded-lg w-full lg:w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Find doctor"
                 />
                 <button
                   onClick={clearFilter}
