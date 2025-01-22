@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Navbar from "../../components/admin/AdminNav";
 import { toast } from "react-toastify";
 import { IDoctor } from "../../../../server/src/models/doctorModel";
@@ -9,6 +15,7 @@ import api from "../../api/api";
 import AdminTopBar from "../../components/admin/AdminTopBar";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { debounce } from "lodash";
 
 const AllDoctors = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
@@ -27,6 +34,7 @@ const AllDoctors = () => {
     () => () => {}
   );
   const dispatch = useDispatch();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const fetchDoctors = useCallback(async () => {
     try {
@@ -45,10 +53,27 @@ const AllDoctors = () => {
     }
   }, [currentPage, searchQuery, specialization, gender, experience, dispatch]);
 
+  // useEffect(() => {
+  //   fetchDoctors();
+  //   setIsLoading(true);
+  // }, [fetchDoctors]);
+
+  const debouncedFetchDoctors = useMemo(
+    () => debounce(fetchDoctors, 700),
+    [fetchDoctors]
+  );
+
   useEffect(() => {
-    fetchDoctors();
-    setIsLoading(true);
-  }, [fetchDoctors]);
+    if (inputRef.current) inputRef.current.focus();
+  });
+
+  useEffect(() => {
+    debouncedFetchDoctors();
+
+    return () => {
+      debouncedFetchDoctors.cancel();
+    };
+  }, [searchQuery, specialization, gender, experience, debouncedFetchDoctors]);
 
   const clearFilter = () => {
     setSearchQuery("");
@@ -115,9 +140,10 @@ const AllDoctors = () => {
               <div className="hidden md:block">
                 <input
                   type="text"
+                  ref={inputRef}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-gray-100 text-gray-800 m-2 h-10 rounded-lg w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="bg-gray-100 m-2 h-10 text-black rounded-lg w-full lg:w-80 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Find doctor"
                 />
                 <select
@@ -149,7 +175,7 @@ const AllDoctors = () => {
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
-                <select
+                {/* <select
                   id="experience"
                   name="experience"
                   value={experience}
@@ -161,7 +187,7 @@ const AllDoctors = () => {
                   <option value="10">10+ years</option>
                   <option value="15">15+ years</option>
                   <option value="20">20+ years</option>
-                </select>
+                </select> */}
                 <button
                   onClick={clearFilter}
                   className="bg-white text-gray-500 m-2 px-3 py-2 border border-[#007E85] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full lg:w-auto"
