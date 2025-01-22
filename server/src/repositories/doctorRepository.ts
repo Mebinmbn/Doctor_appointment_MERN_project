@@ -142,7 +142,7 @@ const getDashboardData = async (doctorId: string) => {
 
 const getPayments = async (id: string) => {
   try {
-    return await PaymentModel.find({ doctorId: id })
+    return await PaymentModel.find({ doctorId: id, paymentStatus: "completed" })
       .sort({ createdAt: -1 })
       .populate("userId", "firstName laseName");
   } catch (error) {

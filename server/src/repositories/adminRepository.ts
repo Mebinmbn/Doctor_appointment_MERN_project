@@ -266,7 +266,7 @@ const getDashboardData = async (id: string, period: string | undefined) => {
 // /////////////////////////////////////////////////////////
 const getPayments = async () => {
   try {
-    return await PaymentModel.find()
+    return await PaymentModel.find({ paymentStatus: "completed" })
       .sort({ createdAt: -1 })
       .populate("userId", "firstName")
       .populate("doctorId", "firstName");
