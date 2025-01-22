@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^2.4.0",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
+    "date-fns": "^4.1.0",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lottie-web": "^5.12.2",
