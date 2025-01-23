@@ -65,13 +65,31 @@ const Chats: React.FC = () => {
 
   useEffect(() => {
     if (socket) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const handleActiveUsers = (users: any) => {
+      const handleActiveUsers = (users: { [key: string]: ActiveUser }) => {
         setActiveUsers(users);
+
+        setChatRooms((prevRooms) =>
+          prevRooms.map((room) => {
+            const isRecipientOnline =
+              users[room.latestMessage.senderId]?.status === "online";
+            return {
+              ...room,
+              latestMessage: {
+                ...room.latestMessage,
+                isRecipientOnline,
+              },
+            };
+          })
+        );
       };
+
       socket.on("userStatusChange", handleActiveUsers);
+
+      return () => {
+        socket.off("userStatusChange", handleActiveUsers);
+      };
     }
-  }, [socket, user?.id]);
+  }, [socket]);
 
   useEffect(() => {
     if (!selectedRoom) return;
