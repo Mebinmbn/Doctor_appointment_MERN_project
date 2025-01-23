@@ -3,8 +3,8 @@ import api from "../../api/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useSocket } from "../../contexts/SocketContexts";
-import PatientSideBar from "../../components/patient/PatientSideBar";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import DoctorNav from "../../components/doctor/DoctorNav";
 
 interface ChatRoom {
   _id: string;
@@ -240,7 +240,7 @@ const Chats: React.FC = () => {
 
   return (
     <div className="md:flex bg-[#007E85] justify-between gap-5">
-      <PatientSideBar />
+      <DoctorNav />
       <div
         className={`${
           selectedRoom ? "hidden" : "block"
