@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useSocket } from "../../contexts/SocketContexts";
 import PatientSideBar from "../../components/patient/PatientSideBar";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 interface ChatRoom {
   _id: string;
@@ -259,6 +260,12 @@ const Chats: React.FC = () => {
           <>
             <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
               <h2 className="text-xl font-semibold">
+                <button
+                  className="text-gray-500"
+                  onClick={() => setSelectedRoom(null)}
+                >
+                  <FaArrowLeftLong />
+                </button>
                 Chat with{" "}
                 {selectedRoom.latestMessage.sender === user?.name
                   ? selectedRoom.latestMessage.receiver
