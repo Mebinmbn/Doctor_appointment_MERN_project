@@ -261,7 +261,7 @@ const Chats: React.FC = () => {
             <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
               <h2 className="text-xl font-semibold">
                 <button
-                  className="text-gray-500"
+                  className="text-gray-500 mt-2 me-2"
                   onClick={() => setSelectedRoom(null)}
                 >
                   <FaArrowLeftLong />
