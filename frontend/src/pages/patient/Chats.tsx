@@ -24,12 +24,20 @@ interface Message {
   timeStamp: Date;
 }
 
+interface ActiveUser {
+  socketId: string;
+  status: "online" | "offline";
+}
+
 const Chats: React.FC = () => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
   const [recipientStatus, setRecipientStatus] = useState<string | null>(null);
+  const [activeUsers, setActiveUsers] = useState<{ [key: string]: ActiveUser }>(
+    {}
+  );
   const user = useSelector((state: RootState) => state.user.user);
   const socket = useSocket();
 
@@ -52,6 +60,16 @@ const Chats: React.FC = () => {
 
     if (user?.id) fetchChatRooms();
   }, [user?.id, messages]);
+
+  useEffect(() => {
+    if (socket) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleActiveUsers = (users: any) => {
+        setActiveUsers(users);
+      };
+      socket.on("userStatusChange", handleActiveUsers);
+    }
+  }, [socket, messages]);
 
   useEffect(() => {
     if (!selectedRoom) return;
@@ -126,33 +144,45 @@ const Chats: React.FC = () => {
   };
 
   const renderChatRooms = () =>
-    chatRooms.map((room) => (
-      <li
-        key={room._id}
-        className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
-          selectedRoom?.latestMessage.roomId === room.latestMessage.roomId
-            ? "bg-gray-100"
-            : ""
-        }`}
-        onClick={() => setSelectedRoom(room)}
-      >
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="font-semibold text-lg">
-              {room.latestMessage.sender === user?.name
-                ? room.latestMessage.receiver
-                : room.latestMessage.sender}
-            </h2>
-            <p className="text-gray-600 text-sm truncate">
-              {room.latestMessage.text}
-            </p>
+    chatRooms.map((room) => {
+      const isRecipientOnline =
+        activeUsers[room.latestMessage.senderId]?.status === "online";
+
+      return (
+        <li
+          key={room._id}
+          className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
+            selectedRoom?.latestMessage.roomId === room.latestMessage.roomId
+              ? "bg-gray-100"
+              : ""
+          }`}
+          onClick={() => setSelectedRoom(room)}
+        >
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="font-semibold text-lg">
+                {room.latestMessage.sender === user?.name
+                  ? room.latestMessage.receiver
+                  : room.latestMessage.sender}
+                <span
+                  className={`ml-2 text-sm ${
+                    isRecipientOnline ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  ({isRecipientOnline ? "online" : "offline"})
+                </span>
+              </h2>
+              <p className="text-gray-600 text-sm truncate">
+                {room.latestMessage.text}
+              </p>
+            </div>
+            <span className="text-gray-400 text-xs">
+              {new Date(room.latestMessage.timeStamp).toLocaleString()}
+            </span>
           </div>
-          <span className="text-gray-400 text-xs">
-            {new Date(room.latestMessage.timeStamp).toLocaleString()}
-          </span>
-        </div>
-      </li>
-    ));
+        </li>
+      );
+    });
 
   const renderMessages = () =>
     messages.map((msg, index) => (
@@ -207,7 +237,8 @@ const Chats: React.FC = () => {
                 {recipientStatus && (
                   <span
                     className={`ml-2 text-sm ${
-                      recipientStatus === "online"
+                      activeUsers[selectedRoom.latestMessage.senderId]
+                        ?.status === "online"
                         ? "text-green-500"
                         : "text-red-500"
                     }`}
