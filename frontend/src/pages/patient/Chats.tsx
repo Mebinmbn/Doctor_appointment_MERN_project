@@ -169,7 +169,7 @@ const Chats: React.FC = () => {
                     isRecipientOnline ? "text-green-500" : "text-red-500"
                   }`}
                 >
-                  ({isRecipientOnline ? "online" : "offline"})
+                  ({isRecipientOnline && "online"})
                 </span>
               </h2>
               <p className="text-gray-600 text-sm truncate">
