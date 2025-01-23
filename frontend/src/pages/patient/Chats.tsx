@@ -61,6 +61,8 @@ const Chats: React.FC = () => {
     if (user?.id) fetchChatRooms();
   }, [user?.id, messages]);
 
+  console.log(recipientStatus);
+
   useEffect(() => {
     if (socket) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -234,7 +236,8 @@ const Chats: React.FC = () => {
                 {selectedRoom.latestMessage.sender === user?.name
                   ? selectedRoom.latestMessage.receiver
                   : selectedRoom.latestMessage.sender}
-                {recipientStatus && (
+                {activeUsers[selectedRoom.latestMessage.senderId]?.status ===
+                  "online" && (
                   <span
                     className={`ml-2 text-sm ${
                       activeUsers[selectedRoom.latestMessage.senderId]
@@ -243,7 +246,7 @@ const Chats: React.FC = () => {
                         : "text-red-500"
                     }`}
                   >
-                    ({recipientStatus})
+                    ({"online"})
                   </span>
                 )}
               </h2>
