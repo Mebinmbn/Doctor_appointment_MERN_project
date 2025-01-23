@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../contexts/ChatContext";
 import { useSocket } from "../contexts/SocketContexts";
 import api from "../api/api";
@@ -23,6 +23,7 @@ const ChatPage: React.FC = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [recipientStatus, setRecipientStatus] = useState<string | null>(null);
   const socket = useSocket();
+  const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
   const fetchChat = async () => {
     try {
@@ -32,6 +33,12 @@ const ChatPage: React.FC = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (socket && roomId) {
@@ -135,6 +142,7 @@ const ChatPage: React.FC = () => {
               </div>
             );
           })}
+          <div ref={lastMessageRef} />
         </div>
         <div className="p-3 bg-white border-t border-gray-300">
           <div className="flex items-center space-x-2">
