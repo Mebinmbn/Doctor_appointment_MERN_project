@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "../../api/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
@@ -40,6 +40,7 @@ const Chats: React.FC = () => {
   );
   const user = useSelector((state: RootState) => state.user.user);
   const socket = useSocket();
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchChatRooms = async () => {
@@ -163,6 +164,12 @@ const Chats: React.FC = () => {
     setInputMessage("");
   };
 
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   const renderChatRooms = () =>
     chatRooms.map((room) => {
       const isRecipientOnline =
@@ -281,6 +288,7 @@ const Chats: React.FC = () => {
               ) : (
                 renderMessages()
               )}
+              <div ref={messageEndRef} />
             </div>
             <div className="p-4 border-t flex items-center">
               <input
