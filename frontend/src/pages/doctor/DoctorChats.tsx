@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "../../api/api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { useSocket } from "../../contexts/SocketContexts";
-import DoctorNav from "../../components/doctor/DoctorNav";
+import PatientSideBar from "../../components/patient/PatientSideBar";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 interface ChatRoom {
   _id: string;
@@ -24,13 +25,23 @@ interface Message {
   timeStamp: Date;
 }
 
+interface ActiveUser {
+  socketId: string;
+  status: "online" | "offline";
+}
+
 const Chats: React.FC = () => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState<string>("");
+  const [recipientStatus, setRecipientStatus] = useState<string | null>(null);
+  const [activeUsers, setActiveUsers] = useState<{ [key: string]: ActiveUser }>(
+    {}
+  );
   const user = useSelector((state: RootState) => state.doctor.doctor);
   const socket = useSocket();
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchChatRooms = async () => {
@@ -51,6 +62,38 @@ const Chats: React.FC = () => {
 
     if (user?.id) fetchChatRooms();
   }, [user?.id, messages]);
+
+  console.log(recipientStatus);
+
+  useEffect(() => {
+    if (socket) {
+      const handleActiveUsers = (users: { [key: string]: ActiveUser }) => {
+        setActiveUsers(users);
+
+        setChatRooms((prevRooms) =>
+          prevRooms.map((room) => {
+            const isRecipientOnline =
+              users[room.latestMessage.senderId]?.status === "online";
+            return {
+              ...room,
+              latestMessage: {
+                ...room.latestMessage,
+                isRecipientOnline,
+              },
+            };
+          })
+        );
+      };
+
+      socket.emit("join", user?.id);
+      socket.on("userStatusChange", handleActiveUsers);
+      return () => {
+        socket.off("userStatusChange", handleActiveUsers);
+      };
+    }
+  }, [socket, user?.id]);
+
+  console.log(activeUsers);
 
   useEffect(() => {
     if (!selectedRoom) return;
@@ -81,7 +124,21 @@ const Chats: React.FC = () => {
         }
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const handleUserStatusChange = (users: any) => {
+        if (
+          selectedRoom.latestMessage.senderId ||
+          selectedRoom.latestMessage.recipientId
+        )
+          if (users[selectedRoom.latestMessage.senderId]?.status) {
+            setRecipientStatus(
+              users[selectedRoom.latestMessage.senderId].status
+            );
+          }
+      };
+
       socket.on("receiveMessage", handleMessageReceive);
+      socket.on("userStatusChange", handleUserStatusChange);
 
       return () => {
         socket.off("receiveMessage", handleMessageReceive);
@@ -110,34 +167,52 @@ const Chats: React.FC = () => {
     setInputMessage("");
   };
 
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   const renderChatRooms = () =>
-    chatRooms.map((room) => (
-      <li
-        key={room._id}
-        className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
-          selectedRoom?.latestMessage.roomId === room.latestMessage.roomId
-            ? "bg-gray-100"
-            : ""
-        }`}
-        onClick={() => setSelectedRoom(room)}
-      >
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="font-semibold text-lg">
-              {room.latestMessage.sender === user?.name
-                ? room.latestMessage.receiver
-                : room.latestMessage.sender}
-            </h2>
-            <p className="text-gray-600 text-sm truncate">
-              {room.latestMessage.text}
-            </p>
+    chatRooms.map((room) => {
+      const isRecipientOnline =
+        activeUsers[room.latestMessage.senderId]?.status === "online";
+
+      return (
+        <li
+          key={room._id}
+          className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
+            selectedRoom?.latestMessage.roomId === room.latestMessage.roomId
+              ? "bg-gray-100"
+              : ""
+          }`}
+          onClick={() => setSelectedRoom(room)}
+        >
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="font-semibold text-lg">
+                {room.latestMessage.sender === user?.name
+                  ? room.latestMessage.receiver
+                  : room.latestMessage.sender}
+                <span
+                  className={`ml-2 text-sm ${
+                    isRecipientOnline ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {isRecipientOnline && "online"}
+                </span>
+              </h2>
+              <p className="text-gray-600 text-sm truncate">
+                {room.latestMessage.text}
+              </p>
+            </div>
+            <span className="text-gray-400 text-xs">
+              {new Date(room.latestMessage.timeStamp).toLocaleString()}
+            </span>
           </div>
-          <span className="text-gray-400 text-xs">
-            {new Date(room.latestMessage.timeStamp).toLocaleString()}
-          </span>
-        </div>
-      </li>
-    ));
+        </li>
+      );
+    });
 
   const renderMessages = () =>
     messages.map((msg, index) => (
@@ -164,14 +239,14 @@ const Chats: React.FC = () => {
     ));
 
   return (
-    <div className="md:flex bg-[#007E85] justify-between gap-5 ml-auto">
-      <DoctorNav />
+    <div className="md:flex bg-[#007E85] justify-between gap-5">
+      <PatientSideBar />
       <div
         className={`${
           selectedRoom ? "hidden" : "block"
         } w-full  bg-white shadow-md h-screen overflow-auto p-5`}
       >
-        <h1 className="text-2xl font-bold p-4 border-b">Patient Chats</h1>
+        <h1 className="text-2xl font-bold p-4 border-b">Doctor Chats</h1>
         <ul>
           {chatRooms.length === 0 ? (
             <p>No chats available.</p>
@@ -185,10 +260,29 @@ const Chats: React.FC = () => {
           <>
             <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
               <h2 className="text-xl font-semibold">
+                <button
+                  className="text-gray-500 mt-2 me-2"
+                  onClick={() => setSelectedRoom(null)}
+                >
+                  <FaArrowLeftLong />
+                </button>
                 Chat with{" "}
                 {selectedRoom.latestMessage.sender === user?.name
                   ? selectedRoom.latestMessage.receiver
                   : selectedRoom.latestMessage.sender}
+                {activeUsers[selectedRoom.latestMessage.senderId]?.status ===
+                  "online" && (
+                  <span
+                    className={`ml-2 text-sm ${
+                      activeUsers[selectedRoom.latestMessage.senderId]
+                        ?.status === "online"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    ({"online"})
+                  </span>
+                )}
               </h2>
               <button
                 className="text-gray-500"
@@ -203,6 +297,7 @@ const Chats: React.FC = () => {
               ) : (
                 renderMessages()
               )}
+              <div ref={messageEndRef} />
             </div>
             <div className="p-4 border-t flex items-center">
               <input
