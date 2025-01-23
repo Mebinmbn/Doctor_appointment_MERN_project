@@ -21,7 +21,7 @@ function DoctorTopBar() {
 
   useEffect(() => {
     if (!socket) return;
-    socket.emit("join", doctor?.id);
+    socket.emit("join", doctor?.id, doctor?.id);
     socket.on("notification", (notification: INotification) => {
       setNotifications((prev) => [...prev, notification]);
       toast.info(notification.content);
