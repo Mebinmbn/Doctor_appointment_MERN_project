@@ -71,7 +71,7 @@ const Chats: React.FC = () => {
       };
       socket.on("userStatusChange", handleActiveUsers);
     }
-  }, [socket, messages]);
+  }, [socket, user?.id]);
 
   useEffect(() => {
     if (!selectedRoom) return;
