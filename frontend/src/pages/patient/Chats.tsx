@@ -84,6 +84,7 @@ const Chats: React.FC = () => {
         );
       };
 
+      socket.emit("join", user?.id);
       socket.on("userStatusChange", handleActiveUsers);
       return () => {
         socket.off("userStatusChange", handleActiveUsers);
