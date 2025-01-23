@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (!socket) return;
-    socket.emit("join", user?.id);
+    socket.emit("join", user?.id, user?.id);
     socket.on("notification", (notification: INotification) => {
       setNotifications((prev) => [...prev, notification]);
       toast.info(notification.content);
