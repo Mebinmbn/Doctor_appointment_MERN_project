@@ -36,13 +36,12 @@ function DoctorTopBar() {
     };
   }, [doctor?.id, socket]);
 
-  play();
-
   useEffect(() => {
     if (socket) {
       socket.on("chatNotification", (data) => {
         console.log("Chat Notification:", data);
         setChatNotification(true);
+        play();
         openChat(
           data.room,
           doctor?.name || "Doctor",
