@@ -4,6 +4,8 @@ import { IoVolumeMute } from "react-icons/io5";
 import { IoMdCall } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import VideoCallModal from "./VideoCallModal";
+import sound from "../assets/sound/chime_ding.mp3";
 
 interface VideoCallProps {
   roomId: string;
@@ -14,51 +16,57 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [audioEnabled, setAudioEnabled] = useState(true);
+  const [isCallStarted, setIsCallStarted] = useState(false);
+  const [message, setMessage] = useState(true);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+  const [isJoined, setIsJoined] = useState(false);
   const negotiationPendingRef = useRef(false);
   const socket = useSocket();
   const navigate = useNavigate();
 
+  const play = () => {
+    new Audio(sound).play();
+  };
+
   useEffect(() => {
-    let hasJoined = false;
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        console.log("Media stream acquired:", stream);
+    const initLocalStream = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
         setLocalStream(stream);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error accessing media devices:", error);
-      });
-
-    if (!hasJoined && socket) {
-      console.log(`Joining room: ${roomId}`);
-      socket.emit("join", roomId);
-      hasJoined = true;
-    }
-
-    socket?.on("signal", async (data) => {
-      console.log("Received signaling data:", JSON.stringify(data, null, 2));
-      if (data.caller !== socket.id) {
-        await handleSignal(data);
       }
-    });
-
-    return () => {
-      console.log("Cleaning up resources");
-
-      localStream?.getTracks().forEach((track) => track.stop());
-
-      peerConnectionRef.current?.close();
-      peerConnectionRef.current = null;
-
-      socket?.off("signal");
-      socket?.off("user-connected");
     };
+
+    initLocalStream();
+    socket?.emit("join", roomId);
+
+    socket?.on("signal", handleSignal);
+
+    return cleanupResources;
   }, [roomId, socket]);
+
+  useEffect(() => {
+    if (socket) {
+      socket?.on("call-started", () => {
+        console.log(isJoined);
+        if (!isJoined) {
+          if (usertype === "patient") {
+            setIsCallStarted(true);
+            setMessage(false);
+            play();
+          }
+        } else {
+          setIsCallStarted(false);
+        }
+      });
+    }
+  }, [socket, isJoined]);
 
   useEffect(() => {
     if (localStream && localVideoRef.current) {
@@ -66,40 +74,74 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     }
   }, [localStream]);
 
-  const callUser = useCallback(() => {
-    if (negotiationPendingRef.current) return;
-    console.log("Calling user");
+  const cleanupResources = useCallback(() => {
+    localStream?.getTracks().forEach((track) => track.stop());
+    peerConnectionRef.current?.close();
+    peerConnectionRef.current = null;
+    socket?.off("signal", handleSignal);
+  }, [localStream, socket]);
 
-    const peerConnection = createPeerConnection();
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, localStream);
-      });
-    }
+  const createPeerConnection = useCallback(() => {
+    const peerConnection = new RTCPeerConnection();
 
-    peerConnectionRef.current = peerConnection;
-
-    peerConnection
-      .createOffer()
-      .then((offer) => {
-        console.log("Created offer:", offer);
-        negotiationPendingRef.current = true;
-        return peerConnection.setLocalDescription(offer);
-      })
-      .then(() => {
-        console.log("Sending offer");
+    peerConnection.onicecandidate = ({ candidate }) => {
+      if (candidate) {
         socket?.emit("signal", {
-          type: "offer",
-          offer: peerConnectionRef.current?.localDescription,
+          type: "candidate",
+          candidate,
           roomId,
           caller: socket.id,
         });
-      })
-      .catch((error) => {
-        console.error("Error creating or sending offer:", error);
-        negotiationPendingRef.current = false;
+      }
+    };
+
+    peerConnection.ontrack = ({ streams }) => {
+      if (streams[0]) {
+        setRemoteStream(streams[0]);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = streams[0];
+        }
+      }
+    };
+
+    peerConnection.onconnectionstatechange = () => {
+      if (peerConnection.connectionState === "failed") {
+        console.error("Connection failed");
+      }
+    };
+
+    return peerConnection;
+  }, [roomId, socket]);
+
+  const callUser = useCallback(async () => {
+    if (negotiationPendingRef.current) return;
+
+    const peerConnection = createPeerConnection();
+
+    localStream?.getTracks().forEach((track) => {
+      peerConnection.addTrack(track, localStream);
+    });
+
+    peerConnectionRef.current = peerConnection;
+
+    try {
+      const offer = await peerConnection.createOffer();
+      negotiationPendingRef.current = true;
+      await peerConnection.setLocalDescription(offer);
+
+      socket?.emit("signal", {
+        type: "offer",
+        offer,
+        roomId,
+        caller: socket.id,
       });
-  }, [localStream, roomId, socket]);
+
+      socket?.emit("call-started", { roomId });
+    } catch (error) {
+      console.error("Error creating or sending offer:", error);
+      negotiationPendingRef.current = false;
+    }
+  }, [localStream, roomId, socket, createPeerConnection]);
 
   const handleSignal = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -110,61 +152,10 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
 
       try {
         if (data.type === "offer") {
-          if (!data.offer || !data.offer.type || !data.offer.sdp) {
-            console.error("Invalid offer received:", data.offer);
-            return;
-          }
-
-          if (peerConnection.signalingState !== "stable") {
-            console.warn(
-              "Cannot handle offer in signaling state:",
-              peerConnection.signalingState
-            );
-            return;
-          }
-
-          console.log("Received offer:", data.offer);
-          await peerConnection.setRemoteDescription(
-            new RTCSessionDescription(data.offer)
-          );
-
-          if (localStream) {
-            localStream.getTracks().forEach((track) => {
-              peerConnection.addTrack(track, localStream);
-            });
-          }
-
-          const answer = await peerConnection.createAnswer();
-          await peerConnection.setLocalDescription(answer);
-
-          console.log("Sending answer");
-          socket?.emit("signal", {
-            type: "answer",
-            answer: peerConnection.localDescription,
-            roomId,
-            caller: socket.id,
-          });
+          await handleOffer(peerConnection, data.offer);
         } else if (data.type === "answer") {
-          if (!data.answer || !data.answer.type || !data.answer.sdp) {
-            console.error("Invalid answer received:", data.answer);
-            return;
-          }
-
-          if (peerConnection.signalingState !== "have-local-offer") {
-            console.warn(
-              "Cannot handle answer in signaling state:",
-              peerConnection.signalingState
-            );
-            return;
-          }
-
-          console.log("Received answer:", data.answer);
-          await peerConnection.setRemoteDescription(
-            new RTCSessionDescription(data.answer)
-          );
-          negotiationPendingRef.current = false;
+          await handleAnswer(peerConnection, data.answer);
         } else if (data.candidate) {
-          console.log("Received ICE candidate:", data.candidate);
           await peerConnection.addIceCandidate(
             new RTCIceCandidate(data.candidate)
           );
@@ -173,73 +164,69 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
         console.error("Error handling signaling data:", error);
       }
     },
-    [localStream, roomId, socket]
+    [createPeerConnection]
   );
 
-  const createPeerConnection = useCallback(() => {
-    console.log("Creating peer connection");
-    const peerConnection = new RTCPeerConnection();
-
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        console.log("Sending ICE candidate:", event.candidate);
-        socket?.emit("signal", {
-          type: "candidate",
-          candidate: event.candidate,
-          roomId,
-          caller: socket.id,
-        });
-      }
-    };
-
-    peerConnection.ontrack = (event) => {
-      if (event.streams[0]) {
-        console.log("Received remote stream:", event.streams[0]);
-        setRemoteStream(event.streams[0]);
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = event.streams[0];
-        }
-      }
-    };
-
-    peerConnection.onconnectionstatechange = () => {
-      console.log("Connection state changed:", peerConnection.connectionState);
-      if (peerConnection.connectionState === "failed") {
-        console.error("Connection failed");
-      }
-    };
-
-    return peerConnection;
-  }, [roomId, socket]);
-
-  const changeAppointmentStatus = useCallback(async () => {
-    try {
-      const response = await api.put(`/appointments/${roomId}`);
-      if (response.data.success) {
-        console.log("status updated");
-      }
-    } catch (error) {
-      console.log(error);
+  const handleOffer = async (
+    peerConnection: RTCPeerConnection,
+    offer: RTCSessionDescriptionInit
+  ) => {
+    if (!offer || peerConnection.signalingState !== "stable") {
+      console.warn(
+        "Invalid offer or signaling state:",
+        offer,
+        peerConnection.signalingState
+      );
+      return;
     }
-  }, []);
 
-  useEffect(() => {
-    return () => stopAllStreams(localStream);
-  }, []);
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
 
-  const stopAllStreams = (stream: MediaStream | null) => {
-    if (stream) {
-      stream.getTracks().forEach((track) => {
-        track.stop();
-      });
-    }
+    localStream?.getTracks().forEach((track) => {
+      peerConnection.addTrack(track, localStream);
+    });
+
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+
+    socket?.emit("signal", {
+      type: "answer",
+      answer,
+      roomId,
+      caller: socket.id,
+    });
   };
 
+  const handleAnswer = async (
+    peerConnection: RTCPeerConnection,
+    answer: RTCSessionDescriptionInit
+  ) => {
+    if (!answer || peerConnection.signalingState !== "have-local-offer") {
+      console.warn(
+        "Invalid answer or signaling state:",
+        answer,
+        peerConnection.signalingState
+      );
+      return;
+    }
+
+    await peerConnection.setRemoteDescription(
+      new RTCSessionDescription(answer)
+    );
+    negotiationPendingRef.current = false;
+  };
+
+  const toggleAudio = useCallback(() => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = !track.enabled;
+        setAudioEnabled(track.enabled);
+      });
+    }
+  }, [localStream]);
+
   const endCall = useCallback(() => {
-    stopAllStreams(localStream);
-    setLocalStream(null);
-    peerConnectionRef.current?.close();
-    peerConnectionRef.current = null;
+    cleanupResources();
 
     if (usertype === "doctor") {
       changeAppointmentStatus();
@@ -247,71 +234,87 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     } else {
       navigate("/appointments");
     }
-  }, [localStream, usertype, navigate, changeAppointmentStatus, roomId]);
+  }, [cleanupResources, usertype, navigate, roomId]);
 
-  const toggleAudio = useCallback(() => {
-    if (localStream) {
-      localStream.getAudioTracks().forEach((track) => {
-        track.enabled = !track.enabled;
-        setAudioEnabled(!audioEnabled);
-      });
+  const changeAppointmentStatus = useCallback(async () => {
+    try {
+      const response = await api.put(`/appointments/${roomId}`);
+      if (response.data.success) {
+        console.log("Appointment status updated");
+      }
+    } catch (error) {
+      console.error("Error updating appointment status:", error);
     }
-  }, [localStream]);
+  }, [roomId]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-[60%]  px-2">
-      <strong>Consultation Room</strong>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white rounded-lg shadow-sm">
-        <div className="relative bg-black rounded-lg overflow-hidden">
-          <video
-            ref={localVideoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-          />
-          <div className="absolute bottom-2 left-2 p-2 bg-black bg-opacity-50 text-white rounded-lg">
-            You {audioEnabled ?? "Muted"}
+    <>
+      <div className="flex flex-col items-center justify-center h-[60%] px-2">
+        <strong>Consultation Room</strong>
+        {usertype === "patient" && message && (
+          <div className="h-8 bg-yellow-300 p-1">
+            <p>Wait for doctor to start the call</p>
           </div>
-        </div>
-        <div className="relative bg-black rounded-lg overflow-hidden">
-          {!remoteStream && (
-            <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 text-white">
-              Waiting for {usertype === "doctor" ? "Patient" : "Doctor"} to
-              join...
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white rounded-lg shadow-sm">
+          <div className="relative bg-black rounded-lg overflow-hidden">
+            <video
+              ref={localVideoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+            />
+            <div className="absolute bottom-2 left-2 p-2 bg-black bg-opacity-50 text-white rounded-lg">
+              You {audioEnabled ? "Unmuted" : "Muted"}
             </div>
-          )}
-          <video
-            ref={remoteVideoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-          />
-          <div className="absolute bottom-2 left-2 p-2 bg-black bg-opacity-50 text-white rounded-lg">
-            {usertype === "doctor" ? "Patient" : "Doctor"}
+          </div>
+          <div className="relative bg-black rounded-lg overflow-hidden">
+            {!remoteStream && (
+              <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 text-white">
+                Waiting for {usertype === "doctor" ? "Patient" : "Doctor"} to
+                join...
+              </div>
+            )}
+            <video
+              ref={remoteVideoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+            />
           </div>
         </div>
+        <div className="mt-4 flex space-x-4">
+          {usertype === "doctor" && (
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              onClick={callUser}
+            >
+              <IoMdCall />
+            </button>
+          )}
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            onClick={toggleAudio}
+          >
+            <IoVolumeMute />
+          </button>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            onClick={endCall}
+          >
+            <IoMdCall />
+          </button>
+        </div>
       </div>
-      <div className="mt-1 flex space-x-4 bg-gray-300 p-4 rounded-lg">
-        <button
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
-          onClick={callUser}
-        >
-          <IoMdCall />
-        </button>
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none"
-          onClick={toggleAudio}
-        >
-          <IoVolumeMute />
-        </button>
-
-        <button
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none"
-          onClick={endCall}
-        >
-          <IoMdCall />
-        </button>
-      </div>
-    </div>
+      <VideoCallModal
+        showModal={isCallStarted}
+        onClose={() => setIsCallStarted(false)}
+        onConfirm={() => {
+          setIsJoined(true);
+          if (callUser) callUser();
+          setIsCallStarted(false);
+        }}
+      />
+    </>
   );
 };
 

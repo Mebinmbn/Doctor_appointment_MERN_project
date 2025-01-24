@@ -51,6 +51,7 @@ export const setupSocketIO = (server: any, app: Application) => {
         if (data.type === "end-call") {
           socket.to(data.roomId).emit("call-ended", { caller: data.caller });
         } else {
+          socket.to(data.roomId).emit("call-started", { roomId: data.roomId });
           io.to(data.roomId).emit("signal", data);
           console.log("Signaling data emitted:", data);
         }
