@@ -15,7 +15,7 @@ function ForgotPassword() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setEmail(userEmail);
-
+    setIsLoading(true);
     setUserType("forgotPassword");
     try {
       const response = await axios.post(
@@ -35,6 +35,7 @@ function ForgotPassword() {
         setIsLoading(true);
         navigate("/otp");
       } else {
+        setIsLoading(false);
         toast.error(response.data.message || "Error sending OTP");
       }
       setUserEmail("");
