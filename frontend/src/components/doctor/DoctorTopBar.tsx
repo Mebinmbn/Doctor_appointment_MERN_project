@@ -36,6 +36,8 @@ function DoctorTopBar() {
     };
   }, [doctor?.id, socket]);
 
+  play();
+
   useEffect(() => {
     if (socket) {
       socket.on("chatNotification", (data) => {
@@ -60,7 +62,6 @@ function DoctorTopBar() {
             );
           },
         });
-        play();
       });
 
       return () => {

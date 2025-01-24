@@ -100,6 +100,8 @@ const Navbar: React.FC = () => {
       socket.on("chatNotification", (data) => {
         console.log("Chat Notification:", data);
 
+        play();
+
         openChat(
           data.room,
           user?.name || "Patient",
@@ -119,7 +121,6 @@ const Navbar: React.FC = () => {
             );
           },
         });
-        play();
       });
 
       return () => {
