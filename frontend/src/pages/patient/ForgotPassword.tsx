@@ -41,6 +41,7 @@ function ForgotPassword() {
       setUserEmail("");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      setIsLoading(false);
       toast.error("Email is not registered with us", error.message);
     }
     setUserEmail("");
