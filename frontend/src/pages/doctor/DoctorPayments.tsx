@@ -32,7 +32,7 @@ const DoctorPayments: React.FC = () => {
         setPayments(response.data.payments);
       }
     } catch (error) {
-      console.error("Error fetching payments:", error);
+      console.error(error);
     }
   };
 

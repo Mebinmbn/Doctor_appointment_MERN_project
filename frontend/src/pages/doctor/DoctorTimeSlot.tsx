@@ -115,17 +115,13 @@ const DoctorCalendar = () => {
         setEvents(calendarEvents);
       }
     } catch (error) {
-      console.error("Error fetching time slots and leave applications:", error);
+      console.error(error);
     }
   }, [id]);
 
   useEffect(() => {
     fetchDateAndTime();
   }, [fetchDateAndTime]);
-
-  useEffect(() => {
-    console.log(events);
-  }, [events]);
 
   const handleSelectSlot = (slotInfo: { start: Date; end: Date }) => {
     const selectedStartDate = slotInfo.start;
@@ -168,24 +164,14 @@ const DoctorCalendar = () => {
     const start = moment(startDate).startOf("day");
     const end = moment(endDate).endOf("day");
 
-    console.log(
-      "Checking leave for dates:",
-      start.format(),
-      "to",
-      end.format()
-    );
-
     for (
       let day = moment(start);
       day.isBefore(end) || day.isSame(end, "day");
       day.add(1, "days")
     ) {
       const date = day.format("YYYY-MM-DD");
-      console.log("Checking date:", date);
 
       const isLeaveAlreadyApplied = events.some((event) => {
-        console.log("Event Title:", event.title);
-
         return (
           moment(event.start).format("YYYY-MM-DD") === date &&
           event.title.includes("Applied for Leave")
@@ -193,12 +179,10 @@ const DoctorCalendar = () => {
       });
 
       if (isLeaveAlreadyApplied) {
-        console.log("Leave already applied for date:", date);
         return true;
       }
     }
 
-    console.log("No leave applied for the selected range");
     return false;
   };
 

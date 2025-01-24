@@ -39,7 +39,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
         });
         setLocalStream(stream);
       } catch (error) {
-        console.error("Error accessing media devices:", error);
+        console.error(error);
       }
     };
 
@@ -54,7 +54,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
   useEffect(() => {
     if (socket) {
       socket?.on("call-started", () => {
-        console.log(isJoined);
         if (!isJoined) {
           if (usertype === "patient") {
             setIsCallStarted(true);
@@ -138,7 +137,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
 
       socket?.emit("call-started", { roomId });
     } catch (error) {
-      console.error("Error creating or sending offer:", error);
+      console.error(error);
       negotiationPendingRef.current = false;
     }
   }, [localStream, roomId, socket, createPeerConnection]);
@@ -161,7 +160,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
           );
         }
       } catch (error) {
-        console.error("Error handling signaling data:", error);
+        console.error(error);
       }
     },
     [createPeerConnection]
@@ -172,11 +171,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     offer: RTCSessionDescriptionInit
   ) => {
     if (!offer || peerConnection.signalingState !== "stable") {
-      console.warn(
-        "Invalid offer or signaling state:",
-        offer,
-        peerConnection.signalingState
-      );
       return;
     }
 
@@ -202,11 +196,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     answer: RTCSessionDescriptionInit
   ) => {
     if (!answer || peerConnection.signalingState !== "have-local-offer") {
-      console.warn(
-        "Invalid answer or signaling state:",
-        answer,
-        peerConnection.signalingState
-      );
       return;
     }
 
@@ -240,10 +229,10 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, usertype }) => {
     try {
       const response = await api.put(`/appointments/${roomId}`);
       if (response.data.success) {
-        console.log("Appointment status updated");
+        console.log("updated");
       }
     } catch (error) {
-      console.error("Error updating appointment status:", error);
+      console.error(error);
     }
   }, [roomId]);
 

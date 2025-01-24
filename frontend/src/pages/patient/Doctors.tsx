@@ -54,7 +54,7 @@ const Doctors = () => {
         dispatch(setDoctorsArray({ doctors: response.data.data }));
       }
     } catch (error) {
-      console.error("Error fetching doctors:", error);
+      console.error(error);
     } finally {
       setLoading(false);
     }

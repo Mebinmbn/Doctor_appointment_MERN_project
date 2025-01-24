@@ -136,8 +136,6 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
         // setEmail(formData.email);
         // setUserType("doctor");
 
-        console.log(formData);
-
         const response = await axios.put(
           "https://befine.site/api/admin/patients",
           formData,
@@ -156,7 +154,6 @@ const EditPatientModal: React.FC<EditPatientModalProps> = ({
         }
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.error("Error in signup request:", axiosError);
 
         toast.error(axiosError.response?.data.error);
       }

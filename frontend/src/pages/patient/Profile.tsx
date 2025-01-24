@@ -55,14 +55,13 @@ function Profile() {
   }, [user, navigate]);
   const fetchPatientDetails = useCallback(async () => {
     const id = user?.id;
-    console.log("id from fetchPatientDetails", id);
+
     try {
       const response = await api.get(`/patients/patient/${id}`, {
         headers: { "User-Type": "patient" },
       });
       if (response.data.success) {
         setPatient(response.data.patient);
-        console.log("data fetched successfully", response.data.patient);
       }
     } catch (error) {
       console.log(error);
@@ -102,7 +101,6 @@ function Profile() {
         }
       );
       if (response.data.success) {
-        console.log(response.data.success);
         return true;
       } else {
         return false;
@@ -190,7 +188,6 @@ function Profile() {
 
     if (Object.keys(errors).length === 0) {
       try {
-        console.log(formData);
         const response = await api.put("/patients/patient", formData, {
           headers: { "User-Type": "patient" },
         });
@@ -201,7 +198,7 @@ function Profile() {
         }
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.error("Error in signup request:", axiosError);
+
         toast.error(axiosError.response?.data.error);
       }
     }

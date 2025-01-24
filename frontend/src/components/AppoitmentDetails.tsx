@@ -40,7 +40,6 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
 
   const fetchAppointmentDetails = async () => {
     try {
-      console.log(appointmentId, userType);
       const response = await api.get(`/appointments/${appointmentId}`, {
         headers: { "User-Type": userType },
       });
@@ -57,7 +56,6 @@ const AppointmentDetails: React.FC<AppointmentProps> = ({
   }, [appointmentId, userType]);
 
   const handleOpenChat = () => {
-    console.log("Opening chat with", { appointmentId, userName, recipientId });
     openChat(
       appointmentId || "",
       userName,

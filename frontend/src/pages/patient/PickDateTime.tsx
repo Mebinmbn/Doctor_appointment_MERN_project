@@ -49,11 +49,11 @@ function PickDateTime() {
       if (response.data.success) {
         const fetchedDateTime = response.data.timeSlots;
         setTimeSlots(fetchedDateTime);
-        console.log("starting", timeSlots);
+
         const newDates: Date[] = fetchedDateTime.map(
           (data: TimeSlots) => data.date
         );
-        console.log("extraction", newDates);
+
         setDates(newDates);
       }
     } catch (error) {
@@ -66,8 +66,6 @@ function PickDateTime() {
       fetchDateAndTime();
     }
   }, []);
-
-  console.log(dates);
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
@@ -95,7 +93,6 @@ function PickDateTime() {
         return false;
       });
       setTimes(avalableTimes);
-      console.log("times", dateData[0].timeSlots);
     }
   };
   const handleTimeClick = (time: Times) => {

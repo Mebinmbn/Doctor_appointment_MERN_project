@@ -48,14 +48,12 @@ function DoctorDashboard() {
       });
       if (response.data.appointments) {
         setAppointments(response.data.appointments);
-        console.log(response.data.appointments);
+
         const today = startOfDay(new Date());
         const tomorrow = endOfDay(today);
 
-        console.log("today", today, " tomorrow", tomorrow);
         const todaysAppointments = [];
         for (const appointment of response.data.appointments) {
-          console.log(appointment.date);
           if (
             new Date(appointment.date) >= today &&
             new Date(appointment.date) <= tomorrow
@@ -83,7 +81,7 @@ function DoctorDashboard() {
         setEarnings(totalPayments);
       }
     } catch (error) {
-      console.error("Error fetching payments:", error);
+      console.error(error);
     }
   };
 

@@ -39,7 +39,6 @@ function DoctorTopBar() {
   useEffect(() => {
     if (socket) {
       socket.on("chatNotification", (data) => {
-        console.log("Chat Notification:", data);
         setChatNotification(true);
         play();
         openChat(
@@ -75,7 +74,6 @@ function DoctorTopBar() {
         headers: { "User-Type": "doctor" },
       });
       if (response.data.success) {
-        console.log(response.data);
         const fetchedNotifications = response.data.notifications;
         const combinedNotifications = [
           ...notifications,

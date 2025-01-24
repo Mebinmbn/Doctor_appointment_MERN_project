@@ -53,7 +53,7 @@ function AllPatients() {
         setTotalPages(response.data.meta.totalPages);
       }
     } catch (error) {
-      console.error("Error fetching patients:", error);
+      console.error(error);
     }
   }, [currentPage, searchQuery]);
 
@@ -122,10 +122,7 @@ function AllPatients() {
             );
           }
         } catch (error) {
-          console.error(
-            `Error in ${status ? "blocking" : "unblocking"} patient:`,
-            error
-          );
+          console.error(error);
           toast.error(`Error in ${status ? "blocking" : "unblocking"}`);
         }
         setIsConfirmModalOpen(false);

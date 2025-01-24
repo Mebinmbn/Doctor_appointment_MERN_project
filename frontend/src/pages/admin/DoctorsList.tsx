@@ -31,14 +31,14 @@ function DoctorsList() {
   useEffect(() => {
     fetchDoctorApplications();
   }, []);
-  console.log(doctorApplications);
+
   const fetchDoctorApplications = async () => {
     try {
       const applicationResponse = await api.get("/admin/applications", {
         headers: { "User-Type": "admin" },
         withCredentials: true,
       });
-      console.log("applicationResponse", applicationResponse.data);
+
       if (applicationResponse.data) {
         setDoctorApplications(applicationResponse.data.applications);
       }

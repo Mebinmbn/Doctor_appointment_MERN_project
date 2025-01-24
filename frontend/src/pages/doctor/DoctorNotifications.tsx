@@ -21,13 +21,13 @@ function DoctorNotifications() {
           headers: { "User-Type": "doctor" },
         }
       );
-      console.log(response);
+
       if (response.data.success) {
         setNotifications(response.data.data);
         setTotalPages(response.data.meta.totalPages);
       }
     } catch (error) {
-      console.error("Error in fetching notifications:", error);
+      console.error(error);
       toast.error("Error in fetching notifications");
     }
   }, [currentPage, doctor?.id]);

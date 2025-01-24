@@ -44,13 +44,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     recipientName: string,
     senderId: string
   ) => {
-    console.log("Updating chat context:", {
-      roomId,
-      userName,
-      recipientId,
-      recipientName,
-      senderId,
-    });
     setRoomId(roomId);
     setUserName(userName);
     setRecipientId(recipientId);

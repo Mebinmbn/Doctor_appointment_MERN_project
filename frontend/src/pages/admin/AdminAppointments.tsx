@@ -29,7 +29,6 @@ function AdminAppointments() {
         },
       });
 
-      console.log("response", response.data);
       if (response.data) {
         setIsLoading(false);
         setAppointments(response.data.appointments);

@@ -29,14 +29,12 @@ function ForgotPassword() {
           withCredentials: true,
         }
       );
-      console.log(response);
+
       if (response.data.success) {
-        console.log(response.data.message);
         toast.success("OTP sent successfully");
         setIsLoading(true);
         navigate("/otp");
       } else {
-        console.error("Error response from server:", response.data);
         toast.error(response.data.message || "Error sending OTP");
       }
       setUserEmail("");

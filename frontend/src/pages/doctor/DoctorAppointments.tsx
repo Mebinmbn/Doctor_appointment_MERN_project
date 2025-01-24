@@ -47,7 +47,7 @@ const DoctorAppointments: React.FC = () => {
         setAppointments(response.data.appointments);
       }
     } catch (error) {
-      console.error("Error fetching appointments:", error);
+      console.error(error);
       toast.error("Failed to fetch appointments");
     }
   }, [doctor]);
@@ -55,7 +55,6 @@ const DoctorAppointments: React.FC = () => {
   useEffect(() => {
     if (doctor) fetchAppointments();
   }, [doctor, fetchAppointments]);
-  console.log(appointments);
 
   const showConfirmationModal = (
     message: string,
@@ -85,7 +84,7 @@ const DoctorAppointments: React.FC = () => {
             toast.success("Appointment Cancelled");
           }
         } catch (error) {
-          console.error("Error cancelling appointment:", error);
+          console.error(error);
           toast.error("Error in cancellation");
         }
         setIsConfirmModalOpen(false);
@@ -106,7 +105,6 @@ const DoctorAppointments: React.FC = () => {
   };
 
   const handleView = (appointmentId: string, status: string) => {
-    console.log(appointmentId);
     if (status === "consulted") {
       navigate("/doctor/medicalrecord", { state: { appointmentId } });
     } else {

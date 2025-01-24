@@ -76,7 +76,7 @@ const OTPVerification = () => {
     e.preventDefault();
     const otp =
       otpValues.one + otpValues.two + otpValues.three + otpValues.four;
-    console.log(otp);
+
     try {
       setIsLoading(true);
       const response = await axios.post(

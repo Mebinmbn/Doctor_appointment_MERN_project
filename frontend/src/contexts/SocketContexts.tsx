@@ -13,9 +13,7 @@ const SocketContext = createContext<Socket | null>(null);
 
 export const useSocket = (): Socket | null => {
   const socket = useContext(SocketContext);
-  if (!socket) {
-    console.warn("useSocket must be used within a SocketProvider");
-  }
+
   return socket;
 };
 
@@ -35,7 +33,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     });
 
     socketInstance.on("connect", () => {
-      console.log("Connected to Socket.io server, ID:", socketInstance.id);
+      console.log("Connected to Socket.io server");
     });
 
     socketInstance.on("disconnect", (reason) => {

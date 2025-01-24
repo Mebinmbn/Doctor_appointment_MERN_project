@@ -46,7 +46,6 @@ export const getLoginUrl = (userType: string) => {
 };
 
 export const setToken = (userType: string, token: string) => {
-  console.log("setToken", userType);
   switch (userType) {
     case "patient":
       return localStorage.setItem("token", token);

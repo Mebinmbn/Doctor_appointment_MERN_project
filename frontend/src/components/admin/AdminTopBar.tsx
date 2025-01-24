@@ -33,7 +33,6 @@ function AdminTopBar() {
         headers: { "User-Type": "admin" },
       });
       if (response.data.success) {
-        console.log(response.data);
         const fetchedNotifications = response.data.notifications;
         const combinedNotifications = [
           ...notifications,

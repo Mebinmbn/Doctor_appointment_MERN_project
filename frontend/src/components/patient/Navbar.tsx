@@ -79,7 +79,7 @@ const Navbar: React.FC = () => {
       }
     } catch (error) {
       const axiosError = error as AxiosError;
-      console.error("Error in fetching notifications:", axiosError);
+      console.error(axiosError);
     }
   };
 
@@ -88,7 +88,6 @@ const Navbar: React.FC = () => {
   };
 
   const toggleNotifications = async () => {
-    console.log("toggle notification");
     const response = await api.put(`/notification/read/${user?.id}`);
     console.log(response.data.success);
 
@@ -98,8 +97,6 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (socket) {
       socket.on("chatNotification", (data) => {
-        console.log("Chat Notification:", data);
-
         play();
 
         openChat(

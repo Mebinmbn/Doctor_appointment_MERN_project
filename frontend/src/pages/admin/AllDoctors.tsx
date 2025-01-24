@@ -113,10 +113,7 @@ const AllDoctors = () => {
             );
           }
         } catch (error) {
-          console.error(
-            `Error in ${status ? "blocking" : "unblocking"} doctor:`,
-            error
-          );
+          console.error(error);
           toast.error(`Error in ${status ? "blocking" : "unblocking"}`);
         }
         setIsConfirmModalOpen(false);

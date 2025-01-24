@@ -62,7 +62,6 @@ function PatientLogin() {
     if (user) {
       navigate("/");
     }
-    console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
   }, [user, navigate]);
 
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/;
@@ -132,7 +131,7 @@ function PatientLogin() {
 
         const response = await api.post("/patients/signup", formData);
 
-        console.log("Patient created:", response.data);
+        console.log(response.data);
         toast.success("Account created, please verify your account");
         setLoading(true);
 
@@ -156,7 +155,7 @@ function PatientLogin() {
         setFormData(initialValues);
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.error("Error in signup request:", axiosError);
+
         if (
           axiosError.response &&
           axiosError.response.data.error ===
@@ -217,16 +216,13 @@ function PatientLogin() {
         setFormData(initialValues);
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.log(
-          "Error in signup request:",
-          axiosError.response?.data.error
-        );
+
         toast.error(axiosError.response?.data.error);
         if (axiosError.response?.data.error === "User is not verified") {
           const response = await api.post("/otp/send", {
             email: formData.email,
           });
-          console.log(response.data.success);
+
           if (response.data.success) navigate("/otp");
           setFormData(initialValues);
         }
@@ -239,9 +235,8 @@ function PatientLogin() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSuccess = async (creditialResponse: any) => {
     try {
-      console.log("Google sign in success", creditialResponse);
       const token = creditialResponse.credential;
-      console.log("token", token);
+
       const response = await api.post("/patients/google", { token });
       if (response.data.success) {
         toast.success("Logged in Successfully");
@@ -251,9 +246,8 @@ function PatientLogin() {
         navigate("/");
       }
     } catch (error) {
-      console.error("Error in Google sign in request:", error);
       const axiosError = error as AxiosError;
-      console.log("Error in signup request:", axiosError.response?.data.error);
+
       toast.error(axiosError.response?.data.error);
     }
   };

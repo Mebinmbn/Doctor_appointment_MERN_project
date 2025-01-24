@@ -24,7 +24,6 @@ function ResetPassword() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error);
-      console.log("Password reset error");
     }
   };
 

@@ -46,7 +46,6 @@ const ChatPage: React.FC = () => {
       fetchChat();
 
       const handleMessageReceive = (data: Message) => {
-        console.log("receiveMessage", data);
         if (data.sender !== userName) {
           setMessages((prev) => [...prev, data]);
         }
@@ -71,14 +70,13 @@ const ChatPage: React.FC = () => {
   }, [roomId, socket]);
 
   const handleSendMessage = () => {
-    console.log("input msg", inputMessage);
     if (socket && roomId && userName) {
       const message: Message = {
         sender: userName,
         text: inputMessage,
         timeStamp: new Date().toISOString(),
       };
-      console.log(message);
+
       socket.emit("sendMessage", {
         ...message,
         room: roomId,

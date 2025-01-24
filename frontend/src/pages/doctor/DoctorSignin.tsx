@@ -88,10 +88,10 @@ function DoctorSignin() {
         setUserType("doctor");
 
         const response = await api.post("/doctor/signin", { email, password });
-        console.log(response.data.success);
+
         if (response.data.success === true) {
           const { user, token } = response.data;
-          console.log(user);
+
           dispatch(
             setDoctor({
               doctor: {
@@ -115,10 +115,7 @@ function DoctorSignin() {
         setFormData(initialValues);
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.log(
-          "Error in signin request:",
-          axiosError.response?.data.error
-        );
+
         toast.error(axiosError.response?.data.error);
         if (
           axiosError.response?.data.error === "Error: Email is not verified"

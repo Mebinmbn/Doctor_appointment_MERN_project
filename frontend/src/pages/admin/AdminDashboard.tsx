@@ -42,7 +42,7 @@ function AdminDashboard() {
           headers: { "User-Type": "admin" },
         }
       );
-      console.log(response.data.data);
+      console.log(response.data.success);
       const { totalCount, newPatients, revenueData } = response.data.data;
       setTotalCount(totalCount);
       setNewPatients(newPatients);

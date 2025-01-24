@@ -96,8 +96,6 @@ function AdminSignin() {
         const password = formData.password;
         setUserType("admin");
 
-        console.log(email, password);
-
         const response = await axios.post(
           "https://befine.site/api/admin/signin",
           { email, password },
@@ -106,7 +104,7 @@ function AdminSignin() {
             withCredentials: true,
           }
         );
-        console.log(response);
+
         if (response.data.success === true) {
           toast.success("Logged in Successfully");
           const { user, token } = response.data;
@@ -118,10 +116,7 @@ function AdminSignin() {
         setFormData(initialValues);
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.log(
-          "Error in signup request:",
-          axiosError.response?.data.error
-        );
+
         toast.error(axiosError.response?.data.error);
 
         setFormData(initialValues);

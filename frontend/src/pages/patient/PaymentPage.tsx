@@ -35,7 +35,7 @@ function PaymentPage() {
         });
         setWalletBalance(data.wallet.balance || 0);
       } catch (error) {
-        console.error("Failed to fetch wallet balance:", error);
+        console.error(error);
       }
     };
 
@@ -94,7 +94,7 @@ function PaymentPage() {
         toast.error(bookingResponse.data.message);
       }
     } catch (error) {
-      console.error("Wallet payment failed:", error);
+      console.error(error);
       toast.error("An error occurred during payment. Please try again.");
     }
   };
@@ -145,9 +145,9 @@ function PaymentPage() {
         { amount: totalAmount, currency: "INR", timeSlot },
         { headers: { "User-Type": "patient" } }
       );
-      console.log(data.data);
+
       const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
-      console.log("RazorPay Id", razorpayKey);
+
       if (!razorpayKey) {
         throw new Error("Razorpay Key is missing in environment variables");
       }
@@ -169,7 +169,6 @@ function PaymentPage() {
             { headers: { "User-Type": "patient" } }
           );
           if (verifyResponse.data.success) {
-            console.log(response);
             toast.success("Payment Successful!");
             const appointmentData = {
               doctorId: doctor._id,

@@ -18,7 +18,6 @@ function PatientTopBar() {
         headers: { "User-Type": "patient" },
       });
       if (response.data.success) {
-        console.log(response.data);
         const fetchedNotifications = response.data.notifications;
         const combinedNotifications = [
           ...notifications,

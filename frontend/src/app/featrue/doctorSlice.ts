@@ -23,7 +23,7 @@ const doctorSlice = createSlice({
     setDoctor: (state, action) => {
       state.doctor = action.payload.doctor;
       state.doctorToken = action.payload.doctorToken;
-      console.log(state.doctor);
+
       localStorage.setItem("doctor", JSON.stringify(action.payload.doctor));
       localStorage.setItem("doctorToken", action.payload.doctorToken);
     },

@@ -18,10 +18,10 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const userType = config.headers["User-Type"];
-    console.log(userType);
+
     if (userType) {
       const token = getToken(userType);
-      console.log("token", token);
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -36,7 +36,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log(error.response.status);
     const originalRequest = error.config;
     const userType = error.config.headers["User-Type"];
 
@@ -51,7 +50,7 @@ api.interceptors.response.use(
           {},
           { withCredentials: true }
         );
-        console.log("user at response", userType);
+
         setToken(userType, data.token);
         api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         return api(originalRequest);

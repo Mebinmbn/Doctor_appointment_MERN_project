@@ -31,7 +31,6 @@ const MedicalRecord = ({ appointmentId }: { appointmentId: string }) => {
         setMedicalRecord(medicalRecord);
         setPrescriptions(prescriptions.prescriptions || []);
         setAppointment(appointment);
-        console.log("appointment", appointment);
       } catch (error) {
         console.log(error);
         setError("Failed to fetch data. Please try again.");

@@ -56,7 +56,7 @@ const Chats: React.FC = () => {
         );
         setChatRooms(sortedRooms);
       } catch (error) {
-        console.error("Error fetching chat rooms:", error);
+        console.error(error);
       }
     };
 
@@ -92,8 +92,6 @@ const Chats: React.FC = () => {
       };
     }
   }, [socket, user?.id]);
-
-  console.log(activeUsers);
 
   useEffect(() => {
     if (!selectedRoom) return;

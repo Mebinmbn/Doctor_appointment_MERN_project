@@ -29,7 +29,7 @@ function Appointments() {
         setAppointments(response.data.appointments);
       }
     } catch (error) {
-      console.error("Error fetching appointments:", error);
+      console.error(error);
       toast.error("Failed to fetch appointments");
     }
   }, [user]);
@@ -54,13 +54,12 @@ function Appointments() {
         toast.success("Appointment Cancelled");
       }
     } catch (error) {
-      console.error("Error cancelling appointment:", error);
+      console.error(error);
       toast.error("Error in cancellation");
     }
   };
 
   const handleView = (appointmentId: string, status: string) => {
-    console.log(appointmentId);
     if (status === "consulted") {
       navigate("/medicalrecord", { state: { appointmentId } });
     } else {

@@ -30,7 +30,7 @@ const LeaveRequests: React.FC = () => {
       setLeaveRequests(response.data.requests);
       setTotalPages(response.data.meta.totalPages);
     } catch (error) {
-      console.error("Error fetching leave requests:", error);
+      console.error(error);
       toast.error("Error fetching leave requests");
     } finally {
       setIsLoading(false);
@@ -57,7 +57,7 @@ const LeaveRequests: React.FC = () => {
           fetchLeaveRequests();
         } catch (error) {
           toast.error("Error updating leave status");
-          console.error("Error updating leave status:", error);
+          console.error(error);
         }
         setIsConfirmModalOpen(false);
       }

@@ -69,7 +69,7 @@ function PatientDetails() {
 
   const fetchPatientDetails = useCallback(async () => {
     const id = user?.id;
-    console.log("id from fetchPatientDetails", id);
+
     try {
       const response = await api.get(`/patients/patient/${id}`, {
         headers: {
@@ -78,25 +78,17 @@ function PatientDetails() {
       });
       if (response.data.success) {
         setPatient(response.data.patient);
-        console.log(
-          "data fetched successfully",
-          response.data.patient,
-          patient
-        );
       }
     } catch (error) {
       console.log(error);
     }
   }, [patient, user?.id]);
 
-  console.log(selectedDate, selectedTime);
   useEffect(() => {
     if (user) {
       fetchPatientDetails();
     }
   }, []);
-
-  console.log("user form patientDetails", user, patient);
 
   const initialValues: FormValues = {
     userId: patient?._id,
@@ -111,8 +103,6 @@ function PatientDetails() {
     city: "",
     pin: "",
   };
-
-  console.log("initialValues", initialValues);
 
   //   const { setEmail, setUserType } = useAuth();
   const [formData, setFormData] = useState<FormValues>(initialValues);
@@ -222,8 +212,6 @@ function PatientDetails() {
         // setEmail(formData.email);
         // setUserType("doctor");
 
-        console.log(formData);
-
         const response = await api.post(
           "/patients/appointments/patient",
           formData,
@@ -244,7 +232,6 @@ function PatientDetails() {
         }
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.error("Error in signup request:", axiosError);
 
         toast.error(axiosError.response?.data.error);
       }

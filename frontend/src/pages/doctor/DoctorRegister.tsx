@@ -84,7 +84,7 @@ function DoctorRegister() {
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0] || null;
-      console.log(file);
+
       setFormData((prevData) => ({ ...prevData, licenseImage: file }));
     },
     []
@@ -164,14 +164,12 @@ function DoctorRegister() {
         setEmail(formData.email);
         setUserType("doctor");
 
-        console.log(formData);
-
         const response = await api.post("/doctor/register", formData, {
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         });
 
-        console.log("Doctor created:", response.data);
+        console.log(response.data.success);
         setLoading(true);
         toast.success(
           "Application submitted successfully, please wait for approval"
@@ -194,7 +192,7 @@ function DoctorRegister() {
         setFormData(initialValues);
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.error("Error in signup request:", axiosError);
+
         if (
           axiosError.response &&
           axiosError.response.data.error ===
