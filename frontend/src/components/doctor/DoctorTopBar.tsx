@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useChat } from "../../contexts/ChatContext";
 import AnimatedMessage from "../Icons/AnimatedMessage";
+import sound from "../../assets/sound/chime_ding.mp3";
 
 function DoctorTopBar() {
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -18,6 +19,10 @@ function DoctorTopBar() {
   const doctor = useSelector((state: RootState) => state.doctor.doctor);
   const socket = useSocket();
   const { openChat } = useChat();
+
+  const play = () => {
+    new Audio(sound).play();
+  };
 
   useEffect(() => {
     if (!socket) return;
@@ -55,6 +60,7 @@ function DoctorTopBar() {
             );
           },
         });
+        play();
       });
 
       return () => {
