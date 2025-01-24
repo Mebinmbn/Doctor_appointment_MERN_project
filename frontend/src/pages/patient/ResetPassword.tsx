@@ -20,6 +20,7 @@ function ResetPassword() {
       setError(
         "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
       );
+      return;
     }
     try {
       const response = await api.post("/patients/reset", { password, email });
@@ -39,7 +40,7 @@ function ResetPassword() {
     <>
       <Navbar />
       <div className="flex h-screen items-center justify-center min-h-screen bg-[#007E85]">
-        <div className="bg-gray-200 h-72 w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
+        <div className="bg-gray-200 h-fit min-h-72 w-96 text-center p-4 rounded-lg drop-shadow-xl border-[1px] border-[#007E85]">
           <h1 className="text-2xl font-bold pt-2 pb-2 text-[#007E85]">
             Reset Password
           </h1>
