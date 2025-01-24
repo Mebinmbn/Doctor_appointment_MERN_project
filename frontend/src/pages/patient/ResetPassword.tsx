@@ -7,12 +7,20 @@ import api from "../../api/api";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const { email } = useAuth();
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!passwordRegex.test(password)) {
+      setError(
+        "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+    }
     try {
       const response = await api.post("/patients/reset", { password, email });
 
@@ -45,6 +53,7 @@ function ResetPassword() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter the password"
             />
+            <p className="text-red-500">{error}</p>
             <button
               type="submit"
               className="bg-[#007E85] rounded-lg p-2 mt-4 my-5 text-white w-24 font-bold"
